@@ -1,24 +1,11 @@
-
-
-export HISTSIZE=10000
-export ssh_user=vltlhson
 export assume_role_password_encrypted=`cat ~/.password_assume_role_encrypted`
 export tmp_credentials="/tmp/aws_temporary_credentials"
-#export AWS_REGION=ap-northeast-1
 
 # add some help aliases
-alias l.='ls .* --color=auto'
-alias ll='ls -l --color'
-alias la='ls -A'
 alias get-account-alias='aws iam list-account-aliases'
 alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Account" --output text)'
 alias aws-cli-save-commandline-to-history='history -1 >> ~/aws_cli_results/history.json'
 alias aws-cli-save-all-commandlines-to-history='history |grep aws | grep -v history >> ~/aws_cli_results/history.json'
-
-alias ssh-add-lamhaison-key='eval `ssh-agent` && ssh-add ~/.ssh/id_rsa_github_lamhaison'
-
-
-complete -C '/usr/local/bin/aws_completer' aws
 
 
 import_tmp_credential() {
@@ -113,7 +100,8 @@ aws_assume_role_set_name() {
 
 aws_assume_role_set_name_with_hint() {
 	
-	cat ~/.aws/config |grep profile |grep -v "source"
+	# cat ~/.aws/config |grep profile |grep -v "source"
+	peco_assume_role_name
 	echo "Please input your assume role name >"
 	read  assume_role_name
 	aws_assume_role_set_name $assume_role_name
@@ -364,4 +352,12 @@ aws_ssm_list_parameters() {
 aws_ssm_connection_ec2() {
 	instance_id=$1
 	aws ssm start-session --target $1
+}
+
+
+
+# brew install peco
+# PECO
+peco_assume_role_name() {
+	cat ~/.aws/config |grep profile |grep -v source | peco
 }

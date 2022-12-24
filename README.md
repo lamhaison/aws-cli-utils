@@ -11,8 +11,6 @@ This is the project to collect helpful aws cli commandline with complex options 
 brew install remind101/formulae/assume-role
 brew install peco
 
-touch ~/.password_assume_role_encrypted
-
 # This password is used to encrypt your tmp credential.
 echo "random_string" > ~/.password_assume_role_encrypted
 ```

@@ -6,6 +6,13 @@ This is the project to collect helpful aws cli commandline with complex options 
 
 
 
+## Setup dependencies
+```
+brew install remind101/formulae/assume-role
+brew install peco
+```
+
+
 ## Setting on ~/.aws/config
 
 ```

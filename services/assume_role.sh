@@ -57,20 +57,16 @@ aws_call_assume_role() {
 	unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
-	
-	expired_time=55
-
-
 
 	if [ -f ${tmp_credentials_file_zip} ]; then
 
-		valid_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -mmin +${expired_time})
+		valid_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -mmin +${aws_assume_role_expired_time})
 		empty_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -empty)
 		# Don't find any file is older than expired-time
 		if [ -z "${valid_file}" ]  && [ -z "${empty_file}" ]; then
 			echo "Re-use the temporary credential of ${ASSUME_ROLE} at ${tmp_credentials_file_zip}"
 		else
-			echo "The credential is older than ${expired_time} or the credential is empty then we will run assume-role ${ASSUME_ROLE} again"
+			echo "The credential is older than ${aws_assume_role_expired_time} or the credential is empty then we will run assume-role ${ASSUME_ROLE} again"
 			aws_assume_role_get_credentail ${tmp_credentials_file}
 		fi
 	else
@@ -105,6 +101,16 @@ aws_assume_role_set_name_with_hint() {
 	aws_assume_role_set_name $assume_role_name
 	echo "You are using the profile ${ASSUME_ROLE}"
 }
+
+
+aws_assume_role_set_name_with_hint_peco() {
+	
+	echo "Please input your assume role name >"
+	assume_role_name=$(grep -iE "\[*\]" ~/.aws/config | tr -d "[]" | peco)
+	aws_assume_role_set_name $assume_role_name
+	echo "You are using the profile ${ASSUME_ROLE}"
+}
+
 
 aws_account_infos() {
 	get-account-alias

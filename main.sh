@@ -1,8 +1,8 @@
 
-export assume_role_password_encrypted=`cat ~/.password_assume_role_encrypted`
-export tmp_credentials=/tmp/aws_temporary_credentials
+export assume_role_password_encrypted="$(cat ~/.password_assume_role_encrypted)"
+export tmp_credentials="/tmp/aws_temporary_credentials"
 export aws_cli_results="$(echo ~/aws_cli_results)"
-export aws_cli_history=${aws_cli_results}/history.json
+export aws_cli_history="${aws_cli_results}/history.json"
 export aws_assume_role_expired_time=55
 
 

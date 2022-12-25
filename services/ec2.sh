@@ -7,12 +7,13 @@ aws_ec2_list() {
 
 aws_ec2_get() {
 	instance_id=$1
+	echo Get the information of the ec2 ${instance_id:?"The instace_id is unset or empty"}
 	aws ec2 describe-instances --instance-ids $instance_id
 }
 
 aws_ec2_reboot() {
 	instance_id=$1
-	echo "Reboot the ec2 instance ${instace_id}"
+	echo Reboot the ec2 instance ${instance_id:?"The instace_id is unset or empty"}
 	aws ec2 reboot-instances --instance-ids $instance_id
 }
 

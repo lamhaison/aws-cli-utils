@@ -48,13 +48,13 @@ aws_assume_role_get_credentail() {
 	if [ -z "${empty_file}" ]; then
 		zip_tmp_credential
 	else
-		echo "Assume role coudn't be succesfull"
+		echo "Assume role couldn't be succesfull"
 	fi
 
 }
 
 aws_call_assume_role() {
-	unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN
+	unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN ASSUMED_ROLE
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
 
@@ -77,12 +77,15 @@ aws_call_assume_role() {
 }
 
 aws_assume_role_set_name() {
+	aws_assume_role_name=$1
+	echo You set the assume role name ${aws_assume_role_name:?"The assume role name is unset or empty"}
 	
-	export ASSUME_ROLE=$1
-	export assume_role=$1
-	
+	export ASSUME_ROLE=${aws_assume_role_name}
+	export assume_role=${aws_assume_role_name}
+	# export ASSUMED_ROLE=${aws_assume_role_name}
 	aws_call_assume_role
 
+	
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
 	if [ -f $tmp_credentials_file_zip ]; then
 		cd ${aws_cli_results}
@@ -90,6 +93,8 @@ aws_assume_role_set_name() {
 	else
 		echo "Please try again, the assume role action was not complete"
 	fi	
+
+	echo "You are using the assume role name ${ASSUME_ROLE}"
 }
 
 aws_assume_role_set_name_with_hint() {
@@ -110,7 +115,7 @@ aws_assume_role_set_name_with_hint_peco() {
 	echo "Please input your assume role name >"
 	assume_role_name=$(grep -iE "\[*\]" ~/.aws/config | tr -d "[]" | peco)
 	aws_assume_role_set_name $assume_role_name
-	echo "You are using the profile ${ASSUME_ROLE}"
+	
 }
 
 

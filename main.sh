@@ -5,11 +5,13 @@ export aws_cli_results="$(echo ~/aws_cli_results)"
 export aws_cli_history=${aws_cli_results}/history.json
 export aws_assume_role_expired_time=55
 
-# TODO Later
-export AWS_CLI_SOURCE_SCRIPTS="/opt/lamhaison-tools/aws-cli-utils"
+
+# Get the current directory of the main.sh script.
+export AWS_CLI_SOURCE_SCRIPTS="$(dirname -- "$0")"
 
 mkdir -p ${tmp_credentials}
 mkdir -p ${aws_cli_results}
+
 
 # add some help aliases
 alias get-account-alias='aws iam list-account-aliases'

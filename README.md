@@ -26,20 +26,20 @@ echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.bashrc
 
 ```
 
-[PROFILE_NAME-dev]
+[profile PROFILE_NAME-dev]
 region = region
 role_arn = arn:aws:iam::ACCOUNT_NAME:role/PROFILE_NAME-dev
 source_profile = SOURCE_PROFILE
 mfa_serial = arn:aws:iam::ACCOUNT_NAME_MFA:mfa/ACCOUNT_NAME
 
-[PROFILE_NAME-stg]
+[profile PROFILE_NAME-stg]
 region = region
 role_arn = arn:aws:iam::ACCOUNT_NAME:role/PROFILE_NAME-stg
 source_profile = SOURCE_PROFILE
 mfa_serial = arn:aws:iam::ACCOUNT_NAME_MFA:mfa/ACCOUNT_NAME
 
 
-[PROFILE_NAME-prd]
+[profile PROFILE_NAME-prd]
 region = region
 role_arn = arn:aws:iam::ACCOUNT_NAME:role/PROFILE_NAME-prod
 source_profile = SOURCE_PROFILE

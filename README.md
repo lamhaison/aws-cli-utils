@@ -48,8 +48,13 @@ mfa_serial = arn:aws:iam::ACCOUNT_NAME_MFA:mfa/ACCOUNT_NAME
 
 
 ## How to use
+### List all functions
 ```
-# Input your MFA
+aws_help
+You can search list function and after that you can run which funtion_name to get the detail of bashshell code
+```
+### Other
+```
 admin@MacBook-Pro-cua-Admin ~ % aws_assume_role_set_name PROFILE_NAME-dev
 You set the assume role name PROFILE_NAME-dev
 Running assume-role PROFILE_NAME-dev
@@ -74,3 +79,4 @@ admin@MacBook-Pro-cua-Admin aws_cli_results % aws_ec2_list
 |  i-0712343f1a9565397|  demo-dev-mongodb-master        |  y.y.y.y      |  1.123.123.123 |  running  |
 +---------------------+---------------------------------+---------------+----------------+-----------+
 ```
+

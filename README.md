@@ -16,13 +16,19 @@ echo "random_string" > ~/.password_assume_role_encrypted
 ```
 
 
+## Settings when open terminal
+```
+echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.bashrc
+```
+
+
 ## Setting on ~/.aws/config
 
 ```
 
 [PROFILE_NAME-dev]
 region = region
-role_arn = arn:aws:iam::ACCOUNT_NAME:role/PROFILE_NAME-prod
+role_arn = arn:aws:iam::ACCOUNT_NAME:role/PROFILE_NAME-dev
 source_profile = SOURCE_PROFILE
 mfa_serial = arn:aws:iam::ACCOUNT_NAME_MFA:mfa/ACCOUNT_NAME
 
@@ -38,4 +44,33 @@ region = region
 role_arn = arn:aws:iam::ACCOUNT_NAME:role/PROFILE_NAME-prod
 source_profile = SOURCE_PROFILE
 mfa_serial = arn:aws:iam::ACCOUNT_NAME_MFA:mfa/ACCOUNT_NAME
+```
+
+
+## How to use
+```
+# Input your MFA
+admin@MacBook-Pro-cua-Admin ~ % aws_assume_role_set_name PROFILE_NAME-dev
+You set the assume role name PROFILE_NAME-dev
+Running assume-role PROFILE_NAME-dev
+MFA code: 165933
+Encrypt temporary credential for assume-role PROFILE_NAME-dev at /tmp/aws_temporary_credentials/PROFILE_NAME-dev.zip
+~
+{
+    "AccountAliases": [
+        "PROFILE_NAME"
+    ]
+}
+AccountId 1110987654321 
+
+
+admin@MacBook-Pro-cua-Admin aws_cli_results % aws_ec2_list
+------------------------------------------------------------------------------------------------------
+|                                          DescribeInstances                                         |
++---------------------+---------------------------------+---------------+----------------+-----------+
+|     InstanceId      |              Name               |   PrivateIp   |   PublicIp     |   State   |
++---------------------+---------------------------------+---------------+----------------+-----------+
+|  i-0512340c9dc5fb531|  demo-dev-jenkins-master        |  x.x.x.x      |  1.123.123.123 |  running  |
+|  i-0712343f1a9565397|  demo-dev-mongodb-master        |  y.y.y.y      |  1.123.123.123 |  running  |
++---------------------+---------------------------------+---------------+----------------+-----------+
 ```

@@ -118,4 +118,5 @@ aws_assume_role_set_name_with_hint_peco() {
 aws_account_infos() {
 	get-account-alias
 	get-account-id
+	echo AWS Region ${AWS_REGION:?"The AWS_REGION is unset or empty"}
 }

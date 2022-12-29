@@ -42,12 +42,15 @@ aws_export_region() {
 aws_assume_role_get_credentail() {
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	echo "Running assume-role ${ASSUME_ROLE}"
+	echo "Remove the credential ${tmp_credentials_file}"
+	rm -rf ${tmp_credentials_file}
 	assume-role ${ASSUME_ROLE} >${tmp_credentials_file}
 	empty_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE} -empty)
 	if [ -z "${empty_file}" ]; then
 		zip_tmp_credential
 	else
-		echo "Assume role couldn't be succesfull"
+		echo "Assume role couldn't be succesful"
+		m -rf ${tmp_credentials_file}
 	fi
 
 }
@@ -66,10 +69,10 @@ aws_call_assume_role() {
 			echo "Re-use the temporary credential of ${ASSUME_ROLE} at ${tmp_credentials_file_zip}"
 		else
 			echo "The credential is older than ${aws_assume_role_expired_time} or the credential is empty then we will run assume-role ${ASSUME_ROLE} again"
-			aws_assume_role_get_credentail ${tmp_credentials_file}
+			aws_assume_role_get_credentail
 		fi
 	else
-		aws_assume_role_get_credentail ${tmp_credentials_file}
+		aws_assume_role_get_credentail
 	fi
 	import_tmp_credential
 

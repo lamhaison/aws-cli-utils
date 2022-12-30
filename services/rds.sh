@@ -11,6 +11,11 @@ aws_rds_list_db_cluster_parameter_groups() {
 	aws rds describe-db-cluster-parameter-groups --query "*[].DBClusterParameterGroupName"
 }
 
+
+aws_rds_list_db_parameter_groups() {
+	aws rds describe-db-parameter-groups --query "*[].{DBParameterGroupName:DBParameterGroupName,DBParameterGroupFamily:DBParameterGroupFamily}"
+}
+
 aws_rds_list() {
 	aws rds describe-db-clusters --query "*[].DBClusterMembers" --output table
 }

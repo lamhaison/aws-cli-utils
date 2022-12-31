@@ -50,7 +50,7 @@ aws_assume_role_get_credentail() {
 		zip_tmp_credential
 	else
 		echo "Assume role couldn't be succesful"
-		rm -rf ${tmp_credentials_file}
+		rm -rf ${tmp_credentials_file} ${tmp_credentials_file}.zip
 	fi
 
 }

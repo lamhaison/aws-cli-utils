@@ -1,5 +1,9 @@
 #!/bin/bash
 
+aws_codepipeline_list() {
+	aws_run_commandline 'aws codepipeline list-pipelines --query "*[].name"'
+}
+
 aws_codepipeline_get_latest_execution_with_hint() {
 	
 	echo "List pipelines"

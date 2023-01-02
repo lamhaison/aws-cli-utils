@@ -1,5 +1,10 @@
 #!/bin/bash
 
+
+aws_cloudfront_list_detail() {
+	aws_run_commandline 'aws cloudfront list-distributions'
+}
+
 aws_cloudfront_list() {
 	aws_run_commandline 'aws cloudfront list-distributions --query "DistributionList.Items[*].{Id:Id,Aliases:Aliases}"'
 	

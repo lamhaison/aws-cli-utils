@@ -1,7 +1,8 @@
 #!/bin/bash
 
 aws_ecr_list_repo() {
-	aws ecr describe-repositories --query "*[].repositoryArn"
+
+	aws_run_commandline "aws ecr describe-repositories --query \"*[].repositoryArn\""
 }
 
 aws_ecr_login() {

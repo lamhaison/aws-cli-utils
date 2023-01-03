@@ -6,7 +6,7 @@ export aws_cli_history="${aws_cli_results}/history.json"
 export aws_assume_role_expired_time=55
 export aws_tmp_input="/tmp/aws_tmp_input_23647494949484.txt"
 # To allow log detail of the aws cli [true|false]
-export aws_show_commandline=true
+export aws_show_commandline=false
 
 # Get the current directory of the main.sh script.
 export AWS_CLI_SOURCE_SCRIPTS="$(dirname -- "$0")"

@@ -2,7 +2,7 @@
 # AWS codebuild
 
 aws_codebuild_list() {
-	aws codebuild list-projects
+	aws_run_commandline "aws codebuild list-projects"
 }
 aws_codebuild_get_latest_build() {
 	aws_codebuild_project_name=$1

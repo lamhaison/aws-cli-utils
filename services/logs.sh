@@ -2,22 +2,23 @@
 
 # AWS logs
 aws_logs_list() {
-	aws logs describe-log-groups --query "*[].logGroupName"
+	aws_run_commandline 'aws logs describe-log-groups --query "*[].logGroupName"'
 }
 
 aws_logs_tail() {
 	aws_log_group_name=$1
-	aws logs tail $aws_log_group_name  --since 60m
+	echo Get log of the group name ${aws_log_group_name:?"aws_log_group_name is unset or empty"}
+	aws logs tail $aws_log_group_name  --since 120m
 }
 
 aws_logs_tail_with_hint() {
-        echo "List log groups"
-        common_input_to_tmp $(aws logs describe-log-groups --query "*[].logGroupName" --output text)
-        echo "Your log group name >"
-        read aws_log_group_name
-	aws_logs_tail $aws_log_group_name
+	aws_logs_tail_with_hint_peco
+        # echo "List log groups"
+        # common_input_to_tmp $(aws logs describe-log-groups --query "*[].logGroupName" --output text)
+        # echo "Your log group name >"
+        # read aws_log_group_name
+	# aws_logs_tail $aws_log_group_name
 }
-
 
 aws_logs_tail_with_hint_peco() {
         echo "List log groups"
@@ -31,7 +32,3 @@ aws_logs_tail_with_hint_peco() {
 
 
 
-# AWS cloudformation
-aws_cloudformation_list_stack_sets() {
-	aws cloudformation list-stack-sets
-}

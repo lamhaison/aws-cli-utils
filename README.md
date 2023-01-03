@@ -5,22 +5,43 @@ This is the project to collect helpful aws cli commandline with complex options 
 - Sometimes, you want to add more options on purpose and you want to have a place to collect and reuse it in the future. That is the reason I defined that structure to help me collect helpful commandlines and share on the github.
 
 
-
 ## Setup dependencies
+Notes: This document is for macos environment.
+
+## Setup aws-cli
+How to install aws cli - https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+```
+aws --version
+aws-cli/2.8.1 Python/3.9.11 Darwin/22.1.0 exe/x86_64 prompt/off
+```
+
+### Install peco
+To allow searching by console.
+![image](./images/aws_help.png)
+
+```
+brew install peco
+peco --version
+peco version v0.5.10 (built with go1.19.2)
+```
+
+### Install assume-role
+To allow assume role to a target account
 ```
 brew install remind101/formulae/assume-role
-brew install peco
+```
 
+### Setup your password for compress the plantext your temporary credentail.
+```
 # This password is used to encrypt your tmp credential.
 echo "random_string" > ~/.password_assume_role_encrypted
 ```
 
 
-## Settings when open terminal
+## Settings when open terminal (I am using iterm)
 ```
 echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.bashrc
 ```
-
 
 ## Setting on ~/.aws/config
 

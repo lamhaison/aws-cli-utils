@@ -56,6 +56,7 @@ aws_assume_role_get_credentail() {
 }
 
 aws_call_assume_role() {
+	# Do later (Validate the variable of ASSUMED_ROLE before calling assume role)
 	unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN ASSUMED_ROLE
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"

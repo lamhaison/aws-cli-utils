@@ -31,8 +31,15 @@ peco_aws_input() {
 	else
 		aws_result=$(eval $aws_cli_commandline)
 		format_text=$(peco_format_aws_output_text $aws_result)
-		echo "******** [ ${aws_cli_commandline} ] ********" > ${input_file_path}
-		echo ${format_text} | tee -a ${input_file_path}
+
+		if [ -n "${format_text}" ];then
+			echo "******** [ ${aws_cli_commandline} ] ********" > ${input_file_path}
+			echo ${format_text} | tee -a ${input_file_path}
+		else
+			echo "Can not get the data"
+		fi
+		
+		
 	fi
 }
 

@@ -49,3 +49,10 @@ peco_aws_ecs_list_clusters() {
 peco_aws_ecs_list_services() {
 	peco_aws_input 'aws ecs list-services --cluster $aws_ecs_cluster_arn --query "*[]" --output text'
 }
+
+
+# AWS ECR
+
+peco_aws_list_repositorie_names() {
+	peco_aws_input 'aws ecr describe-repositories --query "*[].repositoryName" --output text' 'true'
+}

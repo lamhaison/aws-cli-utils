@@ -89,7 +89,7 @@ aws_assume_role_set_name() {
 
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
 	if [ -f $tmp_credentials_file_zip ]; then
-		cd ${aws_cli_results}
+		# cd ${aws_cli_results}
 		aws_account_infos
 	else
 		echo "Please try again, the assume role action was not complete"

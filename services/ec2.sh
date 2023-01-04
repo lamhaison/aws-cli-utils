@@ -61,3 +61,8 @@ aws_ec2_get_image() {
 	echo Get detail of the image ${image_id:?"The image_id is unset or empty"}
 	aws_run_commandline "aws ec2 describe-images --image-ids $image_id"
 }
+
+
+aws_ec2_connect() {
+	aws_ssm_connection_ec2 $1
+}

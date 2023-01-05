@@ -63,3 +63,14 @@ peco_aws_ecs_list_services() {
 peco_aws_list_repositorie_names() {
 	peco_aws_input 'aws ecr describe-repositories --query "*[].repositoryName" --output text' 'true'
 }
+
+
+# AWS RDS
+peco_aws_list_db_parameter_groups() {
+	peco_aws_input 'aws rds describe-db-parameter-groups --query "*[].DBParameterGroupName" --output text' 'true'
+}
+
+peco_aws_list_db_cluster_parameter_groups() {
+	peco_aws_input 'aws rds describe-db-cluster-parameter-groups --query "*[].DBClusterParameterGroupName" --output text' 'true'
+}
+

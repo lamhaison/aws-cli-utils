@@ -74,3 +74,12 @@ peco_aws_list_db_cluster_parameter_groups() {
 	peco_aws_input 'aws rds describe-db-cluster-parameter-groups --query "*[].DBClusterParameterGroupName" --output text' 'true'
 }
 
+
+peco_aws_list_db_clusters() {
+	peco_aws_input 'aws rds describe-db-clusters --query "*[].DBClusterIdentifier" --output text' 'true'
+}
+
+peco_aws_list_db_instances() {
+	peco_aws_input 'aws rds describe-db-instances --query "*[].DBInstanceIdentifier" --output text' 'true'
+}
+

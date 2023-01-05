@@ -4,7 +4,7 @@
 # List all ec2 instance(don't care stopped or running instances)
 aws_ec2_list_all() {
 	aws_run_commandline \
-	"aws ec2 describe-instances \
+		"aws ec2 describe-instances \
 		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0], \
 			InstanceId:InstanceId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
 			PublicIp:PublicIpAddress,State:State.Name}' \
@@ -15,7 +15,7 @@ aws_ec2_list_all() {
 # Only list all the running instances.
 aws_ec2_list() {
 	aws_run_commandline \
-	"aws ec2 describe-instances \
+		"aws ec2 describe-instances \
 		--filters Name=instance-state-name,Values=running \
 		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0], \
 			InstanceId:InstanceId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
@@ -61,7 +61,6 @@ aws_ec2_get_image() {
 	echo Get detail of the image ${image_id:?"The image_id is unset or empty"}
 	aws_run_commandline "aws ec2 describe-images --image-ids $image_id"
 }
-
 
 aws_ec2_connect() {
 	aws_ssm_connection_ec2 $1

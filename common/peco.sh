@@ -2,13 +2,13 @@
 # PECO
 
 peco_assume_role_name() {
-	cat ~/.aws/config |grep -e "^\[profile.*\]$" | peco
+	cat ~/.aws/config | grep -e "^\[profile.*\]$" | peco
 }
 
 peco_format_aws_output_text() {
 	peco_input=$1
 	echo "${peco_input}" | tr "\t" "\n"
-}	
+}
 
 peco_aws_acm_list() {
 	aws_acm_list | peco
@@ -25,21 +25,20 @@ peco_aws_input() {
 	empty_file=$(find ${input_folder} -name ${md5_hash}.txt -empty)
 
 	# The file is existed and not empty and the flag result_cached is not empty
-	if [ -f "${input_file_path}" ] && [ -z "${empty_file}" ] && [ -n "${result_cached}" ];then
+	if [ -f "${input_file_path}" ] && [ -z "${empty_file}" ] && [ -n "${result_cached}" ]; then
 		# Ignore the first line.
 		grep -Ev "\*\*\*\*\*\*\*\* \[.*\]" $input_file_path
 	else
 		aws_result=$(eval $aws_cli_commandline)
 		format_text=$(peco_format_aws_output_text $aws_result)
 
-		if [ -n "${format_text}" ];then
-			echo "******** [ ${aws_cli_commandline} ] ********" > ${input_file_path}
+		if [ -n "${format_text}" ]; then
+			echo "******** [ ${aws_cli_commandline} ] ********" >${input_file_path}
 			echo ${format_text} | tee -a ${input_file_path}
 		else
 			echo "Can not get the data"
 		fi
-		
-		
+
 	fi
 }
 
@@ -57,13 +56,11 @@ peco_aws_ecs_list_services() {
 	peco_aws_input 'aws ecs list-services --cluster $aws_ecs_cluster_arn --query "*[]" --output text'
 }
 
-
 # AWS ECR
 
 peco_aws_list_repositorie_names() {
 	peco_aws_input 'aws ecr describe-repositories --query "*[].repositoryName" --output text' 'true'
 }
-
 
 # AWS RDS
 peco_aws_list_db_parameter_groups() {
@@ -74,7 +71,6 @@ peco_aws_list_db_cluster_parameter_groups() {
 	peco_aws_input 'aws rds describe-db-cluster-parameter-groups --query "*[].DBClusterParameterGroupName" --output text' 'true'
 }
 
-
 peco_aws_list_db_clusters() {
 	peco_aws_input 'aws rds describe-db-clusters --query "*[].DBClusterIdentifier" --output text' 'true'
 }
@@ -82,4 +78,3 @@ peco_aws_list_db_clusters() {
 peco_aws_list_db_instances() {
 	peco_aws_input 'aws rds describe-db-instances --query "*[].DBInstanceIdentifier" --output text' 'true'
 }
-

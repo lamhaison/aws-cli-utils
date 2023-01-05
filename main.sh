@@ -12,7 +12,6 @@ export aws_tmp_input="/tmp/aws_tmp_input_23647494949484.txt"
 export aws_show_commandline=true
 export aws_log_tail_since=120m
 
-
 mkdir -p ${tmp_credentials}
 mkdir -p ${aws_cli_results}
 mkdir -p ${aws_cli_logs}
@@ -24,12 +23,8 @@ alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Acco
 
 # Import sub-commandline.
 
-for module in $(echo "common services")
-do
+for module in $(echo "common services"); do
 	for script in $(ls ${AWS_CLI_SOURCE_SCRIPTS}/${module}); do
 		source ${AWS_CLI_SOURCE_SCRIPTS}/${module}/$script
 	done
 done
-
-
-

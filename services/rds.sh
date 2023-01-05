@@ -101,3 +101,9 @@ aws_rds_audit_log_disabled () {
                  \"ParameterName=server_audit_logs_upload,ParameterValue=0,ApplyMethod=immediate\"
         "
 }
+
+
+
+aws_rds_list_events() {
+	aws rds describe-events
+}

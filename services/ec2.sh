@@ -36,6 +36,19 @@ aws_ec2_reboot() {
 	aws_run_commandline "aws ec2 reboot-instances --instance-ids $instance_id"
 }
 
+aws_ec2_stop() {
+	instance_id=$1
+	echo Stop the ec2 instance ${instance_id:?"The instace_id is unset or empty"}
+	aws_run_commandline "aws ec2 stop-instances --instance-ids $instance_id"
+}
+
+aws_ec2_start() {
+	instance_id=$1
+	echo start the ec2 instance ${instance_id:?"The instace_id is unset or empty"}
+	aws_run_commandline "aws ec2 start-instances --instance-ids $instance_id"
+}
+
+
 # Ec2 image
 aws_ec2_list_images() {
 	aws_run_commandline "aws ec2 describe-images --owners self"

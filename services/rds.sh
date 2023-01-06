@@ -6,6 +6,7 @@ aws_rds_list_db_clusters() {
 	aws_run_commandline 'aws rds describe-db-clusters \
 	--query "*[].{\
 		DBClusterIdentifier:DBClusterIdentifier,\
+		Endpoint:Endpoint,\
 		DBClusterMembers:DBClusterMembers\
 	}" --output table'
 }

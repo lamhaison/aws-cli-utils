@@ -6,7 +6,12 @@ aws_rds_list_db_clusters() {
 	aws_run_commandline 'aws rds describe-db-clusters \
 	--query "*[].{\
 		DBClusterIdentifier:DBClusterIdentifier,\
+		Status:Status,\
+		DBClusterParameterGroup:DBClusterParameterGroup,\
 		Endpoint:Endpoint,\
+		ReaderEndpoint:ReaderEndpoint,\
+		Engine:Engine,\
+		EngineVersion:EngineVersion,\
 		DBClusterMembers:DBClusterMembers\
 	}" --output table'
 }
@@ -15,8 +20,13 @@ aws_rds_list_db_instances() {
 	aws_run_commandline 'aws rds describe-db-instances \
 	--query "*[].{\
 		DBInstanceIdentifier:DBInstanceIdentifier,\
+		DBInstanceStatus:DBInstanceStatus,\
 		Engine:Engine,Endpoint:Endpoint.Address,\
-		DBInstanceClass:DBInstanceClass\
+		DBInstanceClass:DBInstanceClass,\
+		Engine:Engine,\
+		EngineVersion:EngineVersion,\
+		DBParameterGroupName:DBParameterGroups[0].DBParameterGroupName,\
+		DBParameterGroupApplyStatus:DBParameterGroups[0].ParameterApplyStatus\
 	}" --output table'
 }
 
@@ -147,4 +157,32 @@ aws_rds_create_instance_snapshot_with_hint() {
 # AWS events
 aws_rds_list_events() {
 	aws rds describe-events
+}
+
+# AWS rds reboot
+
+aws_rds_reboot_db_instance() {
+	aws_rds_db_instance_identifier=$1
+	echo Reboot the aws rds db instance ${aws_rds_db_instance_identifier:?"aws_rds_db_instance_identifier is unset or empty"}
+	aws_run_commandline "aws rds reboot-db-instance --db-instance-identifier ${aws_rds_db_instance_identifier}"
+}
+
+aws_rds_reboot_db_instance_with_hint() {
+	aws_rds_reboot_db_instance $(echo "$(peco_aws_list_db_instances)" | peco)
+}
+
+# AWS upgrade from aurora-1 to aurora-2
+aws_help_rds_upgrade_aurora_1_to_aurora_2() {
+	echo \
+		"
+		Here is the strcuture of the commandline \
+
+		aws rds modify-db-cluster \
+		    --db-cluster-identifier DB_CLUSTER_NAME \
+		    --db-instance-parameter-group-name DB_PARAMETER_GROU_NAME \
+		    --db-cluster-parameter-group-name DB_CLUSTER_PARAMETER_GROUP_NAME \
+		    --engine-version 5.7.mysql_aurora.2.10.2 \
+		    --allow-major-version-upgrade \
+		    --apply-immediately
+	"
 }

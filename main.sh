@@ -6,8 +6,10 @@ export tmp_credentials="/tmp/aws_temporary_credentials"
 export aws_cli_results="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results"
 export aws_cli_logs="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/logs"
 export aws_cli_input_tmp="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/inputs"
-export aws_assume_role_expired_time=55
 export aws_tmp_input="/tmp/aws_tmp_input_23647494949484.txt"
+# max session 1h
+export aws_assume_role_duration=3600s
+export aws_assume_role_expired_time=55
 # To allow log detail of the aws cli [true|false]
 export aws_show_commandline=true
 export aws_log_tail_since=120m

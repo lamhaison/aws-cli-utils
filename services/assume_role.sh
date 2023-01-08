@@ -44,7 +44,7 @@ aws_assume_role_get_credentail() {
 	echo "Running assume-role ${ASSUME_ROLE}"
 	echo "Remove the credential ${tmp_credentials_file}"
 	rm -rf ${tmp_credentials_file}
-	assume-role ${ASSUME_ROLE} >${tmp_credentials_file}
+	assume-role -duration ${aws_assume_role_duration} ${ASSUME_ROLE} >${tmp_credentials_file}
 	empty_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE} -empty)
 	if [ -z "${empty_file}" ]; then
 		zip_tmp_credential

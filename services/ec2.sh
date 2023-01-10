@@ -48,7 +48,6 @@ aws_ec2_start() {
 	aws_run_commandline "aws ec2 start-instances --instance-ids $instance_id"
 }
 
-
 # Ec2 image
 aws_ec2_list_images() {
 	aws_run_commandline "aws ec2 describe-images --owners self"
@@ -77,4 +76,34 @@ aws_ec2_get_image() {
 
 aws_ec2_connect() {
 	aws_ssm_connection_ec2 $1
+}
+
+aws_ec2_list_eips() {
+	aws_run_commandline 'aws ec2 describe-addresses'
+}
+
+# VPC
+
+aws_ec2_list_vpcs() {
+	aws_run_commandline \
+		"
+		aws ec2 describe-vpcs --query '*[].{Id:VpcId,CidrBlock:CidrBlock,Name:Tags[?Key == \`Name\`] | [0].Value}' --output table
+		"
+}
+
+aws_vpc_list() {
+	aws_ec2_list_vpc
+}
+
+# Subnets
+aws_subnet_list() {
+
+	aws_ec2_list_subnets
+}
+
+aws_ec2_list_subnets() {
+	aws_run_commandline \
+		"
+		aws ec2 describe-subnets
+	"
 }

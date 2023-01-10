@@ -9,7 +9,7 @@ aws_rds_list_db_clusters() {
 		Status:Status,\
 		DBClusterParameterGroup:DBClusterParameterGroup,\
 		Endpoint:Endpoint,\
-		ReaderEndpoint:ReaderEndpoint,\
+		EndpointReader:ReaderEndpoint,\
 		Engine:Engine,\
 		EngineVersion:EngineVersion,\
 		DBClusterMembers:DBClusterMembers\

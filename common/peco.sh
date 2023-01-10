@@ -15,7 +15,7 @@ peco_aws_acm_list() {
 }
 
 peco_aws_input() {
-	aws_cli_commandline=$1
+	aws_cli_commandline="${1} --output text"
 	result_cached=$2
 
 	md5_hash=$(echo $aws_cli_commandline | md5)
@@ -44,37 +44,52 @@ peco_aws_input() {
 
 # AWS Logs
 peco_aws_logs_list() {
-	peco_aws_input 'aws logs describe-log-groups --query "*[].logGroupName" --output text' 'true'
+	peco_aws_input 'aws logs describe-log-groups --query "*[].logGroupName"' 'true'
 }
 
 # AWS ECS
 peco_aws_ecs_list_clusters() {
-	peco_aws_input 'aws ecs list-clusters --query "*[]" --output text' 'true'
+	peco_aws_input 'aws ecs list-clusters --query "*[]"' 'true'
 }
 
 peco_aws_ecs_list_services() {
-	peco_aws_input 'aws ecs list-services --cluster $aws_ecs_cluster_arn --query "*[]" --output text'
+	peco_aws_input 'aws ecs list-services --cluster $aws_ecs_cluster_arn --query "*[]"'
 }
 
 # AWS ECR
 
 peco_aws_list_repositorie_names() {
-	peco_aws_input 'aws ecr describe-repositories --query "*[].repositoryName" --output text' 'true'
+	peco_aws_input 'aws ecr describe-repositories --query "*[].repositoryName"' 'true'
 }
 
 # AWS RDS
 peco_aws_list_db_parameter_groups() {
-	peco_aws_input 'aws rds describe-db-parameter-groups --query "*[].DBParameterGroupName" --output text' 'true'
+	peco_aws_input 'aws rds describe-db-parameter-groups --query "*[].DBParameterGroupName"' 'true'
 }
 
 peco_aws_list_db_cluster_parameter_groups() {
-	peco_aws_input 'aws rds describe-db-cluster-parameter-groups --query "*[].DBClusterParameterGroupName" --output text' 'true'
+	peco_aws_input 'aws rds describe-db-cluster-parameter-groups --query "*[].DBClusterParameterGroupName"' 'true'
 }
 
 peco_aws_list_db_clusters() {
-	peco_aws_input 'aws rds describe-db-clusters --query "*[].DBClusterIdentifier" --output text' 'true'
+	peco_aws_input 'aws rds describe-db-clusters --query "*[].DBClusterIdentifier"' 'true'
 }
 
 peco_aws_list_db_instances() {
-	peco_aws_input 'aws rds describe-db-instances --query "*[].DBInstanceIdentifier" --output text' 'true'
+	peco_aws_input 'aws rds describe-db-instances --query "*[].DBInstanceIdentifier"' 'true'
+}
+
+# Lambda
+peco_aws_lambda_list() {
+	peco_aws_input 'aws lambda list-functions --query "*[].FunctionName"' 'true'
+}
+
+# S3
+peco_aws_s3_list() {
+	peco_aws_input 'aws s3api list-buckets --query "Buckets[].Name"' 'true'
+}
+
+# Codebuild
+peco_aws_codebuild_list() {
+	peco_aws_input 'aws codebuild list-projects --query "*[]"' 'true'
 }

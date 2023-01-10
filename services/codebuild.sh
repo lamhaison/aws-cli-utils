@@ -6,15 +6,15 @@ aws_codebuild_list() {
 }
 aws_codebuild_get_latest_build() {
 	aws_codebuild_project_name=$1
-	aws codebuild batch-get-builds --ids $(aws codebuild list-builds-for-project --project-name $aws_codebuild_project_name --query "*[] | [1]" | awk -F '"' '{print $2}')
+	echo Get the latest build of project ${aws_codebuild_project_name:?"aws_codebuild_project_name is unset or empty"}
+	aws codebuild batch-get-builds --ids $(aws codebuild list-builds-for-project --project-name $aws_codebuild_project_name --query "*[] | [1]" --output text)
 }
 
 aws_codebuild_get_latest_build_with_hint() {
 	echo "List codebuilds"
-	aws codebuild list-projects
-	echo "Your codebuild >"
-	read aws_codebuild_project_name
-	aws_codebuild_get_latest_build $aws_codebuild_project_name
+	# echo "Your codebuild >"
+	# read aws_codebuild_project_name
+	aws_codebuild_get_latest_build $(echo "$(peco_aws_codebuild_list)" | peco)
 
 }
 
@@ -26,10 +26,10 @@ aws_codebuild_start() {
 
 aws_codebuild_start_with_hint() {
 	echo "List codebuilds"
-	aws codebuild list-projects
-	echo "Your codebuild >"
-	read aws_codebuild_project_name
-	aws_codebuild_start $aws_codebuild_project_name
+	# aws codebuild list-projects
+	# echo "Your codebuild >"
+	# read aws_codebuild_project_name
+	aws_codebuild_start $(echo "$(peco_aws_codebuild_list)" | peco)
 
 }
 

@@ -19,6 +19,15 @@ aws_s3_get_object_metadata() {
 
 }
 
+aws_s3_get_s3_bucket_arn() {
+	aws_s3_bucket_name=$1
+	echo "arn:aws:s3:::${aws_s3_bucket_name:?'aws_s3_bucket_name is unset or empty'}"
+}
+
+aws_s3_get_s3_bucket_arn_with_hint() {
+	aws_s3_get_s3_bucket_arn $(echo "$(peco_aws_s3_list)" | peco)
+}
+
 # aws_s3_get_object_metadata_with_hint() {
 # 	bucket_name=$(echo "$(peco_aws_s3_list)" | peco)
 # 	object_key=$2

@@ -93,3 +93,7 @@ peco_aws_s3_list() {
 peco_aws_codebuild_list() {
 	peco_aws_input 'aws codebuild list-projects --query "*[]"' 'true'
 }
+
+peco_aws_codepipeline_list() {
+	peco_aws_input 'aws codepipeline list-pipelines --query "*[].name"' 'true'
+}

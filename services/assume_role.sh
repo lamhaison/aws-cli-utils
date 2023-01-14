@@ -28,7 +28,7 @@ aws_assume_role_unzip_tmp_credential() {
 
 aws_assume_role_remove_tmp_credential() {
 	assume_role_name_input=$1
-	tmp_credentials_file_zip=${tmp_credentials}/${assume_role_name_input}.zip
+	tmp_credentials_file_zip=${tmp_credentials}/${assume_role_name_input:?"aws_assume_role_remove_tmp_credential is unset or empty"}.zip
 	if [ -f "${tmp_credentials_file_zip}" ]; then
 		rm -r ${tmp_credentials_file_zip}
 	fi
@@ -44,7 +44,17 @@ aws_assume_role_get_credentail() {
 	echo "Running assume-role ${ASSUME_ROLE}"
 	echo "Remove the credential ${tmp_credentials_file}"
 	rm -rf ${tmp_credentials_file}
-	assume-role -duration ${aws_assume_role_duration} ${ASSUME_ROLE} >${tmp_credentials_file}
+
+	assume_role_result=""
+	while [[ "${assume_role_result}" == "" ]]; do
+		assume_role_result=$(assume-role -duration ${aws_assume_role_duration} ${ASSUME_ROLE})
+
+		if [[ "${assume_role_result}" == "" ]]; then
+			echo "Assume role couldn't be succesful.Please try again or Ctrl + C to exit"
+		fi
+	done
+
+	echo $assume_role_result >${tmp_credentials_file}
 	empty_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE} -empty)
 	if [ -z "${empty_file}" ]; then
 		zip_tmp_credential

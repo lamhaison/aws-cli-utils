@@ -5,6 +5,11 @@ peco_assume_role_name() {
 	cat ~/.aws/config | grep -e "^\[profile.*\]$" | peco
 }
 
+peco_format_name_convention_pre_defined() {
+	peco_input=$1
+	echo "${peco_input}" | tr "\t" "\n" | tr -s " " "\n" | tr -s '\n'
+}
+
 peco_format_aws_output_text() {
 	peco_input=$1
 	echo "${peco_input}" | tr "\t" "\n"
@@ -12,6 +17,12 @@ peco_format_aws_output_text() {
 
 peco_aws_acm_list() {
 	aws_acm_list | peco
+}
+
+peco_name_convention_input() {
+	text_input=$1
+	format_text=$(peco_format_name_convention_pre_defined $text_input)
+	echo $format_text
 }
 
 peco_aws_input() {
@@ -92,4 +103,8 @@ peco_aws_s3_list() {
 # Codebuild
 peco_aws_codebuild_list() {
 	peco_aws_input 'aws codebuild list-projects --query "*[]"' 'true'
+}
+
+peco_aws_codepipeline_list() {
+	peco_aws_input 'aws codepipeline list-pipelines --query "*[].name"' 'true'
 }

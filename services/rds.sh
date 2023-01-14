@@ -156,10 +156,24 @@ aws_rds_create_instance_snapshot_with_hint() {
 
 # AWS events
 aws_rds_list_events() {
-	aws rds describe-events
+	aws_run_commandline 'aws rds describe-events'
+
 }
 
 # AWS rds reboot
+
+aws_rds_failover_db_cluster() {
+	aws_rds_db_cluster_name=$1
+	aws_run_commandline \
+		"
+	aws rds failover-db-cluster \
+		--db-cluster-identifier ${aws_rds_db_cluster_name:?'aws_rds_db_cluster_name is unset or empty'}
+	"
+}
+
+aws_rds_failover_db_cluster_with_hint() {
+	aws_rds_db_cluster_name $(echo "$(peco_aws_list_db_clusters)" | peco)
+}
 
 aws_rds_reboot_db_instance() {
 	aws_rds_db_instance_identifier=$1

@@ -6,12 +6,12 @@ peco_assume_role_name() {
 }
 
 peco_format_name_convention_pre_defined() {
-	peco_input=$1
+	local peco_input=$1
 	echo "${peco_input}" | tr "\t" "\n" | tr -s " " "\n" | tr -s '\n'
 }
 
 peco_format_aws_output_text() {
-	peco_input=$1
+	local peco_input=$1
 	echo "${peco_input}" | tr "\t" "\n"
 }
 
@@ -20,28 +20,29 @@ peco_aws_acm_list() {
 }
 
 peco_name_convention_input() {
-	text_input=$1
-	format_text=$(peco_format_name_convention_pre_defined $text_input)
+	local text_input=$1
+	local format_text=$(peco_format_name_convention_pre_defined $text_input)
 	echo $format_text
 }
 
 peco_aws_input() {
-	aws_cli_commandline="${1} --output text"
-	result_cached=$2
+	local aws_cli_commandline="${1} --output text"
+	local result_cached=$2
 
-	md5_hash=$(echo $aws_cli_commandline | md5)
-	input_folder=${aws_cli_input_tmp}/${ASSUME_ROLE}
+	local md5_hash=$(echo $aws_cli_commandline | md5)
+	local input_folder=${aws_cli_input_tmp}/${ASSUME_ROLE}
 	mkdir -p ${input_folder}
-	input_file_path="${input_folder}/${md5_hash}.txt"
-	empty_file=$(find ${input_folder} -name ${md5_hash}.txt -empty)
+	local input_file_path="${input_folder}/${md5_hash}.txt"
+	local empty_file=$(find ${input_folder} -name ${md5_hash}.txt -empty)
+	local valid_file=$(find ${input_folder} -name ${md5_hash}.txt -mmin +${peco_input_expired_time})
 
 	# The file is existed and not empty and the flag result_cached is not empty
-	if [ -f "${input_file_path}" ] && [ -z "${empty_file}" ] && [ -n "${result_cached}" ]; then
+	if [ -z "${valid_file}" ] && [ -f "${input_file_path}" ] && [ -z "${empty_file}" ] && [ -n "${result_cached}" ]; then
 		# Ignore the first line.
 		grep -Ev "\*\*\*\*\*\*\*\* \[.*\]" $input_file_path
 	else
-		aws_result=$(eval $aws_cli_commandline)
-		format_text=$(peco_format_aws_output_text $aws_result)
+		local aws_result=$(eval $aws_cli_commandline)
+		local format_text=$(peco_format_aws_output_text $aws_result)
 
 		if [ -n "${format_text}" ]; then
 			echo "******** [ ${aws_cli_commandline} ] ********" >${input_file_path}

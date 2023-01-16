@@ -34,10 +34,10 @@ aws_s3_get_bucket_recursived_with_hint() {
 }
 
 aws_s3_get_object_metadata() {
-	bucket_name=$1
+	aws_s3_bucket_name=$1
 	object_key=$2
 
-	commandline=$(echo aws s3api head-object --bucket ${bucket_name:?"bucket_name is unset or empty"} \
+	local commandline=$(echo aws s3api head-object --bucket ${aws_s3_bucket_name:?"aws_s3_bucket_name is unset or empty"} \
 		--key ${object_key:?"object_key is unset or empty"})
 
 	aws_run_commandline "${commandline}"
@@ -87,4 +87,18 @@ aws_s3_delete() {
 
 aws_s3_rm_with_hint() {
 	aws_s3_delete $(echo "$(peco_aws_s3_list)" | peco)
+}
+
+aws_s3_get_bucket_policy() {
+	aws_s3_bucket_name=$1
+	aws_run_commandline \
+		"
+		aws s3api get-bucket-policy \
+			--bucket ${aws_s3_bucket_name:?'aws_s3_bucket_name is unset or empty'} \
+			--query Policy --output text
+	"
+}
+
+aws_s3_get_bucket_policy_with_hint() {
+	aws_s3_get_bucket_policy $(echo "$(peco_aws_s3_list)" | peco)
 }

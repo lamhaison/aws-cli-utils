@@ -17,6 +17,26 @@ zip_tmp_credential() {
 	cd -
 }
 
+aws_assume_role_get_current() {
+	echo "You are using the assume role name ${ASSUME_ROLE}"
+}
+
+aws_assume_role_disable_print_account_info() {
+	export aws_assume_role_print_account_info=false
+}
+
+aws_assume_role_enable_print_account_info() {
+	export aws_assume_role_print_account_info=true
+}
+
+aws_assume_role_reuse_current() {
+	aws_call_assume_role
+}
+
+aws_assume_role_re_use_current() {
+	aws_call_assume_role
+}
+
 aws_assume_role_unzip_tmp_credential() {
 	cd $tmp_credentials
 	assume_role_name=$1
@@ -46,8 +66,9 @@ aws_assume_role_get_credentail() {
 	rm -rf ${tmp_credentials_file}
 
 	assume_role_result=""
+	assume_role_duration="$((${aws_assume_role_expired_time} * 60))s"
 	while [[ "${assume_role_result}" == "" ]]; do
-		assume_role_result=$(assume-role -duration ${aws_assume_role_duration} ${ASSUME_ROLE})
+		assume_role_result=$(assume-role -duration ${assume_role_duration} ${ASSUME_ROLE})
 
 		if [[ "${assume_role_result}" == "" ]]; then
 			echo "Assume role couldn't be succesful.Please try again or Ctrl + C to exit"
@@ -71,9 +92,10 @@ aws_call_assume_role() {
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
 
+	assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
 	if [ -f ${tmp_credentials_file_zip} ]; then
 
-		valid_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -mmin +${aws_assume_role_expired_time})
+		valid_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -mmin +${assume_role_duration})
 		empty_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -empty)
 		# Don't find any file is older than expired-time
 		if [ -z "${valid_file}" ] && [ -z "${empty_file}" ]; then
@@ -101,7 +123,10 @@ aws_assume_role_set_name() {
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
 	if [ -f $tmp_credentials_file_zip ]; then
 		# cd ${aws_cli_results}
-		aws_account_infos
+
+		if [ "${aws_assume_role_print_account_info}" = "true" ]; then
+			aws_account_infos
+		fi
 	else
 		echo "Please try again, the assume role action was not complete"
 	fi
@@ -124,7 +149,7 @@ aws_assume_role_set_name_with_hint() {
 aws_assume_role_set_name_with_hint_peco() {
 
 	echo "Please input your assume role name >"
-	assume_role_name=$(grep -iE "\[*\]" ~/.aws/config | tr -d "[]" | awk -F " " '{print $2}' | peco)
+	local assume_role_name=$(grep -iE "\[*\]" ~/.aws/config | tr -d "[]" | awk -F " " '{print $2}' | peco)
 	aws_assume_role_set_name $assume_role_name
 
 }

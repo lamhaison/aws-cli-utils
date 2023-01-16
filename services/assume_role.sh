@@ -17,6 +17,10 @@ zip_tmp_credential() {
 	cd -
 }
 
+aws_assume_role_reset() {
+	source ${AWS_CLI_SOURCE_SCRIPTS}/main.sh
+}
+
 aws_assume_role_get_current() {
 	echo "You are using the assume role name ${ASSUME_ROLE}"
 }

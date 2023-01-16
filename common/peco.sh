@@ -25,6 +25,10 @@ peco_name_convention_input() {
 	echo $format_text
 }
 
+peco_aws_disable_input_cached() {
+	export aws_assume_role_expired_time=0
+}
+
 peco_aws_input() {
 	local aws_cli_commandline="${1} --output text"
 	local result_cached=$2

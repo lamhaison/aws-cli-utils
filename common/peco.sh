@@ -45,7 +45,8 @@ peco_aws_input() {
 		# Ignore the first line.
 		grep -Ev "\*\*\*\*\*\*\*\* \[.*\]" $input_file_path
 	else
-		local aws_result=$(eval $aws_cli_commandline)
+		local aws_result=$(aws_run_commandline_with_retry "$aws_cli_commandline" "true")
+
 		local format_text=$(peco_format_aws_output_text $aws_result)
 
 		if [ -n "${format_text}" ]; then

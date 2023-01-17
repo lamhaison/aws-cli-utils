@@ -92,7 +92,7 @@ aws_ec2_list_vpcs() {
 }
 
 aws_vpc_list() {
-	aws_ec2_list_vpc
+	aws_ec2_list_vpcs
 }
 
 # Subnets

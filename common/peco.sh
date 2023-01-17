@@ -75,8 +75,15 @@ peco_aws_ecs_list_services() {
 
 # AWS ECR
 
-peco_aws_list_repositorie_names() {
+peco_aws_ecr_list_repositorie_names() {
 	peco_aws_input 'aws ecr describe-repositories --query "*[].repositoryName"' 'true'
+}
+
+peco_aws_ecr_list_images() {
+	aws_ecr_repo_name=$1
+	peco_aws_input "aws ecr list-images \
+		--repository-name ${aws_ecr_repo_name} \
+		--query 'imageIds[].{imageTag:imageTag}'"
 }
 
 # AWS RDS
@@ -113,4 +120,9 @@ peco_aws_codebuild_list() {
 
 peco_aws_codepipeline_list() {
 	peco_aws_input 'aws codepipeline list-pipelines --query "*[].name"' 'true'
+}
+
+# Codedeploy
+peco_aws_codedeploy_list_deployment_ids() {
+	peco_aws_input 'aws deploy list-deployments --query "deployments[]"'
 }

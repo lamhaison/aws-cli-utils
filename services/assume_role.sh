@@ -160,6 +160,10 @@ aws_assume_role_set_name_with_hint_peco() {
 
 aws_account_infos() {
 	get-account-alias
-	get-account-id
+
+	local aws_account_id=$(aws_run_commandline_with_retry 'aws sts get-caller-identity --query "Account" --output text' "true")
+	export AWS_ACCOUNT_ID=$aws_account_id
+	echo "AccountId ${AWS_ACCOUNT_ID}"
+
 	echo AWS Region ${AWS_REGION:?"The AWS_REGION is unset or empty"}
 }

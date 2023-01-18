@@ -1,5 +1,5 @@
 # Extend for poco-select-history function
-export HISTSIZE=10000
+export HISTSIZE=20000
 
 # Get the current directory of the main.sh script.
 export AWS_CLI_SOURCE_SCRIPTS="$(dirname -- "$0")"
@@ -54,5 +54,5 @@ function peco_select_history() {
 	CURSOR=$#BUFFER
 	# zle clear-screen
 }
-zle -N peco-select-history
-bindkey '^r' peco-select-history
+zle -N peco_select_history
+bindkey '^r' peco_select_history

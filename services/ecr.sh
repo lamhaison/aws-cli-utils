@@ -9,6 +9,10 @@ aws_ecr_login() {
 		--username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
 }
 
+aws_ecr_logout() {
+	docker logout ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+}
+
 aws_ecr_list_images() {
 	aws_ecr_repo_name=$1
 	cat <<-_EOF_

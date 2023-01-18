@@ -66,8 +66,8 @@ aws_export_region() {
 aws_assume_role_get_credentail() {
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	echo "Running assume-role ${ASSUME_ROLE}"
-	echo "Remove the credential ${tmp_credentials_file}"
-	rm -rf ${tmp_credentials_file}
+	# echo "Remove the credential ${tmp_credentials_file}"
+	# rm -rf "${tmp_credentials_file}/*" && mkdir -p ${tmp_credentials_file}
 
 	assume_role_result=""
 	assume_role_duration="$((${aws_assume_role_expired_time} * 60))s"

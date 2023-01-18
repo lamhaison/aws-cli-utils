@@ -67,7 +67,7 @@ aws_assume_role_get_credentail() {
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	echo "Running assume-role ${ASSUME_ROLE}"
 	# echo "Remove the credential ${tmp_credentials_file}"
-	# rm -rf "${tmp_credentials_file}/*" && mkdir -p ${tmp_credentials_file}
+	# rm -rf ${tmp_credentials_file} ${tmp_credentials_file}.zip
 
 	assume_role_result=""
 	assume_role_duration="$((${aws_assume_role_expired_time} * 60))s"
@@ -75,7 +75,8 @@ aws_assume_role_get_credentail() {
 		assume_role_result=$(assume-role -duration ${assume_role_duration} ${ASSUME_ROLE})
 
 		if [[ "${assume_role_result}" == "" ]]; then
-			echo "Assume role couldn't be succesful.Please try again or Ctrl + C to exit"
+			echo "Assume role couldn't be succesful. Please try again or Ctrl + C to exit"
+			sleep 1
 		fi
 	done
 
@@ -140,6 +141,8 @@ aws_assume_role_set_name() {
 
 aws_assume_role_set_name_with_hint() {
 
+	set -x
+
 	# # cat ~/.aws/config |grep profile |grep -v "source"
 	# peco_assume_role_name
 	# echo "Please input your assume role name >"
@@ -148,12 +151,15 @@ aws_assume_role_set_name_with_hint() {
 	# echo "You are using the profile ${ASSUME_ROLE}"
 
 	aws_assume_role_set_name_with_hint_peco
+
+	set +x
 }
 
 aws_assume_role_set_name_with_hint_peco() {
 
 	echo "Please input your assume role name >"
-	local assume_role_name=$(grep -iE "\[*\]" ~/.aws/config | tr -d "[]" | awk -F " " '{print $2}' | peco)
+	local assume_role_name=$(grep -iE "\[*\]" ~/.aws/config | tr -d "[]" | awk -F " " '{print $2}' | peco --query "$LBUFFER")
+	CURSOR=$#assume_role_name
 	aws_assume_role_set_name $assume_role_name
 
 }

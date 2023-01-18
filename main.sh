@@ -1,3 +1,6 @@
+# Extend for poco-select-history function
+export HISTSIZE=10000
+
 # Get the current directory of the main.sh script.
 export AWS_CLI_SOURCE_SCRIPTS="$(dirname -- "$0")"
 
@@ -30,8 +33,26 @@ alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Acco
 
 # Import sub-commandline.
 
+# https://yukimemi.netlify.app/all-you-need-is-peco/
+# https://thevaluable.dev/zsh-line-editor-configuration-mouseless/
 for module in $(echo "common services"); do
 	for script in $(ls ${AWS_CLI_SOURCE_SCRIPTS}/${module}); do
 		source ${AWS_CLI_SOURCE_SCRIPTS}/${module}/$script
 	done
 done
+
+function peco_select_history() {
+	local tac
+	if which tac >/dev/null; then
+		tac="tac"
+	else
+		tac="tail -r"
+	fi
+	BUFFER=$(history -n 1 |
+		eval $tac |
+		peco --query "$LBUFFER")
+	CURSOR=$#BUFFER
+	# zle clear-screen
+}
+zle -N peco-select-history
+bindkey '^r' peco-select-history

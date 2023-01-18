@@ -8,7 +8,8 @@ aws_cloudfront_list() {
 	aws_run_commandline \
 		"
 			aws cloudfront list-distributions \
-				--query 'DistributionList.Items[*].{Id:Id,Aliases:Aliases,Comment:Comment}'
+				--query 'DistributionList.Items[*].{Id:Id,Aliases:Aliases,Comment:Comment}' \
+				--output table
 		"
 
 }

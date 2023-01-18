@@ -13,9 +13,9 @@ aws_run_commandline_with_retry() {
 		if [[ $? -ne 0 ]]; then
 			retry_counter=$(($retry_counter + 1))
 
-			if [[ "${silent_mode}" = "false" ]]; then
-				echo "Retry ${retry_counter}"
-			fi
+			# if [[ "${silent_mode}" = "false" ]]; then
+			# 	echo "Retry ${retry_counter}"
+			# fi
 
 			sleep ${aws_cli_retry_sleep_interval}
 		else
@@ -26,7 +26,9 @@ aws_run_commandline_with_retry() {
 }
 
 aws_run_commandline() {
-	aws_run_commandline_with_logging "$1"
+	aws_run_commandline=$1
+	aws_run_commandline="${aws_run_commandline:?'aws_run_commandline is unset or empty'}"
+	aws_run_commandline_with_logging "${aws_run_commandline}"
 }
 
 aws_run_commandline_with_logging() {

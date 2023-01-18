@@ -44,6 +44,12 @@ peco_name_convention_input() {
 	echo $format_text
 }
 
+peco_create_menu_with_array_input() {
+	local text_input=$1
+	local format_text=$(peco_format_name_convention_pre_defined $text_input)
+	echo $format_text
+}
+
 peco_aws_disable_input_cached() {
 	export aws_assume_role_expired_time=0
 }
@@ -64,7 +70,7 @@ peco_aws_input() {
 		# Ignore the first line.
 		grep -Ev "\*\*\*\*\*\*\*\* \[.*\]" $input_file_path
 	else
-		local aws_result=$(aws_run_commandline_with_retry "$aws_cli_commandline" "true")
+		local aws_result=$(aws_run_commandline_with_retry "$aws_cli_commandline" "false")
 
 		local format_text=$(peco_format_aws_output_text $aws_result)
 
@@ -107,8 +113,16 @@ peco_aws_ecr_list_repositorie_names() {
 peco_aws_ecr_list_images() {
 	aws_ecr_repo_name=$1
 	peco_aws_input "aws ecr list-images \
-		--repository-name ${aws_ecr_repo_name} \
-		--query 'imageIds[].{imageTag:imageTag}'"
+		--repository-name ${aws_ecr_repo_name:?'aws_ecr_repo_name is unset or empy'} \
+		--query \"imageIds[].{imageTag:imageTag}\""
+}
+
+peco_aws_alb_list_listners() {
+	aws_alb_arn=$1
+	peco_aws_input " \
+		aws elbv2 describe-listeners \
+			--load-balancer-arn ${aws_alb_arn:?'aws_alb_arn is unset or empty'} \
+			--query \"Listeners[*].ListenerArn\""
 }
 
 # AWS RDS
@@ -155,4 +169,9 @@ peco_aws_codedeploy_list_deployment_ids() {
 # Cloudfront
 peco_aws_cloudfront_list() {
 	peco_aws_input "aws cloudfront list-distributions --query 'DistributionList.Items[*].{Id:Id}'" 'true'
+}
+
+# Autoscaling group
+peco_aws_autoscaling_list() {
+	peco_aws_input 'aws autoscaling describe-auto-scaling-groups --query "*[].AutoScalingGroupName"' 'true'
 }

@@ -26,11 +26,11 @@ aws_s3_get_bucket_recursived() {
 }
 
 aws_s3_get_bucket_with_hint() {
-	aws_s3_get_bucket $(echo "$(peco_aws_s3_list)" | peco)
+	aws_s3_get_bucket $(peco_create_menu 'peco_aws_s3_list')
 }
 
 aws_s3_get_bucket_recursived_with_hint() {
-	aws_s3_get_bucket_recursived $(echo "$(peco_aws_s3_list)" | peco)
+	aws_s3_get_bucket_recursived $(peco_create_menu 'peco_aws_s3_list')
 }
 
 aws_s3_get_object_metadata() {
@@ -50,11 +50,11 @@ aws_s3_get_bucket_arn() {
 }
 
 aws_s3_get_bucket_arn_with_hint() {
-	aws_s3_get_s3_bucket_arn $(echo "$(peco_aws_s3_list)" | peco)
+	aws_s3_get_bucket_arn $(peco_create_menu 'peco_aws_s3_list')
 }
 
 # aws_s3_get_object_metadata_with_hint() {
-# 	bucket_name=$(echo "$(peco_aws_s3_list)" | peco)
+# 	bucket_name=$(peco_create_menu 'peco_aws_s3_list')
 # 	object_key=$2
 
 # 	commandline=$(echo aws s3api head-object --bucket ${bucket_name:?"bucket_name is unset or empty"} \
@@ -86,7 +86,7 @@ x() {
 }
 
 aws_s3_rm_with_hint() {
-	aws_s3_rm $(echo "$(peco_aws_s3_list)" | peco)
+	aws_s3_rm $(peco_create_menu 'peco_aws_s3_list')
 }
 
 aws_s3_get_bucket_policy() {
@@ -100,5 +100,5 @@ aws_s3_get_bucket_policy() {
 }
 
 aws_s3_get_bucket_policy_with_hint() {
-	aws_s3_get_bucket_policy $(echo "$(peco_aws_s3_list)" | peco)
+	aws_s3_get_bucket_policy $(peco_create_menu 'peco_aws_s3_list')
 }

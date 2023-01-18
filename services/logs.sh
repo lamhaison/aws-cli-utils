@@ -13,6 +13,6 @@ aws_logs_tail() {
 
 aws_logs_tail_with_hint() {
 	echo "Your log group name >"
-	aws_log_group_name=$(echo "$(peco_aws_logs_list)" | peco)
+	aws_log_group_name=$(peco_create_menu 'peco_aws_logs_list')
 	aws_logs_tail $aws_log_group_name
 }

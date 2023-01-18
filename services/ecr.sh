@@ -32,12 +32,12 @@ aws_ecr_get_latest_image() {
 
 aws_ecr_get_latest_image_with_hint() {
 	echo "Your repository name >"
-	aws_ecr_get_latest_image $(echo "$(peco_aws_ecr_list_repositorie_names)" | peco)
+	aws_ecr_get_latest_image $(peco_create_menu 'peco_aws_ecr_list_repositorie_names')
 }
 
 aws_ecr_list_images_with_hint() {
 	echo "Your repository name >"
-	aws_ecr_list_images $(echo "$(peco_aws_ecr_list_repositorie_names)" | peco)
+	aws_ecr_list_images $(peco_create_menu 'peco_aws_ecr_list_repositorie_names')
 }
 
 aws_ecr_get_image() {
@@ -55,9 +55,10 @@ aws_ecr_get_image() {
 
 aws_ecr_pull_image_with_hint() {
 	echo "Your repository name >"
-	aws_ecr_repo_name=$(echo "$(peco_aws_ecr_list_repositorie_names)" | peco)
+	aws_ecr_repo_name=$(peco_create_menu 'peco_aws_ecr_list_repositorie_names')
 	echo "Your image tag for ${aws_ecr_repo_name:?'aws_ecr_repo_name is unset or empty'} >"
-	aws_ecr_repo_image_tag=$(echo "$(peco_aws_ecr_list_images ${aws_ecr_repo_name})" | peco)
+	# aws_ecr_repo_image_tag=$(echo "$(peco_aws_ecr_list_images ${aws_ecr_repo_name})" | peco)
+	aws_ecr_repo_image_tag=$(peco_create_menu "peco_aws_ecr_list_images ${aws_ecr_repo_name}")
 	aws_ecr_get_image \
 		${aws_ecr_repo_name:?'aws_ecr_repo_name is unset or empty'} \
 		${aws_ecr_repo_image_tag:?'aws_ecr_repo_image_tag is uset or empty'}

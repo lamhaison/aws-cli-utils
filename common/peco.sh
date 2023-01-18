@@ -1,6 +1,25 @@
 # brew install peco
 # PECO
 
+function peco_select_history() {
+	local tac
+	if which tac >/dev/null; then
+		tac="tac"
+	else
+		tac="tail -r"
+	fi
+	commandline=$(history -n 1 |
+		eval $tac | peco --on-cancel error)
+
+	echo "Running the commandline again [ ${commandline:?'then commandline is unset or empty'} ]"
+	eval ${commandline:?'then commandline is unset or empty'}
+
+}
+
+function peco_history() {
+	peco_select_history
+}
+
 peco_assume_role_name() {
 	cat ~/.aws/config | grep -e "^\[profile.*\]$" | peco
 }
@@ -57,6 +76,12 @@ peco_aws_input() {
 		fi
 
 	fi
+}
+
+peco_create_menu() {
+	input_function=$1
+	input_value=$(echo "$(eval $input_function)" | peco)
+	echo ${input_value:?'Can not get the input from peco menu'}
 }
 
 # AWS Logs
@@ -125,4 +150,9 @@ peco_aws_codepipeline_list() {
 # Codedeploy
 peco_aws_codedeploy_list_deployment_ids() {
 	peco_aws_input 'aws deploy list-deployments --query "deployments[]"'
+}
+
+# Cloudfront
+peco_aws_cloudfront_list() {
+	peco_aws_input "aws cloudfront list-distributions --query 'DistributionList.Items[*].{Id:Id}'" 'true'
 }

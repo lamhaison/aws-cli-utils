@@ -41,22 +41,8 @@ for module in $(echo "common services"); do
 	done
 done
 
-function peco_select_history() {
-	local tac
-	if which tac >/dev/null; then
-		tac="tac"
-	else
-		tac="tail -r"
-	fi
-	BUFFER=$(history -n 1 |
-		eval $tac |
-		peco --query "$LBUFFER")
-	# Move the cursor at then end of the input($#variable_name is to get the length itself)
-	CURSOR=$#BUFFER
-	# zle clear-screen
-}
 zle -N peco_select_history
 bindkey '^r' peco_select_history
 
-zle -N aws_assume_role_set_name_with_hint
-bindkey '^@' aws_assume_role_set_name_with_hint
+# zle -N aws_assume_role_set_name_with_hint
+# bindkey '^@' aws_assume_role_set_name_with_hint

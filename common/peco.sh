@@ -1,6 +1,5 @@
 # brew install peco
 # PECO
-
 function peco_select_history() {
 	local tac
 	if which tac >/dev/null; then
@@ -8,12 +7,12 @@ function peco_select_history() {
 	else
 		tac="tail -r"
 	fi
-	commandline=$(history -n 1 |
-		eval $tac | peco --on-cancel error)
-
-	echo "Running the commandline again [ ${commandline:?'then commandline is unset or empty'} ]"
-	eval ${commandline:?'then commandline is unset or empty'}
-
+	BUFFER=$(history -n 1 |
+		eval $tac |
+		peco --query "$LBUFFER")
+	# Move the cursor at then end of the input($#variable_name is to get the length itself)
+	CURSOR=$#BUFFER
+	# zle clear-screen
 }
 
 function peco_history() {

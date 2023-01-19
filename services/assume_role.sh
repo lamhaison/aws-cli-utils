@@ -140,19 +140,9 @@ aws_assume_role_set_name() {
 }
 
 aws_assume_role_set_name_with_hint() {
-
-	set -x
-
-	# # cat ~/.aws/config |grep profile |grep -v "source"
-	# peco_assume_role_name
-	# echo "Please input your assume role name >"
-	# read  assume_role_name
-	# aws_assume_role_set_name $assume_role_name
-	# echo "You are using the profile ${ASSUME_ROLE}"
-
+	# set -x
 	aws_assume_role_set_name_with_hint_peco
-
-	set +x
+	# set +x
 }
 
 aws_assume_role_set_name_with_hint_peco() {

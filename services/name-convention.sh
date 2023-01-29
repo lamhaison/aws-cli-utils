@@ -28,3 +28,9 @@ aws_name_convention_get_s3_bucket_name_with_hint() {
 		$(echo "$(peco_name_convention_input $aws_name_convention_resource_types)" | peco)
 
 }
+
+aws_name_convention_get_iam_instance_profile() {
+	local aws_name_convention_iam_instance_profile_name="bastion jenkins-master jenkins-slave"
+	local name_input=$(echo "$(peco_name_convention_input $aws_name_convention_iam_instance_profile_name)" | peco)
+	echo $(aws_name_convention_get_prefix_name)-${name_input:?'name_input is unset or empty'}
+}

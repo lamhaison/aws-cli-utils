@@ -55,7 +55,7 @@ aws_iam_attach_ssm_policy() {
 
 }
 
-aws_iam_create_instance_profile_with_hint() {
+aws_iam_create_instance_profile_for_ssh_with_hint() {
 	aws_iam_ec2_instance_profile_role_name=$(aws_name_convention_get_iam_instance_profile)
 	echo "To create iam ec2 instance profile \
 		${aws_iam_ec2_instance_profile_role_name:?'aws_iam_ec2_instance_profile_role_name is unset or empty'}"

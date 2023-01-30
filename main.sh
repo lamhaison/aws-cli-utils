@@ -32,17 +32,8 @@ alias get-account-alias='aws iam list-account-aliases'
 alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Account" --output text)'
 
 # Import sub-commandline.
-
-# https://yukimemi.netlify.app/all-you-need-is-peco/
-# https://thevaluable.dev/zsh-line-editor-configuration-mouseless/
 for module in $(echo "common services"); do
 	for script in $(ls ${AWS_CLI_SOURCE_SCRIPTS}/${module}); do
 		source ${AWS_CLI_SOURCE_SCRIPTS}/${module}/$script
 	done
 done
-
-zle -N peco_select_history
-bindkey '^r' peco_select_history
-
-# zle -N aws_assume_role_set_name_with_hint
-# bindkey '^@' aws_assume_role_set_name_with_hint

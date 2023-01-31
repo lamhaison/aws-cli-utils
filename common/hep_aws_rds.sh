@@ -13,9 +13,11 @@ aws_help_rds_list_bin_logs() {
 		"show binary logs;"
 }
 
-aws_help_start_stop_replication() {
+aws_help_rds_start_stop_replication() {
 	echo "CALL mysql.rds_start_replication;"
+	echo "show slave status\G;"
 	echo "CALL mysql.rds_stop_replication;"
+	echo "show slave status\G;"
 }
 
 aws_help_rds_aurora_set_replication() {

@@ -1,6 +1,6 @@
 #!/bin/bash
 aws_help() {
-	aws_custom_commandline=$(cat ${AWS_CLI_SOURCE_SCRIPTS}/services/* | grep -e "^aws*\(.+*\)" | tr -d "(){" | sort | peco)
+	aws_custom_commandline=$(cat ${AWS_CLI_SOURCE_SCRIPTS}/{services,common}/* | grep -e "^aws*\(.+*\)" | tr -d "(){" | sort | peco)
 	echo You can run which ${aws_custom_commandline:?"The commandline is unset or empty. Then do nothing"} to get more detail
 }
 

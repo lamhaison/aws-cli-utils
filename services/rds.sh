@@ -193,10 +193,17 @@ aws_help_rds_upgrade_aurora_1_to_aurora_2() {
 
 		aws rds modify-db-cluster \
 		    --db-cluster-identifier DB_CLUSTER_NAME \
-		    --db-instance-parameter-group-name DB_PARAMETER_GROU_NAME \
+		    --db-instance-parameter-group-name DB_PARAMETER_GROUP_NAME \
 		    --db-cluster-parameter-group-name DB_CLUSTER_PARAMETER_GROUP_NAME \
 		    --engine-version 5.7.mysql_aurora.2.10.2 \
 		    --allow-major-version-upgrade \
 		    --apply-immediately
 	"
+}
+
+aws_rds_list_db_cluster_snapshot() {
+	aws_run_commandline " \
+		aws rds describe-db-cluster-snapshots --include-shared
+	"
+
 }

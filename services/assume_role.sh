@@ -136,6 +136,7 @@ aws_assume_role_set_name() {
 		echo "Please try again, the assume role action was not complete"
 	fi
 
+	echo -ne "\e]1;AWS-PROFILE[ ${ASSUME_ROLE} ]\a"
 	echo "You are using the assume role name ${ASSUME_ROLE}"
 }
 

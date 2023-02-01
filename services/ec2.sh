@@ -107,3 +107,10 @@ aws_ec2_list_subnets() {
 		aws ec2 describe-subnets
 	"
 }
+
+# Security group
+aws_sg_list() {
+	aws_run_commandline "\
+		aws ec2 describe-security-groups
+	"
+}

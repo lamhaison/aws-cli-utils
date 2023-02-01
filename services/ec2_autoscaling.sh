@@ -72,3 +72,22 @@ aws_autoscaling_detach_instance_with_hint() {
 	# aws_autoscaling_name=$(peco_create_menu 'peco_aws_autoscaling_list')
 
 }
+
+aws_autoscaling_get_launching_template() {
+	aws_autoscaling_launching_template_id=$1
+	aws_run_commandline "\
+		aws ec2 describe-launch-templates \
+			--launch-template-ids ${aws_autoscaling_launching_template_id}
+	"
+}
+
+aws_autoscaling_get_launching_template_version() {
+
+	aws_autoscaling_launching_template_id=$1
+	# aws_autoscaling_launching_template_version=$2
+	aws_run_commandline "\
+		aws ec2 describe-launch-template-versions \
+			--launch-template-id ${aws_autoscaling_launching_template_id}
+	"
+
+}

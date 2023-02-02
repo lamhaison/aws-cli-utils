@@ -1,3 +1,7 @@
+aws_assume_role_option_set_output_table() {
+	export AWS_DEFAULT_OUTPUT="table"
+}
+
 aws_run_commandline_with_retry() {
 	local aws_commandline=$1
 	local silent_mode=$2

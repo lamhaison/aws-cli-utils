@@ -62,3 +62,38 @@ aws_iam_create_instance_profile_for_ssh_with_hint() {
 	aws_iam_create_instance_profile ${aws_iam_ec2_instance_profile_role_name}
 	aws_iam_attach_ssm_policy ${aws_iam_ec2_instance_profile_role_name}
 }
+
+aws_iam_list_roles() {
+	aws_run_commandline "\
+		aws iam list-roles --query '*[].{RoleName:RoleName}'
+	"
+}
+
+aws_iam_get_role() {
+	aws_role_name=$1
+	aws_run_commandline "\
+		aws iam get-role --role-name \
+			${aws_role_name:?'aws_role_name is unset or empty'}
+	"
+}
+
+aws_iam_get_role_policy() {
+	aws_role_name=$1
+	# aws_iam_get_role ${aws_role_name}
+
+	aws_run_commandline "\
+		aws iam list-attached-role-policies --role-name ${aws_role_name}
+	"
+
+	aws_run_commandline "\
+		aws iam list-role-policies --role-name ${aws_role_name}
+	"
+
+	for policy_name in $(aws iam list-role-policies --role-name ${aws_role_name} --query '*[]' --output text); do
+		aws_run_commandline "\
+			aws iam get-role-policy \
+				--role-name ${aws_role_name} \
+				--policy-name $policy_name
+		"
+	done
+}

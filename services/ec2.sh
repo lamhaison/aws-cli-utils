@@ -114,3 +114,24 @@ aws_sg_list() {
 		aws ec2 describe-security-groups
 	"
 }
+
+aws_sg_get() {
+	aws_sg_id=$1
+
+	aws_run_commandline "\
+		aws ec2 describe-security-groups \
+    		--group-ids ${aws_sg_id:?'aws_sg_id is unset or empty'}
+	"
+}
+
+aws_sg_add_rule() {
+	aws_sg_id=$1
+
+	echo "\
+		# Allow access the ssh from a specific IP address
+		aws ec2 authorize-security-group-ingress \
+		--group-id ${aws_sg_id:?'aws_sg_id is unset or empty'} \
+		--protocol tcp --port 22 \
+		--cidr $(lamhaison_get_public_ip)/32
+	"
+}

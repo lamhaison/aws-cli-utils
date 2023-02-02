@@ -1,6 +1,3 @@
-# Extend for poco-select-history function
-export HISTSIZE=20000
-
 # Get the current directory of the main.sh script.
 export AWS_CLI_SOURCE_SCRIPTS="$(dirname -- "$0")"
 

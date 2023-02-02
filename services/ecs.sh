@@ -46,3 +46,12 @@ aws_ecs_get_scheduled_actions() {
 		--service-namespace ecs
 	"
 }
+
+aws_ecs_get_taskdefinition() {
+	aws_task_definition_arn=$1
+	aws_run_commandline "\
+		aws ecs describe-task-definition \
+			--task-definition ${aws_task_definition_arn:?'aws_task_definition_arn is unset or empty'}
+	"
+
+}

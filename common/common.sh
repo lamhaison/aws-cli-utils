@@ -2,6 +2,14 @@ aws_assume_role_option_set_output_table() {
 	export AWS_DEFAULT_OUTPUT="table"
 }
 
+aws_assume_role_option_set_output_json() {
+	export AWS_DEFAULT_OUTPUT="json"
+}
+
+aws_assume_role_option_set_output_yml() {
+	export AWS_DEFAULT_OUTPUT="yaml"
+}
+
 aws_run_commandline_with_retry() {
 	local aws_commandline=$1
 	local silent_mode=$2

@@ -70,30 +70,54 @@ aws_iam_list_roles() {
 }
 
 aws_iam_get_role() {
-	aws_role_name=$1
+	aws_iam_role_name=$1
 	aws_run_commandline "\
 		aws iam get-role --role-name \
-			${aws_role_name:?'aws_role_name is unset or empty'}
+			${aws_iam_role_name:?'aws_iam_role_name is unset or empty'}
 	"
 }
 
-aws_iam_get_role_policy() {
-	aws_role_name=$1
-	# aws_iam_get_role ${aws_role_name}
+aws_iam_get_role_with_hint() {
+	aws_iam_get_role $(peco_create_menu 'peco_aws_iam_list_roles')
+}
+
+aws_iam_list_role_policies() {
+	aws_iam_role_name=$1
+	# aws_iam_get_role ${aws_iam_role_name}
 
 	aws_run_commandline "\
-		aws iam list-attached-role-policies --role-name ${aws_role_name}
+		aws iam list-attached-role-policies --role-name ${aws_iam_role_name}
 	"
 
 	aws_run_commandline "\
-		aws iam list-role-policies --role-name ${aws_role_name}
+		aws iam list-role-policies --role-name ${aws_iam_role_name}
 	"
 
-	for policy_name in $(aws iam list-role-policies --role-name ${aws_role_name} --query '*[]' --output text); do
+	for policy_name in $(aws iam list-role-policies --role-name ${aws_iam_role_name} --query '*[]' --output text); do
 		aws_run_commandline "\
 			aws iam get-role-policy \
-				--role-name ${aws_role_name} \
+				--role-name ${aws_iam_role_name} \
 				--policy-name $policy_name
 		"
 	done
+}
+
+aws_iam_list_role_policies_with_hint() {
+	aws_iam_list_role_policies $(peco_create_menu 'peco_aws_iam_list_roles')
+}
+
+aws_iam_get_policy() {
+	aws_iam_policy_arn=$1
+	aws_run_commandline "\
+		 aws iam get-policy --policy-arn \
+		 	${aws_iam_policy_arn:?'aws_iam_policy_arn is unset or empty'}
+
+		 aws iam get-policy-version --policy-arn \
+		 	${aws_iam_policy_arn:?'aws_iam_policy_arn is unset or empty'} \
+		 	--version-id v1
+	"
+}
+
+aws_iam_get_policy_with_hint() {
+	aws_iam_get_policy $(peco_create_menu 'peco_aws_iam_list_attached_policies')
 }

@@ -24,6 +24,9 @@ mkdir -p ${aws_cli_results}
 mkdir -p ${aws_cli_logs}
 mkdir -p ${aws_cli_input_tmp}
 
+# Default settings AWSCLI
+export AWS_DEFAULT_OUTPUT="json"
+
 # add some help aliases
 alias get-account-alias='aws iam list-account-aliases'
 alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Account" --output text)'

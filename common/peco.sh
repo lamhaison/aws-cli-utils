@@ -153,3 +153,12 @@ peco_aws_cloudfront_list() {
 peco_aws_autoscaling_list() {
 	peco_aws_input 'aws autoscaling describe-auto-scaling-groups --query "*[].AutoScalingGroupName"' 'true'
 }
+
+# IAM role list
+peco_aws_iam_list_roles() {
+	peco_aws_input 'aws iam list-roles --query "*[].{RoleName:RoleName}"' 'true'
+}
+
+peco_aws_iam_list_attached_policies() {
+	peco_aws_input 'aws iam list-policies --scope Local --only-attached --query "*[].Arn"' 'true'
+}

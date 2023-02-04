@@ -14,6 +14,10 @@ aws_run_commandline_with_retry() {
 	local aws_commandline=$1
 	local silent_mode=$2
 	local retry_counter=0
+
+	# Check credential valid first
+	aws_assume_role_is_tmp_credential_valid
+
 	while [[ "${retry_counter}" -le "${aws_cli_retry_time}" ]]; do
 
 		if [[ "${silent_mode}" = "true" ]]; then

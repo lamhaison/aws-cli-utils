@@ -91,6 +91,21 @@ aws_assume_role_get_credentail() {
 
 }
 
+aws_assume_role_is_tmp_credential_valid() {
+
+	local tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
+	local tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
+	local assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
+
+	local valid_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -mmin +${assume_role_duration})
+
+	if [[ -n "${valid_file}" ]]; then
+		echo -ne "\e]1;AWS-PROFILE[ ${ASSUME_ROLE} ]\a"
+		aws_assume_role_re_use_current
+	fi
+
+}
+
 aws_call_assume_role() {
 	# Do later (Validate the variable of ASSUMED_ROLE before calling assume role)
 	unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN ASSUMED_ROLE

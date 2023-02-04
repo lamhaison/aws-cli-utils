@@ -37,3 +37,8 @@ for module in $(echo "common services"); do
 		source ${AWS_CLI_SOURCE_SCRIPTS}/${module}/$script
 	done
 done
+
+# Add hot-keys
+zle -N aws_help
+bindkey '^@' aws_help
+bindkey '^e' aws_help

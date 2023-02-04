@@ -33,10 +33,15 @@ peco_aws_disable_input_cached() {
 }
 
 peco_aws_input() {
-	local aws_cli_commandline="${1} --output text"
+	peco_commandline_input "${1} --output text" $2
+}
+
+peco_commandline_input() {
+
+	local commandline="${1}"
 	local result_cached=$2
 
-	local md5_hash=$(echo $aws_cli_commandline | md5)
+	local md5_hash=$(echo $commandline | md5)
 	local input_folder=${aws_cli_input_tmp}/${ASSUME_ROLE}
 	mkdir -p ${input_folder}
 	local input_file_path="${input_folder}/${md5_hash}.txt"
@@ -48,18 +53,19 @@ peco_aws_input() {
 		# Ignore the first line.
 		grep -Ev "\*\*\*\*\*\*\*\* \[.*\]" $input_file_path
 	else
-		local aws_result=$(aws_run_commandline_with_retry "$aws_cli_commandline" "false")
+		local aws_result=$(aws_run_commandline_with_retry "$commandline" "false")
 
 		local format_text=$(peco_format_aws_output_text $aws_result)
 
 		if [ -n "${format_text}" ]; then
-			echo "******** [ ${aws_cli_commandline} ] ********" >${input_file_path}
+			echo "******** [ ${commandline} ] ********" >${input_file_path}
 			echo ${format_text} | tee -a ${input_file_path}
 		else
 			echo "Can not get the data"
 		fi
 
 	fi
+
 }
 
 peco_create_menu() {
@@ -161,4 +167,12 @@ peco_aws_iam_list_roles() {
 
 peco_aws_iam_list_attached_policies() {
 	peco_aws_input 'aws iam list-policies --scope Local --only-attached --query "*[].Arn"' 'true'
+}
+
+# EC2 Instance
+peco_aws_ec2_list() {
+
+	commandline="aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId}' --output text | tr -s '\t' '_'"
+
+	peco_commandline_input ${commandline} 'true'
 }

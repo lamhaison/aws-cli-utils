@@ -78,6 +78,12 @@ aws_ec2_connect() {
 	aws_ssm_connection_ec2 $1
 }
 
+aws_ec2_connect_with_hint() {
+	aws_ec2_instance_id=$(peco_create_menu 'peco_aws_ec2_list')
+	aws_ec2_instance_id=$(echo "${aws_ec2_instance_id}" | awk -F "_" '{print $1}')
+	aws_ssm_connection_ec2 ${aws_ec2_instance_id}
+}
+
 aws_ec2_list_eips() {
 	aws_run_commandline 'aws ec2 describe-addresses'
 }

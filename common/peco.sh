@@ -152,7 +152,9 @@ peco_aws_codedeploy_list_deployment_ids() {
 
 # Cloudfront
 peco_aws_cloudfront_list() {
-	peco_aws_input "aws cloudfront list-distributions --query 'DistributionList.Items[*].{Id:Id}'" 'true'
+	commandline="aws cloudfront list-distributions \
+		--query 'DistributionList.Items[*].{AId:Id,BComment:Comment}' --output text | tr -s '\t' '_'"
+	peco_commandline_input ${commandline} 'true'
 }
 
 # Autoscaling group
@@ -173,6 +175,5 @@ peco_aws_iam_list_attached_policies() {
 peco_aws_ec2_list() {
 
 	commandline="aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId}' --output text | tr -s '\t' '_'"
-
 	peco_commandline_input ${commandline} 'true'
 }

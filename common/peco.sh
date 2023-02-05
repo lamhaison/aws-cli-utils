@@ -29,7 +29,7 @@ peco_create_menu_with_array_input() {
 }
 
 peco_aws_disable_input_cached() {
-	export aws_assume_role_expired_time=0
+	export peco_input_expired_time=0
 }
 
 peco_aws_input() {
@@ -69,8 +69,10 @@ peco_commandline_input() {
 }
 
 peco_create_menu() {
-	input_function=$1
-	input_value=$(echo "$(eval $input_function)" | peco)
+	local input_function=$1
+	local peco_options=$2
+	local peco_command="peco ${peco_options}"
+	local input_value=$(echo "$(eval $input_function)" | eval ${peco_command})
 	echo ${input_value:?'Can not get the input from peco menu'}
 }
 

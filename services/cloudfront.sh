@@ -21,10 +21,7 @@ aws_cloudfront_get() {
 }
 
 aws_cloudfront_get_with_hint() {
-	# aws_cloudfront_list
-	echo "Your Distribution ID >"
-	# read aws_distribution_id
-	aws_distribution_id=$(peco_create_menu 'peco_aws_cloudfront_list')
+	aws_distribution_id=$(peco_create_menu 'peco_aws_cloudfront_list' '--prompt "Your Distribution ID >"')
 	aws_distribution_id=$(echo ${aws_distribution_id} | awk -F "_" '{print $1}')
 	aws_cloudfront_get ${aws_distribution_id}
 }
@@ -48,7 +45,7 @@ aws_cloudfront_invalidate_cache() {
 }
 
 aws_cloudfront_invalidate_cache_with_hint() {
-	aws_distribution_id=$(peco_create_menu 'peco_aws_cloudfront_list')
+	aws_distribution_id=$(peco_create_menu 'peco_aws_cloudfront_list' '--prompt "Your Distribution ID >"')
 	aws_distribution_id=$(echo ${aws_distribution_id} | awk -F "_" '{print $1}')
 	echo "Your Distribution ID. It will be start with / . For ex /* >"
 	read aws_distribution_path

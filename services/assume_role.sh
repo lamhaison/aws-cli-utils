@@ -162,10 +162,18 @@ aws_assume_role_set_name_with_hint() {
 }
 
 aws_assume_role_set_name_with_hint_peco() {
-
 	echo "Please input your assume role name >"
-	local assume_role_name=$(grep -iE "\[*\]" ~/.aws/config | tr -d "[]" | awk -F " " '{print $2}' | peco --query "$LBUFFER")
-	CURSOR=$#assume_role_name
+	local assume_role_list=$(grep -iE "\[*\]" ~/.aws/config |
+		tr -d "[]" | awk -F " " '{print $2}')
+
+	if [[ -n "${ASSUME_ROLE}" ]]; then
+		assume_role_list=$(echo ${assume_role_list} | grep -v ${ASSUME_ROLE})
+		assume_role_list=$(echo "${ASSUME_ROLE}\n${assume_role_list}")
+
+	fi
+
+	# local assume_role_name=$(echo "${assume_role_list}" | peco --selection-prefix "Current >")
+	local assume_role_name=$(echo "${assume_role_list}" | peco)
 	aws_assume_role_set_name $assume_role_name
 
 }

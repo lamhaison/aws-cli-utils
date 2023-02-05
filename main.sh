@@ -40,5 +40,6 @@ done
 
 # Add hot-keys
 zle -N aws_help
-bindkey '^@' aws_help
+zle -N aws_main_function
+bindkey '^@' aws_main_function
 bindkey '^e' aws_help

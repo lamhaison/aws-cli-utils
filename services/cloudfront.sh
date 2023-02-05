@@ -20,7 +20,7 @@ aws_cloudfront_get() {
 	aws_run_commandline "aws cloudfront get-distribution --id ${aws_distribution_id}"
 }
 
-aws_cloudfront_list_with_hint() {
+aws_cloudfront_get_with_hint() {
 	# aws_cloudfront_list
 	echo "Your Distribution ID >"
 	# read aws_distribution_id

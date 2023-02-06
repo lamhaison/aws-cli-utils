@@ -7,7 +7,7 @@ aws_ec2_list_all() {
 		"aws ec2 describe-instances \
 		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0], \
 			InstanceId:InstanceId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
-			PublicIp:PublicIpAddress,State:State.Name}' \
+			PublicIp:PublicIpAddress,State:State.Name,LaunchTime:LaunchTime}' \
 		--output table
 	"
 }
@@ -19,7 +19,7 @@ aws_ec2_list() {
 		--filters Name=instance-state-name,Values=running \
 		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0], \
 			InstanceId:InstanceId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
-			PublicIp:PublicIpAddress,State:State.Name}' \
+			PublicIp:PublicIpAddress,State:State.Name,LaunchTime:LaunchTime}' \
 		--output table
 	"
 }
@@ -78,6 +78,12 @@ aws_ec2_connect() {
 	aws_ssm_connection_ec2 $1
 }
 
+aws_ec2_connect_with_hint() {
+	aws_ec2_instance_id=$(peco_create_menu 'peco_aws_ec2_list')
+	aws_ec2_instance_id=$(echo "${aws_ec2_instance_id}" | awk -F "_" '{print $1}')
+	aws_ssm_connection_ec2 ${aws_ec2_instance_id}
+}
+
 aws_ec2_list_eips() {
 	aws_run_commandline 'aws ec2 describe-addresses'
 }
@@ -92,7 +98,7 @@ aws_ec2_list_vpcs() {
 }
 
 aws_vpc_list() {
-	aws_ec2_list_vpc
+	aws_ec2_list_vpcs
 }
 
 # Subnets
@@ -105,5 +111,33 @@ aws_ec2_list_subnets() {
 	aws_run_commandline \
 		"
 		aws ec2 describe-subnets
+	"
+}
+
+# Security group
+aws_sg_list() {
+	aws_run_commandline "\
+		aws ec2 describe-security-groups
+	"
+}
+
+aws_sg_get() {
+	aws_sg_id=$1
+
+	aws_run_commandline "\
+		aws ec2 describe-security-groups \
+    		--group-ids ${aws_sg_id:?'aws_sg_id is unset or empty'}
+	"
+}
+
+aws_sg_add_rule() {
+	aws_sg_id=$1
+
+	echo "\
+		# Allow access the ssh from a specific IP address
+		aws ec2 authorize-security-group-ingress \
+		--group-id ${aws_sg_id:?'aws_sg_id is unset or empty'} \
+		--protocol tcp --port 22 \
+		--cidr $(lamhaison_get_public_ip)/32
 	"
 }

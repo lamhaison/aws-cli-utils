@@ -14,7 +14,7 @@ aws_codebuild_get_latest_build_with_hint() {
 	echo "List codebuilds"
 	# echo "Your codebuild >"
 	# read aws_codebuild_project_name
-	aws_codebuild_get_latest_build $(echo "$(peco_aws_codebuild_list)" | peco)
+	aws_codebuild_get_latest_build $(peco_create_menu 'peco_aws_codebuild_list')
 
 }
 
@@ -29,7 +29,7 @@ aws_codebuild_start_with_hint() {
 	# aws codebuild list-projects
 	# echo "Your codebuild >"
 	# read aws_codebuild_project_name
-	aws_codebuild_start $(echo "$(peco_aws_codebuild_list)" | peco)
+	aws_codebuild_start $(peco_create_menu 'peco_aws_codebuild_list')
 
 }
 

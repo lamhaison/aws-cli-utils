@@ -3,9 +3,7 @@
 # AWS  SSM
 
 aws_ssm_list_parameters() {
-
-        aws_run_commandline \
-                '
+        aws_run_commandline '\
         aws ssm get-parameters-by-path \
                 --path "/" \
                 --recursive \
@@ -14,7 +12,12 @@ aws_ssm_list_parameters() {
 }
 
 aws_ssm_connection_ec2() {
-        instance_id=$1
-        echo Connect to the ec2 instance ${instance_id:?"instance_id is unset or empty"}
-        aws ssm start-session --target $instance_id
+        aws_ec2_instance_id=$1
+        echo "Connect to the ec2 instance ${aws_ec2_instance_id:?'aws_ec2_instance_id is unset or empty'} \
+                by commandline [ aws ssm start-session --target $aws_ec2_instance_id ]"
+
+        if [[ -n "${aws_ec2_instance_id}" ]]; then
+                aws ssm start-session --target $aws_ec2_instance_id
+        fi
+
 }

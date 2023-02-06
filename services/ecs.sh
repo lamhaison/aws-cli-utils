@@ -10,12 +10,16 @@ aws_ecs_list_services() {
 
 aws_ecs_list_services_with_hint() {
 	echo "List clusters"
-	aws_ecs_cluster_arn=$(aws ecs list-clusters --query "*[]" --output text | tr "\t" "\n" | peco)
+	aws_ecs_cluster_arn=$(echo "$(peco_aws_ecs_list_clusters)" | peco)
 	aws_ecs_list_services $aws_ecs_cluster_arn
 }
 
 aws_ecs_get_service_command() {
-	aws_run_commandline "aws ecs describe-services --cluster $aws_ecs_cluster_arn --services $aws_ecs_service_arn"
+	aws_run_commandline "\
+	aws ecs describe-services \
+		--cluster $aws_ecs_cluster_arn \
+		--services $aws_ecs_service_arn
+	"
 }
 
 aws_ecs_get_service() {
@@ -45,4 +49,13 @@ aws_ecs_get_scheduled_actions() {
 	aws application-autoscaling describe-scheduled-actions \
 		--service-namespace ecs
 	"
+}
+
+aws_ecs_get_taskdefinition() {
+	aws_task_definition_arn=$1
+	aws_run_commandline "\
+		aws ecs describe-task-definition \
+			--task-definition ${aws_task_definition_arn:?'aws_task_definition_arn is unset or empty'}
+	"
+
 }

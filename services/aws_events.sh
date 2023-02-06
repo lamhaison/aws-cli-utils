@@ -4,6 +4,12 @@ aws_events_list() {
 	aws_run_commandline "aws events list-rules"
 }
 
+aws_events_list_status() {
+	aws_run_commandline "\
+		aws events list-rules --query 'Rules[].{Name:Name,State:State}' --output table
+	"
+}
+
 aws_events_list_targets() {
 	for item in $(aws events list-rules --query "*[].Name" --output text); do
 		aws_run_commandline "aws events list-targets-by-rule --rule $item"

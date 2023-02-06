@@ -1,17 +1,14 @@
-# brew install peco
-# PECO
-
 peco_assume_role_name() {
 	cat ~/.aws/config | grep -e "^\[profile.*\]$" | peco
 }
 
 peco_format_name_convention_pre_defined() {
-	peco_input=$1
+	local peco_input=$1
 	echo "${peco_input}" | tr "\t" "\n" | tr -s " " "\n" | tr -s '\n'
 }
 
 peco_format_aws_output_text() {
-	peco_input=$1
+	local peco_input=$1
 	echo "${peco_input}" | tr "\t" "\n"
 }
 
@@ -20,37 +17,63 @@ peco_aws_acm_list() {
 }
 
 peco_name_convention_input() {
-	text_input=$1
-	format_text=$(peco_format_name_convention_pre_defined $text_input)
+	local text_input=$1
+	local format_text=$(peco_format_name_convention_pre_defined $text_input)
 	echo $format_text
 }
 
-peco_aws_input() {
-	aws_cli_commandline="${1} --output text"
-	result_cached=$2
+peco_create_menu_with_array_input() {
+	local text_input=$1
+	local format_text=$(peco_format_name_convention_pre_defined $text_input)
+	echo $format_text
+}
 
-	md5_hash=$(echo $aws_cli_commandline | md5)
-	input_folder=${aws_cli_input_tmp}/${ASSUME_ROLE}
+peco_aws_disable_input_cached() {
+	export peco_input_expired_time=0
+}
+
+peco_aws_input() {
+	peco_commandline_input "${1} --output text" $2
+}
+
+peco_commandline_input() {
+
+	local commandline="${1}"
+	local result_cached=$2
+
+	local md5_hash=$(echo $commandline | md5)
+	local input_folder=${aws_cli_input_tmp}/${ASSUME_ROLE}
 	mkdir -p ${input_folder}
-	input_file_path="${input_folder}/${md5_hash}.txt"
-	empty_file=$(find ${input_folder} -name ${md5_hash}.txt -empty)
+	local input_file_path="${input_folder}/${md5_hash}.txt"
+	local empty_file=$(find ${input_folder} -name ${md5_hash}.txt -empty)
+	local valid_file=$(find ${input_folder} -name ${md5_hash}.txt -mmin +${peco_input_expired_time})
 
 	# The file is existed and not empty and the flag result_cached is not empty
-	if [ -f "${input_file_path}" ] && [ -z "${empty_file}" ] && [ -n "${result_cached}" ]; then
+	if [ -z "${valid_file}" ] && [ -f "${input_file_path}" ] && [ -z "${empty_file}" ] && [ -n "${result_cached}" ]; then
 		# Ignore the first line.
 		grep -Ev "\*\*\*\*\*\*\*\* \[.*\]" $input_file_path
 	else
-		aws_result=$(eval $aws_cli_commandline)
-		format_text=$(peco_format_aws_output_text $aws_result)
+		local aws_result=$(aws_run_commandline_with_retry "$commandline" "false")
+
+		local format_text=$(peco_format_aws_output_text $aws_result)
 
 		if [ -n "${format_text}" ]; then
-			echo "******** [ ${aws_cli_commandline} ] ********" >${input_file_path}
+			echo "******** [ ${commandline} ] ********" >${input_file_path}
 			echo ${format_text} | tee -a ${input_file_path}
 		else
 			echo "Can not get the data"
 		fi
 
 	fi
+
+}
+
+peco_create_menu() {
+	local input_function=$1
+	local peco_options=$2
+	local peco_command="peco ${peco_options}"
+	local input_value=$(echo "$(eval $input_function)" | eval ${peco_command})
+	echo ${input_value:?'Can not get the input from peco menu'}
 }
 
 # AWS Logs
@@ -69,8 +92,23 @@ peco_aws_ecs_list_services() {
 
 # AWS ECR
 
-peco_aws_list_repositorie_names() {
+peco_aws_ecr_list_repositorie_names() {
 	peco_aws_input 'aws ecr describe-repositories --query "*[].repositoryName"' 'true'
+}
+
+peco_aws_ecr_list_images() {
+	aws_ecr_repo_name=$1
+	peco_aws_input "aws ecr list-images \
+		--repository-name ${aws_ecr_repo_name:?'aws_ecr_repo_name is unset or empy'} \
+		--query \"imageIds[].{imageTag:imageTag}\""
+}
+
+peco_aws_alb_list_listners() {
+	aws_alb_arn=$1
+	peco_aws_input " \
+		aws elbv2 describe-listeners \
+			--load-balancer-arn ${aws_alb_arn:?'aws_alb_arn is unset or empty'} \
+			--query \"Listeners[*].ListenerArn\""
 }
 
 # AWS RDS
@@ -107,4 +145,37 @@ peco_aws_codebuild_list() {
 
 peco_aws_codepipeline_list() {
 	peco_aws_input 'aws codepipeline list-pipelines --query "*[].name"' 'true'
+}
+
+# Codedeploy
+peco_aws_codedeploy_list_deployment_ids() {
+	peco_aws_input 'aws deploy list-deployments --query "deployments[]"'
+}
+
+# Cloudfront
+peco_aws_cloudfront_list() {
+	commandline="aws cloudfront list-distributions \
+		--query 'DistributionList.Items[*].{AId:Id,BComment:Comment}' --output text | tr -s '\t' '_'"
+	peco_commandline_input ${commandline} 'true'
+}
+
+# Autoscaling group
+peco_aws_autoscaling_list() {
+	peco_aws_input 'aws autoscaling describe-auto-scaling-groups --query "*[].AutoScalingGroupName"' 'true'
+}
+
+# IAM role list
+peco_aws_iam_list_roles() {
+	peco_aws_input 'aws iam list-roles --query "*[].{RoleName:RoleName}"' 'true'
+}
+
+peco_aws_iam_list_attached_policies() {
+	peco_aws_input 'aws iam list-policies --scope Local --only-attached --query "*[].Arn"' 'true'
+}
+
+# EC2 Instance
+peco_aws_ec2_list() {
+
+	commandline="aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId}' --output text | tr -s '\t' '_'"
+	peco_commandline_input ${commandline} 'true'
 }

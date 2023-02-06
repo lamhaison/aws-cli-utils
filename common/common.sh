@@ -24,7 +24,7 @@ aws_run_commandline_with_retry() {
 	local retry_counter=0
 
 	# Check credential valid first
-	aws_assume_role_is_tmp_credential_valid
+	# aws_assume_role_is_tmp_credential_valid
 
 	while [[ "${retry_counter}" -le "${aws_cli_retry_time}" ]]; do
 

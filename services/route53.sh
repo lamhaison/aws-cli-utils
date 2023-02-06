@@ -15,7 +15,11 @@ aws_route53_get_host_zone() {
 	aws_run_commandline "\
 		aws route53 list-resource-record-sets \
 			--hosted-zone-id ${aws_route53_host_zone_id:?'aws_route53_host_zone_id is unset or empty'} \
-			--query 'ResourceRecordSets[].{Name:Name,Type:Type,AliasTarget:AliasTarget.DNSName}' \
+			--query 'ResourceRecordSets[].{ \
+				Name:Name,Type:Type,\
+				AliasTarget:AliasTarget.DNSName, \
+				ResourceRecords:ResourceRecords, \
+				ResourceRecords:ResourceRecords[0].Value}' \
 			--output table
 	"
 }

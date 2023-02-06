@@ -10,6 +10,14 @@ aws_assume_role_option_set_output_yml() {
 	export AWS_DEFAULT_OUTPUT="yaml"
 }
 
+aws_assume_role_enable_fast_mode() {
+	export aws_assume_role_print_account_info=false
+}
+
+aws_assume_role_disable_fast_mode() {
+	export aws_assume_role_print_account_info=true
+}
+
 aws_run_commandline_with_retry() {
 	local aws_commandline=$1
 	local silent_mode=$2
@@ -49,6 +57,8 @@ aws_run_commandline() {
 
 aws_run_commandline_with_logging() {
 	aws_commandline=$1
+	aws_commandline_logging=$(echo ${aws_commandline:?'aws_commandline is unset or empty'} | tr -d '\t' | tr -d '\n')
+	# aws_commandline_logging=$(echo ${aws_commandline})
 	local log_file_path=${aws_cli_logs}/${ASSUME_ROLE}.log
 	if [ "$aws_show_commandline" = "true" ]; then
 		local output="tee -a ${log_file_path}"
@@ -59,7 +69,7 @@ aws_run_commandline_with_logging() {
 	aws_commandline_result=$(aws_run_commandline_with_retry "${aws_commandline}" "${ignored_error_when_retry}")
 
 	echo "-------------------------------------START--$(date '+%Y-%m-%d-%H-%M-%S')------------------------------------------------" >>${log_file_path}
-	echo Running commandline \[ ${aws_commandline:?"Commandline is unset or empty"}\ ] | eval $output
-	echo $aws_commandline_result | tee -a ${aws_cli_logs}/${ASSUME_ROLE}.log
+	echo "Running commandline [ ${aws_commandline_logging} ]" | eval $output
+	echo $aws_commandline_result | tee -a ${log_file_path}
 	echo "-------------------------------------FINISH-$(date '+%Y-%m-%d-%H-%M-%S')------------------------------------------------" >>${log_file_path}
 }

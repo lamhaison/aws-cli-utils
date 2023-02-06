@@ -201,9 +201,16 @@ aws_help_rds_upgrade_aurora_1_to_aurora_2() {
 	"
 }
 
-aws_rds_list_db_cluster_snapshot() {
+aws_rds_list_db_cluster_snapshots() {
 	aws_run_commandline " \
-		aws rds describe-db-cluster-snapshots --include-shared
+		aws rds describe-db-cluster-snapshots \
+			--include-shared \
+			--query 'DBClusterSnapshots[].{\
+				DBClusterSnapshotIdentifier:DBClusterSnapshotIdentifier,\
+				DBClusterIdentifier:DBClusterIdentifier,\
+				SnapshotCreateTime:SnapshotCreateTime,\
+				Status:Status}' \
+			--output table
 	"
 
 }

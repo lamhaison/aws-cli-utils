@@ -7,7 +7,7 @@ aws_codebuild_list() {
 aws_codebuild_get_latest_build() {
 	aws_codebuild_project_name=$1
 	echo Get the latest build of project ${aws_codebuild_project_name:?"aws_codebuild_project_name is unset or empty"}
-	aws codebuild batch-get-builds --ids $(aws codebuild list-builds-for-project --project-name $aws_codebuild_project_name --query "*[] | [1]" --output text)
+	aws codebuild batch-get-builds --ids $(aws codebuild list-builds-for-project --project-name $aws_codebuild_project_name --query "*[] | [0]" | tr -d \''"\')
 }
 
 aws_codebuild_get_latest_build_with_hint() {

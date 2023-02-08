@@ -17,6 +17,8 @@ export peco_input_expired_time=10
 export aws_assume_role_expired_time=60
 # To allow log detail of the aws cli [true|false]
 export aws_show_commandline=true
+# To allow log information to make as evident and upload to the ticket. [true|false]
+export aws_show_log_uploaded=false
 export aws_log_tail_since=120m
 
 mkdir -p ${tmp_credentials}

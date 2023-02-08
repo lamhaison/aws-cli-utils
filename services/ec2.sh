@@ -141,3 +141,12 @@ aws_sg_add_rule() {
 		--cidr $(lamhaison_get_public_ip)/32
 	"
 }
+
+aws_region_list() {
+	aws_run_commandline "\
+		aws ec2 describe-regions \
+    		--all-regions \
+    		--query 'Regions[].{Name:RegionName,Endpoint:Endpoint}' \
+    		--output table
+	"
+}

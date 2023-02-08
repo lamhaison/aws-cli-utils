@@ -18,6 +18,10 @@ aws_assume_role_disable_fast_mode() {
 	export aws_assume_role_print_account_info=true
 }
 
+aws_assume_role_disable_show_detail_commandline() {
+	export aws_show_commandline=false
+}
+
 aws_run_commandline_with_retry() {
 	local aws_commandline=$1
 	local silent_mode=$2
@@ -60,16 +64,26 @@ aws_run_commandline_with_logging() {
 	aws_commandline_logging=$(echo ${aws_commandline:?'aws_commandline is unset or empty'} | tr -d '\t' | tr -d '\n')
 	# aws_commandline_logging=$(echo ${aws_commandline})
 	local log_file_path=${aws_cli_logs}/${ASSUME_ROLE}.log
-	if [ "$aws_show_commandline" = "true" ]; then
-		local output="tee -a ${log_file_path}"
+
+	if [ "$aws_show_log_uploaded" = "true" ]; then
+
+		local log_uploaded_file_path=${aws_cli_logs}/${ASSUME_ROLE}-uploaded.log
+		local tee_command="tee -a ${log_file_path} ${log_uploaded_file_path}"
+
 	else
-		local output=">> ${log_file_path}"
+		local tee_command="tee -a ${log_file_path}"
+	fi
+
+	if [ "$aws_show_commandline" = "true" ]; then
+		local detail_commandline_tee_command="${tee_command}"
+	else
+		local detail_commandline_tee_command="${tee_command} > /dev/null"
 	fi
 
 	aws_commandline_result=$(aws_run_commandline_with_retry "${aws_commandline}" "${ignored_error_when_retry}")
 
-	echo "-------------------------------------START--$(date '+%Y-%m-%d-%H-%M-%S')------------------------------------------------" >>${log_file_path}
-	echo "Running commandline [ ${aws_commandline_logging} ]" | eval $output
-	echo $aws_commandline_result | tee -a ${log_file_path}
-	echo "-------------------------------------FINISH-$(date '+%Y-%m-%d-%H-%M-%S')------------------------------------------------" >>${log_file_path}
+	echo "------------------------------STARTED--$(date '+%Y-%m-%d-%H-%M-%S')-----------------------------------------" | eval $tee_command >/dev/null
+	echo "Running commandline [ ${aws_commandline_logging} ]" | eval $detail_commandline_tee_command
+	echo $aws_commandline_result | eval $tee_command
+	echo "------------------------------FINISHED-$(date '+%Y-%m-%d-%H-%M-%S')-----------------------------------------" | eval $tee_command >/dev/null
 }

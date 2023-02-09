@@ -121,12 +121,12 @@ aws_rds_audit_log_disabled_with_hint() {
 }
 
 # RDS snapshots
-aws_rds_get_snapshoots() {
+aws_rds_get_snapshots() {
 	aws_run_commandline 'aws rds describe-db-snapshots'
 }
 
-aws_rds_create_cluster_snapshot() {
-	aws_rds_db_cluster_name=$1
+aws_rds_create_db_cluster_snapshot() {
+	aws_rds_dbdb__cluster_name=$1
 	aws_run_commandline \
 		"
         aws rds create-db-cluster-snapshot \
@@ -135,23 +135,38 @@ aws_rds_create_cluster_snapshot() {
         "
 }
 
-aws_rds_create_cluster_snapshot_with_hint() {
-	aws_rds_create_cluster_snapshot $(echo "$(peco_aws_list_db_clusters)" | peco)
+aws_rds_delete_db_cluster_snapshot() {
+	aws_rds_db_cluster_snapshot_name=$1
+	aws_run_commandline "\
+		aws rds delete-db-cluster-snapshot \
+			--db-cluster-snapshot-identifier \
+				${aws_rds_db_cluster_snapshot_name:?'aws_rds_db_cluster_snapshot_name is unset or empty'}
+	"
 }
 
-aws_rds_create_instance_snapshot() {
-	aws_rds_db_instance_name=$1
+aws_rds_create_db_cluster_snapshot_with_hint() {
+	aws_rds_create_db_cluster_snapshot $(echo "$(peco_aws_list_db_clusters)" | peco)
+}
 
-	aws_run_commandline \
-		"
-	aws rds create-db-snapshot \
+aws_rds_create_db_instance_snapshot() {
+	aws_rds_db_instance_name=$1
+	aws_run_commandline "\
+		aws rds create-db-snapshot \
     		--db-instance-identifier ${aws_rds_db_instance_name:?"aws_rds_db_instance_name is unset or empty"} \
     		--db-snapshot-identifier ${aws_rds_db_instance_name}-$(date '+%Y-%m-%d-%H-%M-%S')
-    	"
+    "
 }
 
-aws_rds_create_instance_snapshot_with_hint() {
-	aws_rds_create_instance_snapshot $(echo "$(peco_aws_list_db_instances)" | peco)
+aws_rds_delete_db_snapshot() {
+	aws_rds_db_snapshot_name=$1
+	aws_run_commandline "\
+		aws rds delete-db-snapshot --db-snapshot-identifier \
+				${aws_rds_db_snapshot_name:?'aws_rds_db_cluster_snapshot_name is unset or empty'}
+	"
+}
+
+aws_rds_create_db_instance_snapshot_with_hint() {
+	aws_rds_create_db_instance_snapshot $(echo "$(peco_aws_list_db_instances)" | peco)
 }
 
 # AWS events
@@ -209,7 +224,7 @@ aws_rds_list_db_cluster_snapshots() {
 				DBClusterSnapshotIdentifier:DBClusterSnapshotIdentifier,\
 				DBClusterIdentifier:DBClusterIdentifier,\
 				SnapshotCreateTime:SnapshotCreateTime,\
-				Status:Status}' \
+				Status:Status,SnapshotType:SnapshotType}' \
 			--output table
 	"
 

@@ -116,6 +116,18 @@ peco_aws_list_db_parameter_groups() {
 	peco_aws_input 'aws rds describe-db-parameter-groups --query "*[].DBParameterGroupName"' 'true'
 }
 
+peco_aws_rds_list_db_cluster_snapshots() {
+	peco_aws_input 'aws rds describe-db-cluster-snapshots \
+		--snapshot-type manual \
+		--query "DBClusterSnapshots[].DBClusterSnapshotIdentifier"'
+}
+
+peco_aws_rds_list_db_snapshots() {
+	peco_aws_input 'aws rds describe-db-snapshots \
+		--snapshot-type manual \
+		--query "DBSnapshots[].DBSnapshotIdentifier"'
+}
+
 peco_aws_list_db_cluster_parameter_groups() {
 	peco_aws_input 'aws rds describe-db-cluster-parameter-groups --query "*[].DBClusterParameterGroupName"' 'true'
 }

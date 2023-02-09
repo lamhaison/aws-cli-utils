@@ -20,7 +20,7 @@ aws_name_convention_get_s3_bucket_name_with_hint() {
 
 	aws_name_convention_resource_types="static \
 		vod terraform cf-logs \
-		alb-logs webapp-react admin-react"
+		alb-logs webapp-react admin-react backup"
 
 	echo "List resource type ${aws_name_convention_resource_types}"
 

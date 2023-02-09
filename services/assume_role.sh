@@ -6,7 +6,7 @@ import_tmp_credential() {
 }
 
 zip_tmp_credential() {
-	cd $tmp_credentials
+	cd $tmp_credentials >/dev/null
 	echo "Encrypt temporary credential for assume-role ${ASSUME_ROLE} at ${tmp_credentials}/${ASSUME_ROLE}.zip"
 
 	if [ -f "${tmp_credentials}/${ASSUME_ROLE}.zip" ]; then
@@ -14,7 +14,7 @@ zip_tmp_credential() {
 	fi
 
 	zip -q -P $assume_role_password_encrypted $ASSUME_ROLE.zip $ASSUME_ROLE && rm -rf $ASSUME_ROLE
-	cd -
+	cd - >/dev/null
 }
 
 aws_assume_role_reset() {
@@ -42,12 +42,12 @@ aws_assume_role_re_use_current() {
 }
 
 aws_assume_role_unzip_tmp_credential() {
-	cd $tmp_credentials
+	cd $tmp_credentials >/dev/null
 	assume_role_name=$1
 	rm -rf ${assume_role_name}
 	unzip -P $assume_role_password_encrypted ${assume_role_name}.zip
 	echo "You credential is save here ${tmp_credentials}/${assume_role_name}"
-	cd -
+	cd - >/dev/null
 }
 
 aws_assume_role_remove_tmp_credential() {

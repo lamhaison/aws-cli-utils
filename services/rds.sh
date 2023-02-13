@@ -157,12 +157,17 @@ aws_rds_create_db_instance_snapshot() {
     "
 }
 
+# TODO LATER
 aws_rds_share_db_cluster_snapshot_with_other_aws_account() {
 	aws_rds_db_cluster_name=$1
 	aws_shared_account_id=$2
-	aws rds modify-db-cluster-snapshot-attribute \
-		--db-cluster-snapshot-identifier ${aws_rds_db_cluster_name} \
-		--attribute-name restore --values-to-add ${aws_shared_account_id}
+
+	aws_run_commandline "\
+		aws rds modify-db-cluster-snapshot-attribute \
+			--db-cluster-snapshot-identifier ${aws_rds_db_cluster_name} \
+			--attribute-name restore --values-to-add ${aws_shared_account_id}	
+	"
+
 }
 
 aws_rds_delete_db_snapshot() {

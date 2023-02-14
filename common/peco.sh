@@ -40,13 +40,14 @@ peco_commandline_input() {
 
 	local commandline="${1}"
 	local result_cached=$2
+	local input_expired_time="${3:=$peco_input_expired_time}"
 
 	local md5_hash=$(echo $commandline | md5)
 	local input_folder="${aws_cli_input_tmp}/${ASSUME_ROLE:=NOTSET}"
 	mkdir -p ${input_folder}
 	local input_file_path="${input_folder}/${md5_hash}.txt"
 	local empty_file=$(find ${input_folder} -name ${md5_hash}.txt -empty)
-	local valid_file=$(find ${input_folder} -name ${md5_hash}.txt -mmin +${peco_input_expired_time})
+	local valid_file=$(find ${input_folder} -name ${md5_hash}.txt -mmin +${input_expired_time})
 
 	# The file is existed and not empty and the flag result_cached is not empty
 	if [ -z "${valid_file}" ] && [ -f "${input_file_path}" ] && [ -z "${empty_file}" ] && [ -n "${result_cached}" ]; then

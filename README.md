@@ -40,7 +40,7 @@ echo "random_string" > ~/.password_assume_role_encrypted
 
 ## Settings when open terminal (I am using iterm)
 ```
-mkdir -p /opt/lamhaison-tools
+mkdir -p /opt/lamhaison-tools && cd /opt/lamhaison-tools
 git clone git@github.com:lamhaison/aws-cli-utils.git
 echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.bashrc
 ```

@@ -23,7 +23,7 @@ aws_events_disable_rule() {
 	set -x
 	rule_name=$1
 
-	aws_account_infos
+	aws_account_info
 	echo "Disable rule ${rule_name}"
 	aws events describe-rule --name $1
 	aws events disable-rule --name $1

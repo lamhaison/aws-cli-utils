@@ -145,7 +145,7 @@ aws_assume_role_set_name() {
 		# cd ${aws_cli_results}
 
 		if [ "${aws_assume_role_print_account_info}" = "true" ]; then
-			aws_account_infos
+			aws_account_info
 		fi
 	else
 		echo "Please try again, the assume role action was not complete"
@@ -178,7 +178,7 @@ aws_assume_role_set_name_with_hint_peco() {
 
 }
 
-aws_account_infos() {
+aws_account_info() {
 	get-account-alias
 
 	local aws_account_id=$(aws_run_commandline_with_retry 'aws sts get-caller-identity --query "Account" --output text' "true")

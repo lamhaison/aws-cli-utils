@@ -41,7 +41,7 @@ for module in $(echo "common services"); do
 done
 
 # Add hot-keys
-zle -N aws_help
+# zle -N aws_help
 zle -N aws_main_function
 bindkey '^@' aws_main_function
-bindkey '^e' aws_help
+# bindkey '^e' aws_help

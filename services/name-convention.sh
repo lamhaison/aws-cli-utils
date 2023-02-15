@@ -10,6 +10,11 @@ aws_name_convention_get_long_env_name() {
 	echo "development staging production"
 }
 
+aws_name_convention_get_with_assume_role_name() {
+	local input_name=$1
+	echo ${ASSUME_ROLE:="ASSUME_ROLE"}-${input_name:="input_name"}
+}
+
 aws_name_convention_get_s3_bucket_name() {
 	aws_s3_bucket_name=$1
 	echo "The bucket name should will be like that \
@@ -27,6 +32,15 @@ aws_name_convention_get_s3_bucket_name_with_hint() {
 	aws_name_convention_get_s3_bucket_name \
 		$(echo "$(peco_name_convention_input $aws_name_convention_resource_types)" | peco)
 
+}
+
+aws_name_convention_get_cloudwatch_dasgboard() {
+	aws_name_convention_cloudwatch_dashboard_name="overview \
+		benchmark db-connection alb-5xx \
+		"
+
+	aws_name_convention_get_with_assume_role_name \
+		$(echo "$(peco_name_convention_input $aws_name_convention_cloudwatch_dashboard_name)" | peco)
 }
 
 aws_name_convention_get_iam_instance_profile() {

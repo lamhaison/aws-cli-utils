@@ -31,7 +31,8 @@ aws_cloudwatch_list_dashboards() {
 	"
 }
 
-# To return json for the dashboard
+# To return json for the dashboard. But the JSON is not valid.
+# TODO Later
 aws_cloudfront_get_dashboard() {
 	aws_run_commandline "\
 		aws cloudwatch get-dashboard \

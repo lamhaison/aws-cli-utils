@@ -187,3 +187,11 @@ aws_account_info() {
 
 	echo AWS Region ${AWS_REGION:?"The AWS_REGION is unset or empty"}
 }
+
+aws_assume_role_get_tmp_credentials_for_new_members() {
+	local tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
+	aws_assume_role_set_name_with_hint
+	aws_assume_role_unzip_tmp_credential $assume_role
+	cat ${tmp_credentials_file} && rm -rf ${tmp_credentials_file}
+
+}

@@ -23,3 +23,28 @@ aws_cloudwatch_get_graph() {
 
 	echo "Access the graph by the url ${graph_file_path}/${graph_file_file_name}"
 }
+
+aws_cloudwatch_list_dashboards() {
+	aws_run_commandline "\
+		aws cloudwatch list-dashboards \
+			--query '*[].{DashboardName:DashboardName,LastModified:LastModified}'
+	"
+}
+
+# To return json for the dashboard
+aws_cloudfront_get_dashboard() {
+	aws_run_commandline "\
+		aws cloudwatch get-dashboard \
+			--dashboard-name ${1:?'aws_cloudwatch_dashboard_name is unset or empty'} \
+			--query 'DashboardBody' --output text
+	"
+}
+
+aws_cloudfront_update_dashboard() {
+	echo "Load dashboard data from file ${2}"
+	local aws_coudwatch_dashboard_body=$(cat $2)
+	aws cloudwatch put-dashboard \
+		--dashboard-name ${1:?'aws_cloudwatch_dashboard_name is unset or empty'} \
+		--dashboard-body ${aws_coudwatch_dashboard_body}
+
+}

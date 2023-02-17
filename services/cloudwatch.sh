@@ -14,14 +14,14 @@ aws_cloudwatch_list_alb_arn() {
 
 aws_cloudwatch_get_graph() {
 	local aws_cloudwatch_widget_image=$1
-	local graph_file_file_name="$(lamhaison_file_name_get_random_name ${ASSUME_ROLE}).png"
 	local graph_file_path="${aws_cli_images}/${ASSUME_ROLE}"
 	mkdir -p ${graph_file_path}
+	local graph_file_name_full_path="$(mktemp ${graph_file_path}/${ASSUME_ROLE}-XXXXXXXXXXXXXX).png"
 	aws cloudwatch get-metric-widget-image \
 		--metric-widget ${aws_cloudwatch_widget_image} \
-		--output-format png --output text | base64 --decode >${graph_file_path}/${graph_file_file_name}
+		--output-format png --output text | base64 --decode >${graph_file_name_full_path}
 
-	echo "Access the graph by the url ${graph_file_path}/${graph_file_file_name}"
+	echo "Access the graph by the url ${graph_file_name_full_path}"
 }
 
 aws_cloudwatch_list_dashboards() {

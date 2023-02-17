@@ -110,7 +110,9 @@ aws_subnet_list() {
 aws_ec2_list_subnets() {
 	aws_run_commandline \
 		"
-		aws ec2 describe-subnets
+		aws ec2 describe-subnets \
+			--query '*[].{VpcId:VpcId,SubnetId:SubnetId,\
+				AvailabilityZone:AvailabilityZone,Name:Tags[?Key==\`Name\`].Value | [0]}' --output table
 	"
 }
 

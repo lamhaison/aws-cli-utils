@@ -59,3 +59,16 @@ aws_ecs_get_taskdefinition() {
 	"
 
 }
+
+aws_ecs_set_service_desized_count() {
+	aws_ecs_service_name=$1
+	aws_ecs_cluster_name=$2
+	aws_ecs_desized_count=$3
+	aws_run_commandline "\
+		aws ecs update-service \
+			--cluster ${aws_ecs_service_name} \
+			--service ${aws_ecs_service_name} \
+			--desired-count ${aws_ecs_desized_count}
+			
+	"
+}

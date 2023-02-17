@@ -35,10 +35,8 @@ alias get-account-alias='aws iam list-account-aliases'
 alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Account" --output text)'
 
 # Import sub-commandline.
-for module in $(echo "common services"); do
-	for script in $(ls ${AWS_CLI_SOURCE_SCRIPTS}/${module}); do
-		source ${AWS_CLI_SOURCE_SCRIPTS}/${module}/$script
-	done
+for script in $(find ${HELPFUL_COMMANDLINES_SOURCE_SCRIPTS} -type f -name '*.sh' | grep -v main.sh); do
+	source $script
 done
 
 # Add hot-keys

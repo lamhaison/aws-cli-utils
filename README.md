@@ -71,10 +71,14 @@ mfa_serial = arn:aws:iam::ACCOUNT_NAME_MFA:mfa/ACCOUNT_NAME
 
 
 ## How to use
+### AssumeRole
+```
+Ctrl + @ and press enter and choose the assume role that you want to use.
+```
 ### List all functions
 ```
 aws_help
-You can search list function and after that you can run which funtion_name to get the detail of bashshell code
+You can search list function and after that you can run which funtion_name to get the detail of bashshell code.
 ```
 ### Other
 ```

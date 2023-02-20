@@ -110,7 +110,9 @@ aws_subnet_list() {
 aws_ec2_list_subnets() {
 	aws_run_commandline \
 		"
-		aws ec2 describe-subnets
+		aws ec2 describe-subnets \
+			--query '*[].{VpcId:VpcId,SubnetId:SubnetId,\
+				AvailabilityZone:AvailabilityZone,Name:Tags[?Key==\`Name\`].Value | [0]}' --output table
 	"
 }
 
@@ -130,15 +132,15 @@ aws_sg_get() {
 	"
 }
 
-aws_sg_add_rule() {
+aws_sg_add_rule_instruction() {
 	aws_sg_id=$1
 
 	echo "\
 		# Allow access the ssh from a specific IP address
 		aws ec2 authorize-security-group-ingress \
-		--group-id ${aws_sg_id:?'aws_sg_id is unset or empty'} \
+		--group-id ${aws_sg_id:="\$aws_sg_id"} \
 		--protocol tcp --port 22 \
-		--cidr $(lamhaison_get_public_ip)/32
+		--cidr $(dig +short myip.opendns.com @resolver1.opendns.com)/32
 	"
 }
 

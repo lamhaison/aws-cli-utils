@@ -42,6 +42,11 @@ aws_cloudfront_invalidate_cache() {
 			--paths '${aws_distribution_path}'
 	"
 
+	echo "\
+		How to get the status of the invalidate cloudfront request
+		aws cloudfront get-invalidation --id \$aws_cloudfront_invalidation_id --distribution-id $aws_distribution_id
+	"
+
 }
 
 aws_cloudfront_invalidate_cache_with_hint() {

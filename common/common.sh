@@ -80,10 +80,9 @@ aws_run_commandline_with_logging() {
 		local detail_commandline_tee_command="${tee_command} > /dev/null"
 	fi
 
-	aws_commandline_result=$(aws_run_commandline_with_retry "${aws_commandline}" "${ignored_error_when_retry}")
-
 	echo "------------------------------STARTED--$(date '+%Y-%m-%d-%H-%M-%S')-----------------------------------------" | eval $tee_command >/dev/null
 	echo "Running commandline [ ${aws_commandline_logging} ]" | eval $detail_commandline_tee_command
+	aws_commandline_result=$(aws_run_commandline_with_retry "${aws_commandline}" "${ignored_error_when_retry}")
 	echo $aws_commandline_result | eval $tee_command
 	echo "------------------------------FINISHED-$(date '+%Y-%m-%d-%H-%M-%S')-----------------------------------------" | eval $tee_command >/dev/null
 }

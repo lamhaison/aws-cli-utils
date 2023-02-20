@@ -6,7 +6,7 @@ import_tmp_credential() {
 }
 
 zip_tmp_credential() {
-	cd $tmp_credentials
+	cd $tmp_credentials >/dev/null
 	echo "Encrypt temporary credential for assume-role ${ASSUME_ROLE} at ${tmp_credentials}/${ASSUME_ROLE}.zip"
 
 	if [ -f "${tmp_credentials}/${ASSUME_ROLE}.zip" ]; then
@@ -14,7 +14,7 @@ zip_tmp_credential() {
 	fi
 
 	zip -q -P $assume_role_password_encrypted $ASSUME_ROLE.zip $ASSUME_ROLE && rm -rf $ASSUME_ROLE
-	cd -
+	cd - >/dev/null
 }
 
 aws_assume_role_reset() {
@@ -42,12 +42,12 @@ aws_assume_role_re_use_current() {
 }
 
 aws_assume_role_unzip_tmp_credential() {
-	cd $tmp_credentials
+	cd $tmp_credentials >/dev/null
 	assume_role_name=$1
 	rm -rf ${assume_role_name}
 	unzip -P $assume_role_password_encrypted ${assume_role_name}.zip
 	echo "You credential is save here ${tmp_credentials}/${assume_role_name}"
-	cd -
+	cd - >/dev/null
 }
 
 aws_assume_role_remove_tmp_credential() {
@@ -145,7 +145,7 @@ aws_assume_role_set_name() {
 		# cd ${aws_cli_results}
 
 		if [ "${aws_assume_role_print_account_info}" = "true" ]; then
-			aws_account_infos
+			aws_account_info
 		fi
 	else
 		echo "Please try again, the assume role action was not complete"
@@ -178,7 +178,7 @@ aws_assume_role_set_name_with_hint_peco() {
 
 }
 
-aws_account_infos() {
+aws_account_info() {
 	get-account-alias
 
 	local aws_account_id=$(aws_run_commandline_with_retry 'aws sts get-caller-identity --query "Account" --output text' "true")
@@ -186,4 +186,12 @@ aws_account_infos() {
 	echo "AccountId ${AWS_ACCOUNT_ID}"
 
 	echo AWS Region ${AWS_REGION:?"The AWS_REGION is unset or empty"}
+}
+
+aws_assume_role_get_tmp_credentials_for_new_members() {
+	local tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
+	aws_assume_role_set_name_with_hint
+	aws_assume_role_unzip_tmp_credential $assume_role
+	cat ${tmp_credentials_file} && rm -rf ${tmp_credentials_file}
+
 }

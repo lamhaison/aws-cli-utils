@@ -8,11 +8,18 @@ This is the project to collect helpful aws cli commandline with complex options 
 ## Setup dependencies
 Notes: This document is for macos environment.
 
-## Setup aws-cli
+### Setup aws-cli
 How to install aws cli - https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 ```
 aws --version
 aws-cli/2.8.1 Python/3.9.11 Darwin/22.1.0 exe/x86_64 prompt/off
+```
+
+### Install jq
+```
+brew install jq
+jq --version
+jq-1.6
 ```
 
 ### Install peco
@@ -40,8 +47,8 @@ echo "random_string" > ~/.password_assume_role_encrypted
 
 ## Settings when open terminal (I am using iterm)
 ```
-mkdir -p /opt/lamhaison-tools
-git clone git@github.com:lamhaison/aws-cli-utils.git
+mkdir -p /opt/lamhaison-tools && cd /opt/lamhaison-tools
+git clone https://github.com/lamhaison/helpful-commandlines.git
 echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.bashrc
 ```
 
@@ -71,10 +78,14 @@ mfa_serial = arn:aws:iam::ACCOUNT_NAME_MFA:mfa/ACCOUNT_NAME
 
 
 ## How to use
+### AssumeRole
+```
+Ctrl + @ and press enter and choose the assume role that you want to use.
+```
 ### List all functions
 ```
 aws_help
-You can search list function and after that you can run which funtion_name to get the detail of bashshell code
+You can search list function and after that you can run which funtion_name to get the detail of bashshell code.
 ```
 ### Other
 ```

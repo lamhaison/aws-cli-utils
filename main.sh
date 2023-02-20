@@ -5,6 +5,7 @@ export assume_role_password_encrypted="$(cat ~/.password_assume_role_encrypted)"
 export tmp_credentials="/tmp/aws_temporary_credentials"
 export aws_cli_results="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results"
 export aws_cli_logs="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/logs"
+export aws_cli_images="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/images"
 export aws_cli_input_tmp="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/inputs"
 export aws_tmp_input="/tmp/aws_tmp_input_23647494949484.txt"
 export aws_assume_role_print_account_info="false"
@@ -33,15 +34,13 @@ export AWS_DEFAULT_OUTPUT="json"
 alias get-account-alias='aws iam list-account-aliases'
 alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Account" --output text)'
 
-# Import sub-commandline.
-for module in $(echo "common services"); do
-	for script in $(ls ${AWS_CLI_SOURCE_SCRIPTS}/${module}); do
-		source ${AWS_CLI_SOURCE_SCRIPTS}/${module}/$script
-	done
+# Import sub-commandlines.
+for script in $(find ${AWS_CLI_SOURCE_SCRIPTS} -type f -name '*.sh' | grep -v main.sh); do
+	source $script
 done
 
 # Add hot-keys
-zle -N aws_help
+# zle -N aws_help
 zle -N aws_main_function
 bindkey '^@' aws_main_function
-bindkey '^e' aws_help
+# bindkey '^e' aws_help

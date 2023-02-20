@@ -5,7 +5,7 @@ aws_datapipeline_list() {
 }
 
 aws_datapipeline_check_using() {
-	aws_account_infos
+	aws_account_info
 	echo "List all data pipelines"
 	aws datapipeline list-pipelines
 }

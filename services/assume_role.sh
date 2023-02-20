@@ -108,7 +108,7 @@ aws_assume_role_is_tmp_credential_valid() {
 
 aws_call_assume_role() {
 	# Do later (Validate the variable of ASSUMED_ROLE before calling assume role)
-	unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN ASSUMED_ROLE
+	unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN ASSUMED_ROLE AWS_ACCOUNT_ID
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
 
@@ -178,13 +178,16 @@ aws_assume_role_set_name_with_hint_peco() {
 
 }
 
-aws_account_info() {
-	get-account-alias
-
+aws_assume_role_get_aws_account_id() {
 	local aws_account_id=$(aws_run_commandline_with_retry 'aws sts get-caller-identity --query "Account" --output text' "true")
 	export AWS_ACCOUNT_ID=$aws_account_id
-	echo "AccountId ${AWS_ACCOUNT_ID}"
 
+}
+
+aws_account_info() {
+	get-account-alias
+	aws_assume_role_get_aws_account_id
+	echo "AccountId ${AWS_ACCOUNT_ID}"
 	echo AWS Region ${AWS_REGION:?"The AWS_REGION is unset or empty"}
 }
 

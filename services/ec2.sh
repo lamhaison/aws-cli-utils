@@ -52,6 +52,18 @@ aws_ec2_start() {
 aws_ec2_list_images() {
 	aws_run_commandline "aws ec2 describe-images --owners self"
 }
+
+aws_ec2_list_aws_default_images() {
+	aws_run_commandline " \
+		aws ec2 describe-images \
+			--filters 'Name=architecture,Values=x86_64' \
+			'Name=virtualization-type,Values=hvm' 'Name=root-device-type,Values=ebs' \
+			'Name=block-device-mapping.volume-type,Values=gp2' \
+			'Name=ena-support,Values=true' 'Name=owner-alias,Values=amazon' \
+			'Name=name,Values=*amzn2-ami-hvm-2.0.????????.?-x86_64-gp2' \
+			--query 'Images[*].[ImageId,Name]' --output text
+	"
+}
 aws_ec2_create_image() {
 	instance_id=$1
 	echo To create a image from the ec2 instance ${instance_id:?"The instace_id is unset or empty"}

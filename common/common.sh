@@ -59,10 +59,16 @@ aws_run_commandline() {
 	aws_run_commandline_with_logging "${aws_run_commandline}"
 }
 
+function aws_commandline_logging() {
+	local aws_commandline_logging=$(echo ${1:?'aws_commandline is unset or empty'} | tr -d '\t' | tr -d '\n' | tr -s ' ')
+
+	if [ "$aws_show_commandline" = "true" ]; then
+		echo "Running commandline [ ${aws_commandline_logging} ]"
+	fi
+}
+
 aws_run_commandline_with_logging() {
-	aws_commandline=$1
-	aws_commandline_logging=$(echo ${aws_commandline:?'aws_commandline is unset or empty'} | tr -d '\t' | tr -d '\n')
-	# aws_commandline_logging=$(echo ${aws_commandline})
+	local aws_commandline=$1
 	local log_file_path=${aws_cli_logs}/${ASSUME_ROLE}.log
 
 	if [ "$aws_show_log_uploaded" = "true" ]; then
@@ -74,6 +80,7 @@ aws_run_commandline_with_logging() {
 		local tee_command="tee -a ${log_file_path}"
 	fi
 
+	# TODO Later (Consider to remove it because we add aws_commandline_logging function with condition)
 	if [ "$aws_show_commandline" = "true" ]; then
 		local detail_commandline_tee_command="${tee_command}"
 	else
@@ -81,7 +88,7 @@ aws_run_commandline_with_logging() {
 	fi
 
 	echo "------------------------------STARTED--$(date '+%Y-%m-%d-%H-%M-%S')-----------------------------------------" | eval $tee_command >/dev/null
-	echo "Running commandline [ ${aws_commandline_logging} ]" | eval $detail_commandline_tee_command
+	aws_commandline_logging ${aws_commandline} | eval $detail_commandline_tee_command
 	aws_commandline_result=$(aws_run_commandline_with_retry "${aws_commandline}" "${ignored_error_when_retry}")
 	echo $aws_commandline_result | eval $tee_command
 	echo "------------------------------FINISHED-$(date '+%Y-%m-%d-%H-%M-%S')-----------------------------------------" | eval $tee_command >/dev/null

@@ -65,10 +65,15 @@ aws_s3_get_bucket_arn_with_hint() {
 # }
 
 aws_s3_create() {
-	aws_s3_bucket_name=$1
-	aws s3api create-bucket \
-		--bucket ${aws_s3_bucket_name:?"aws_s3_bucket_name is unset or empty"} \
-		--create-bucket-configuration LocationConstraint=${AWS_REGION}
+	local aws_s3_bucket_name=$1
+	# Don't have to specific bucket configuration if it is region us-east-1
+	local aws_s3_cmd_created="aws s3api create-bucket --bucket ${aws_s3_bucket_name:?'aws_s3_bucket_name is unset or empty'}"
+	if [[ "us-east-1" != "${AWS_REGION}" ]]; then
+		aws_s3_cmd_created="${aws_s3_cmd_created} --create-bucket-configuration LocationConstraint=${AWS_REGION}"
+	fi
+
+	eval ${aws_s3_cmd_created}
+
 }
 
 aws_s3_rm() {

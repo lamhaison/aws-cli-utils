@@ -71,7 +71,7 @@ aws_s3_create() {
 		--create-bucket-configuration LocationConstraint=${AWS_REGION}
 }
 
-x() {
+aws_s3_rm() {
 	aws_s3_bucket_name=$1
 	echo "We didn't run the commandline, we just suggest the commandline"
 	echo "If you want ot process it please run the commandline \

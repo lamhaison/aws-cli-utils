@@ -130,7 +130,7 @@ aws_rds_create_db_cluster_snapshot() {
 		"
 }
 
-aws_rds_delete_db_cluster_snapshot() {
+aws_rds_rm_db_cluster_snapshot() {
 	aws_rds_db_cluster_snapshot_name=$1
 	aws_run_commandline "\
 		aws rds delete-db-cluster-snapshot \
@@ -165,7 +165,7 @@ aws_rds_share_db_cluster_snapshot_with_other_aws_account() {
 
 }
 
-aws_rds_delete_db_snapshot() {
+aws_rds_rm_db_snapshot() {
 	aws_rds_db_snapshot_name=$1
 	aws_run_commandline "\
 		aws rds delete-db-snapshot --db-snapshot-identifier \

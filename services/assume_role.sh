@@ -132,6 +132,11 @@ aws_call_assume_role() {
 }
 
 aws_assume_role_set_name() {
+
+	function aws_assume_role_save_current_assume_role() {
+		echo "${ASSUME_ROLE}" >${1:?'aws_cli_current_assume_role_name is unset or empty'}
+	}
+
 	aws_assume_role_name=$1
 	echo You set the assume role name ${aws_assume_role_name:?"The assume role name is unset or empty"}
 
@@ -153,27 +158,31 @@ aws_assume_role_set_name() {
 
 	echo -ne "\e]1;AWS-PROFILE[ ${ASSUME_ROLE} ]\a"
 	echo "You are using the assume role name ${ASSUME_ROLE}"
+
+	aws_assume_role_save_current_assume_role ${aws_cli_current_assume_role_name}
 }
 
 aws_assume_role_set_name_with_hint() {
-	# set -x
-	aws_assume_role_set_name_with_hint_peco
-	# set +x
-}
 
-aws_assume_role_set_name_with_hint_peco() {
-	echo "Please input your assume role name >"
-	local assume_role_list=$(grep -iE "\[*\]" ~/.aws/config |
-		tr -d "[]" | awk -F " " '{print $2}')
+	function peco_aws_asssume_role_list() {
+		grep -iE "\[*\]" ~/.aws/config |
+			tr -d "[]" | awk -F " " '{print $2}'
 
-	if [[ -n "${ASSUME_ROLE}" ]]; then
-		assume_role_list=$(echo ${assume_role_list} | grep -v ${ASSUME_ROLE})
-		assume_role_list=$(echo "${ASSUME_ROLE}\n${assume_role_list}")
+	}
 
-	fi
+	function aws_assume_role_insert_current_asssume_role_first() {
+		assume_role_list=$1
+		if [[ -n "${ASSUME_ROLE}" ]]; then
+			assume_role_list=$(echo ${assume_role_list} | grep -v ${ASSUME_ROLE})
+			assume_role_list=$(echo "${ASSUME_ROLE}\n${assume_role_list}")
 
-	# local assume_role_name=$(echo "${assume_role_list}" | peco --selection-prefix "Current >")
-	local assume_role_name=$(echo "${assume_role_list}" | peco)
+		fi
+
+		echo ${assume_role_list}
+	}
+
+	local assume_role_list=$(aws_assume_role_insert_current_asssume_role_first "$(peco_aws_asssume_role_list)")
+	local assume_role_name=$(peco_create_menu 'echo ${assume_role_list}' '--prompt "Please select your assume role name >"')
 	aws_assume_role_set_name $assume_role_name
 
 }

@@ -3,6 +3,7 @@ export AWS_CLI_SOURCE_SCRIPTS="$(dirname -- "$0")"
 
 export assume_role_password_encrypted="$(cat ~/.password_assume_role_encrypted)"
 export tmp_credentials="/tmp/aws_temporary_credentials"
+
 export aws_cli_results="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results"
 export aws_cli_logs="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/logs"
 export aws_cli_images="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/images"
@@ -38,6 +39,15 @@ alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Acco
 for script in $(find ${AWS_CLI_SOURCE_SCRIPTS} -type f -name '*.sh' | grep -v main.sh); do
 	source $script
 done
+
+# Reuse session in the new terminal
+export aws_cli_current_assume_role_name="/tmp/aws_cli_current_assume_role_SW7DNb48oQB57"
+export aws_cli_load_current_assume_role=true
+# If the file is not empty
+# TODO Later (To check if the credential is expired, don't autoload credential)
+if [ "true" = "${aws_cli_load_current_assume_role}" ] && [ -s "${aws_cli_current_assume_role_name}" ]; then
+	aws_assume_role_set_name $(cat ${aws_cli_current_assume_role_name})
+fi
 
 # Add hot-keys
 # zle -N aws_help

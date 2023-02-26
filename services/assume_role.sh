@@ -112,12 +112,10 @@ aws_assume_role_load_current_assume_role_for_new_tab() {
 	local tmp_credentials_file_zip="${tmp_credentials}/${aws_assume_role}.zip"
 	local assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
 
-	local expired_tmp_credential=$(find ${tmp_credentials} -name ${aws_assume_role}.zip -mmin +${assume_role_duration})
 	if [ "true" = "${aws_cli_load_current_assume_role}" ] &&
 		# the file current aws assume role exists
 		[ -s "${aws_cli_current_assume_role_name}" ] &&
-		[ "true" = "$(aws_assume_role_unzip_tmp_credential_valid ${aws_assume_role})" ] &&
-		[ -z "${expired_tmp_credential}" ]; then
+		[ "true" = "$(aws_assume_role_unzip_tmp_credential_valid ${aws_assume_role})" ]; then
 		aws_assume_role_set_name ${aws_assume_role}
 	fi
 }
@@ -138,11 +136,7 @@ aws_call_assume_role() {
 
 	assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
 	if [ -f ${tmp_credentials_file_zip} ]; then
-
-		valid_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -mmin +${assume_role_duration})
-		empty_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -empty)
-		# Don't find any file is older than expired-time
-		if [ -z "${valid_file}" ] && [ -z "${empty_file}" ]; then
+		if [ "$(aws_assume_role_unzip_tmp_credential_valid ${ASSUME_ROLE})" = "true" ]; then
 			echo "Re-use the temporary credential of ${ASSUME_ROLE} at ${tmp_credentials_file_zip}"
 		else
 			echo "The credential is older than ${aws_assume_role_expired_time} or the credential is empty then we will run assume-role ${ASSUME_ROLE} again"

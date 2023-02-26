@@ -46,7 +46,7 @@ export aws_cli_load_current_assume_role=true
 # If the file is not empty
 # TODO Later (To check if the credential is expired, don't autoload credential)
 if [ "true" = "${aws_cli_load_current_assume_role}" ] && [ -s "${aws_cli_current_assume_role_name}" ]; then
-	aws_assume_role_set_name $(cat ${aws_cli_current_assume_role_name})
+	aws_assume_role_load_current_assume_role_for_new_tab
 fi
 
 # Add hot-keys

@@ -121,7 +121,7 @@ aws_rds_get_snapshots() {
 }
 
 aws_rds_create_db_cluster_snapshot() {
-	aws_rds_dbdb__cluster_name=$1
+	aws_rds_db_cluster_name=$1
 	aws_run_commandline \
 		"
 		aws rds create-db-cluster-snapshot \

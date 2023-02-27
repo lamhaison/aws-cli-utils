@@ -18,6 +18,10 @@ aws_assume_role_disable_fast_mode() {
 	export aws_assume_role_print_account_info=true
 }
 
+aws_assume_role_disable_load_current_assume_role_for_new_tab() {
+	rm -rf ${aws_cli_current_assume_role_name} >/dev/null
+}
+
 aws_assume_role_disable_show_detail_commandline() {
 	export aws_show_commandline=false
 }

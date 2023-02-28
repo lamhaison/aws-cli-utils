@@ -25,27 +25,38 @@ aws_ec2_list() {
 }
 
 aws_ec2_get() {
-	instance_id=$1
-	echo Get the information of the ec2 ${instance_id:?"The instace_id is unset or empty"}
-	aws_run_commandline "aws ec2 describe-instances --instance-ids $instance_id"
+	aws_run_commandline "\
+		aws ec2 describe-instances \
+			--instance-ids ${1:?"The aws_ec2_instance_id is unset or empty"}
+	"
 }
 
 aws_ec2_reboot() {
-	instance_id=$1
-	echo Reboot the ec2 instance ${instance_id:?"The instace_id is unset or empty"}
-	aws_run_commandline "aws ec2 reboot-instances --instance-ids $instance_id"
+	aws_run_commandline "\
+		aws ec2 reboot-instances \
+			--instance-ids ${1:?"The aws_ec2_instance_id is unset or empty"}
+	"
 }
 
 aws_ec2_stop() {
-	instance_id=$1
-	echo Stop the ec2 instance ${instance_id:?"The instace_id is unset or empty"}
-	aws_run_commandline "aws ec2 stop-instances --instance-ids $instance_id"
+	aws_run_commandline "\
+		aws ec2 stop-instances \
+			--instance-ids ${1:?"The aws_ec2_instance_id is unset or empty"}
+	"
 }
 
 aws_ec2_start() {
-	instance_id=$1
-	echo start the ec2 instance ${instance_id:?"The instace_id is unset or empty"}
-	aws_run_commandline "aws ec2 start-instances --instance-ids $instance_id"
+	aws_run_commandline "\
+		aws ec2 start-instances \
+			--instance-ids ${1:?"The aws_ec2_instance_id is unset or empty"}
+	"
+}
+
+aws_ec2_rm_instruction() {
+	aws_commandline_logging "\
+		aws ec2 terminate-instances \
+			--instance-ids ${1:="\$aws_ec2_instance_ids"}
+	"
 }
 
 # Ec2 image
@@ -65,16 +76,16 @@ aws_ec2_list_aws_default_images() {
 	"
 }
 aws_ec2_create_image() {
-	instance_id=$1
-	echo To create a image from the ec2 instance ${instance_id:?"The instace_id is unset or empty"}
+	local aws_ec2_instance_id=$1
+	echo To create a image from the ec2 instance ${aws_ec2_instance_id:?"The instace_id is unset or empty"}
 	aws_ec2_instance_name=$(aws ec2 describe-instances \
-		--instance-ids $instance_id \
+		--instance-ids $aws_ec2_instance_id \
 		--query 'Reservations[*].Instances[*].{Tags:Tags[?Key == `Name`] | [0].Value}' \
 		--output text)
 
 	aws ec2 create-image \
 		--no-reboot \
-		--instance-id $instance_id \
+		--instance-id $aws_ec2_instance_id \
 		--name ${aws_ec2_instance_name}-$(date '+%Y-%m-%d-%H-%M-%S') \
 		--description ${aws_ec2_instance_name}-$(date '+%Y-%m-%d-%H-%M-%S') \
 		--query "ImageId" --output text

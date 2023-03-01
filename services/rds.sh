@@ -22,6 +22,7 @@ aws_rds_list_db_instances() {
 	aws_run_commandline " \
 		aws rds describe-db-instances \
 		--query '*[].{\
+			DBClusterIdentifier:DBClusterIdentifier,\
 			DBInstanceIdentifier:DBInstanceIdentifier,\
 			DBInstanceStatus:DBInstanceStatus,\
 			Engine:Engine,Endpoint:Endpoint.Address,\

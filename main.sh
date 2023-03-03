@@ -42,7 +42,7 @@ done
 
 # Reuse session in the new terminal
 export aws_cli_current_assume_role_name="/tmp/aws_cli_current_assume_role_SW7DNb48oQB57"
-export aws_cli_load_current_assume_role=true
+export aws_cli_load_current_assume_role=false
 # If the file is not empty
 # TODO Later (To check if the credential is expired, don't autoload credential)
 if [ "true" = "${aws_cli_load_current_assume_role}" ] && [ -s "${aws_cli_current_assume_role_name}" ]; then

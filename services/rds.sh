@@ -22,6 +22,7 @@ aws_rds_list_db_instances() {
 	aws_run_commandline " \
 		aws rds describe-db-instances \
 		--query '*[].{\
+			DBClusterIdentifier:DBClusterIdentifier,\
 			DBInstanceIdentifier:DBInstanceIdentifier,\
 			DBInstanceStatus:DBInstanceStatus,\
 			Engine:Engine,Endpoint:Endpoint.Address,\
@@ -121,7 +122,7 @@ aws_rds_get_snapshots() {
 }
 
 aws_rds_create_db_cluster_snapshot() {
-	aws_rds_dbdb__cluster_name=$1
+	aws_rds_db_cluster_name=$1
 	aws_run_commandline \
 		"
 		aws rds create-db-cluster-snapshot \
@@ -130,7 +131,7 @@ aws_rds_create_db_cluster_snapshot() {
 		"
 }
 
-aws_rds_delete_db_cluster_snapshot() {
+aws_rds_rm_db_cluster_snapshot() {
 	aws_rds_db_cluster_snapshot_name=$1
 	aws_run_commandline "\
 		aws rds delete-db-cluster-snapshot \
@@ -165,7 +166,7 @@ aws_rds_share_db_cluster_snapshot_with_other_aws_account() {
 
 }
 
-aws_rds_delete_db_snapshot() {
+aws_rds_rm_db_snapshot() {
 	aws_rds_db_snapshot_name=$1
 	aws_run_commandline "\
 		aws rds delete-db-snapshot --db-snapshot-identifier \
@@ -236,4 +237,21 @@ aws_rds_list_db_cluster_snapshots() {
 			--output table
 	"
 
+}
+
+aws_rds_rm_db_instance_instruction() {
+	aws_rds_db_instance_name=$1
+
+	aws_commandline_logging " \
+		aws rds modify-db-instance \
+			--db-instance-identifier ${aws_rds_db_instance_name:="\$aws_rds_db_instance_name"} \
+			--apply-immediately \
+			--no-deletion-protection
+	"
+
+	aws_commandline_logging " \
+		aws rds delete-db-instance \
+			--db-instance-identifier ${aws_rds_db_instance_name:="\$aws_rds_db_instance_name"} \
+			--skip-final-snapshot
+	"
 }

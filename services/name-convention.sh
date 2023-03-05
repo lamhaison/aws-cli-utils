@@ -25,6 +25,8 @@ aws_name_convention_get_s3_bucket_name_with_hint() {
 
 	aws_name_convention_resource_types="static \
 		vod terraform cf-logs \
+		lambda-functions-zip-files \
+		homepage \
 		alb-logs webapp-react admin-react backup athena-query-results"
 
 	echo "List resource type ${aws_name_convention_resource_types}"

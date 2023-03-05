@@ -42,13 +42,23 @@ aws_ecs_get_service_with_hint() {
 
 }
 
-aws_ecs_get_scheduled_actions() {
+aws_ecs_list_scheduled_actions() {
 
 	aws_run_commandline \
 		"
 	aws application-autoscaling describe-scheduled-actions \
 		--service-namespace ecs
 	"
+}
+
+aws_ecs_list_scaling_policies() {
+	# TODO Later
+	aws_run_commandline "\
+		aws application-autoscaling describe-scaling-policies \
+			--service-namespace ecs --query '*[].Alarms[0].AlarmName' \
+			--output text | xargs aws cloudwatch describe-alarms --alarm-names
+	"
+
 }
 
 aws_ecs_get_taskdefinition() {

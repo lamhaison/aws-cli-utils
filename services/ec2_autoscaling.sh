@@ -69,8 +69,7 @@ aws_autoscaling_set_desired_capacity_with_hint() {
 
 # TODO LATER
 aws_autoscaling_detach_instance_with_hint() {
-	# aws_autoscaling_name=$(peco_create_menu 'peco_aws_autoscaling_list')
-
+	echo "TODO Later"
 }
 
 aws_autoscaling_get_launching_template() {

@@ -91,15 +91,37 @@ aws_assume_role_get_credentail() {
 
 }
 
-aws_assume_role_is_tmp_credential_valid() {
-
-	local tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
-	local tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
+aws_assume_role_unzip_tmp_credential_valid() {
+	local aws_assume_role=$1
+	local tmp_credentials_file_zip="${tmp_credentials}/${aws_assume_role}.zip"
 	local assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
 
-	local valid_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -mmin +${assume_role_duration})
+	local expired_tmp_credential=$(find ${tmp_credentials} -name ${aws_assume_role}.zip -mmin +${assume_role_duration})
+	# the file aws assume role zip file exists and not empty and not expired
+	if [ -s "${tmp_credentials_file_zip}" ] && [ -z "${expired_tmp_credential}" ]; then
+		echo "true"
+	else
+		echo "false"
+	fi
 
-	if [[ -n "${valid_file}" ]]; then
+}
+
+aws_assume_role_load_current_assume_role_for_new_tab() {
+
+	local aws_assume_role=$(cat ${aws_cli_current_assume_role_name})
+	local tmp_credentials_file_zip="${tmp_credentials}/${aws_assume_role}.zip"
+	local assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
+
+	if [ "true" = "${aws_cli_load_current_assume_role}" ] &&
+		# the file current aws assume role exists
+		[ -s "${aws_cli_current_assume_role_name}" ] &&
+		[ "true" = "$(aws_assume_role_unzip_tmp_credential_valid ${aws_assume_role})" ]; then
+		aws_assume_role_set_name ${aws_assume_role}
+	fi
+}
+
+aws_assume_role_is_tmp_credential_valid() {
+	if [[ "true" = "$(aws_assume_role_unzip_tmp_credential_valid ${ASSUME_ROLE})" ]]; then
 		echo -ne "\e]1;AWS-PROFILE[ ${ASSUME_ROLE} ]\a"
 		aws_assume_role_re_use_current
 	fi
@@ -108,17 +130,13 @@ aws_assume_role_is_tmp_credential_valid() {
 
 aws_call_assume_role() {
 	# Do later (Validate the variable of ASSUMED_ROLE before calling assume role)
-	unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN ASSUMED_ROLE
+	unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN ASSUMED_ROLE AWS_ACCOUNT_ID
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
 
 	assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
 	if [ -f ${tmp_credentials_file_zip} ]; then
-
-		valid_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -mmin +${assume_role_duration})
-		empty_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE}.zip -empty)
-		# Don't find any file is older than expired-time
-		if [ -z "${valid_file}" ] && [ -z "${empty_file}" ]; then
+		if [ "$(aws_assume_role_unzip_tmp_credential_valid ${ASSUME_ROLE})" = "true" ]; then
 			echo "Re-use the temporary credential of ${ASSUME_ROLE} at ${tmp_credentials_file_zip}"
 		else
 			echo "The credential is older than ${aws_assume_role_expired_time} or the credential is empty then we will run assume-role ${ASSUME_ROLE} again"
@@ -132,6 +150,11 @@ aws_call_assume_role() {
 }
 
 aws_assume_role_set_name() {
+
+	function aws_assume_role_save_current_assume_role() {
+		echo "${ASSUME_ROLE}" >${1:?'aws_cli_current_assume_role_name is unset or empty'}
+	}
+
 	aws_assume_role_name=$1
 	echo You set the assume role name ${aws_assume_role_name:?"The assume role name is unset or empty"}
 
@@ -153,38 +176,45 @@ aws_assume_role_set_name() {
 
 	echo -ne "\e]1;AWS-PROFILE[ ${ASSUME_ROLE} ]\a"
 	echo "You are using the assume role name ${ASSUME_ROLE}"
+
+	aws_assume_role_save_current_assume_role ${aws_cli_current_assume_role_name}
 }
 
 aws_assume_role_set_name_with_hint() {
-	# set -x
-	aws_assume_role_set_name_with_hint_peco
-	# set +x
+
+	function peco_aws_asssume_role_list() {
+		grep -iE "\[*\]" ~/.aws/config |
+			tr -d "[]" | awk -F " " '{print $2}'
+
+	}
+
+	function aws_assume_role_insert_current_asssume_role_first() {
+		assume_role_list=$1
+		if [[ -n "${ASSUME_ROLE}" ]]; then
+			assume_role_list=$(echo ${assume_role_list} | grep -v ${ASSUME_ROLE})
+			assume_role_list=$(echo "${ASSUME_ROLE}\n${assume_role_list}")
+
+		fi
+
+		echo ${assume_role_list}
+	}
+
+	local assume_role_list=$(aws_assume_role_insert_current_asssume_role_first "$(peco_aws_asssume_role_list)")
+	local assume_role_name=$(peco_create_menu 'echo ${assume_role_list}' '--prompt "Please select your assume role name >"')
+	aws_assume_role_set_name $assume_role_name
+
 }
 
-aws_assume_role_set_name_with_hint_peco() {
-	echo "Please input your assume role name >"
-	local assume_role_list=$(grep -iE "\[*\]" ~/.aws/config |
-		tr -d "[]" | awk -F " " '{print $2}')
-
-	if [[ -n "${ASSUME_ROLE}" ]]; then
-		assume_role_list=$(echo ${assume_role_list} | grep -v ${ASSUME_ROLE})
-		assume_role_list=$(echo "${ASSUME_ROLE}\n${assume_role_list}")
-
-	fi
-
-	# local assume_role_name=$(echo "${assume_role_list}" | peco --selection-prefix "Current >")
-	local assume_role_name=$(echo "${assume_role_list}" | peco)
-	aws_assume_role_set_name $assume_role_name
+aws_assume_role_get_aws_account_id() {
+	local aws_account_id=$(aws_run_commandline_with_retry 'aws sts get-caller-identity --query "Account" --output text' "true")
+	export AWS_ACCOUNT_ID=$aws_account_id
 
 }
 
 aws_account_info() {
 	get-account-alias
-
-	local aws_account_id=$(aws_run_commandline_with_retry 'aws sts get-caller-identity --query "Account" --output text' "true")
-	export AWS_ACCOUNT_ID=$aws_account_id
+	aws_assume_role_get_aws_account_id
 	echo "AccountId ${AWS_ACCOUNT_ID}"
-
 	echo AWS Region ${AWS_REGION:?"The AWS_REGION is unset or empty"}
 }
 

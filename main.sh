@@ -1,5 +1,23 @@
-# Get the current directory of the main.sh script.
-export AWS_CLI_SOURCE_SCRIPTS="$(dirname -- "$0")"
+#!/bin/bash
+#
+# @version 		1.0
+# @script		main.sh
+# @description	TODO : to load function for aws-cli-utils
+# $1: Where is looking for sh files and source the list
+# $2: Do you want to set the bind key?
+
+AWS_CLI_SOURCE_SCRIPTS=$1
+
+if [[ -z "${AWS_CLI_SOURCE_SCRIPTS}" ]]; then
+	LOCAL_AWS_CLI_SOURCE_SCRIPTS=$(dirname -- "$0")
+	if [[ "${LOCAL_AWS_CLI_SOURCE_SCRIPTS}" = "." ]]; then
+		DEFAULT_AWS_CLI_SOURCE_SCRIPTS='/opt/lamhaison-tools/aws-cli-utils'
+	fi
+
+	export AWS_CLI_SOURCE_SCRIPTS="${LOCAL_AWS_CLI_SOURCE_SCRIPTS:=${DEFAULT_AWS_CLI_SOURCE_SCRIPTS}}"
+else
+	export AWS_CLI_SOURCE_SCRIPTS=${AWS_CLI_SOURCE_SCRIPTS}
+fi
 
 export assume_role_password_encrypted="$(cat ~/.password_assume_role_encrypted)"
 export tmp_credentials="/tmp/aws_temporary_credentials"
@@ -36,7 +54,7 @@ alias get-account-alias='aws iam list-account-aliases'
 alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Account" --output text)'
 
 # Import sub-commandlines.
-for script in $(find ${AWS_CLI_SOURCE_SCRIPTS} -type f -name '*.sh' | grep -v main.sh); do
+for script in $(find ${AWS_CLI_SOURCE_SCRIPTS} -type f -name '*.sh' | grep -v main.sh | grep -v main.sh | grep -v test.sh | grep -v temp.sh); do
 	source $script
 done
 
@@ -49,8 +67,12 @@ if [ "true" = "${aws_cli_load_current_assume_role}" ] && [ -s "${aws_cli_current
 	aws_assume_role_load_current_assume_role_for_new_tab
 fi
 
-# Add hot-keys
-# zle -N aws_help
-zle -N aws_main_function
-bindkey '^@' aws_main_function
+LHS_BIND_KEY=${2:='True'}
+
+if [[ "${LHS_BIND_KEY}" = "True" ]]; then
+	# Add hot-keys
+	# zle -N aws_help
+	zle -N aws_main_function
+	bindkey '^@' aws_main_function
 # bindkey '^e' aws_help
+fi

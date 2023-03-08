@@ -36,7 +36,7 @@ aws_name_convention_get_s3_bucket_name_with_hint() {
 
 }
 
-aws_name_convention_get_cloudwatch_dasgboard() {
+aws_name_convention_get_cloudwatch_dashboard() {
 	aws_name_convention_cloudwatch_dashboard_name="overview \
 		benchmark db-connection alb-5xx \
 		"

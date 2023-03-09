@@ -9,16 +9,24 @@ aws_ecr_login() {
 	if [[ -z "${AWS_ACCOUNT_ID}" ]]; then
 		aws_assume_role_get_aws_account_id
 	fi
-	aws ecr get-login-password --region ${AWS_REGION} | docker login \
-		--username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+
+	local aws_ecr_docker_login_password=$(aws ecr get-login-password --region ${AWS_REGION})
+
+	local aws_ecr_docker_login_cmd=$(
+		echo "echo '${aws_ecr_docker_login_password}' | docker login \
+				--username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+	)
+
+	aws_run_commandline "${aws_ecr_docker_login_cmd}"
+
 }
 
 aws_ecr_logout() {
-
 	if [[ -z "${AWS_ACCOUNT_ID}" ]]; then
 		aws_assume_role_get_aws_account_id
 	fi
-	docker logout ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+	aws_run_commandline "docker logout ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+
 }
 
 aws_ecr_list_images() {

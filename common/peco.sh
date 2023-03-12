@@ -40,10 +40,10 @@ peco_commandline_input() {
 
 	local commandline="${1}"
 	local result_cached=$2
-	local input_expired_time="${3:=$peco_input_expired_time}"
+	local input_expired_time="${3:-$peco_input_expired_time}"
 
 	local md5_hash=$(echo $commandline | md5)
-	local input_folder="${aws_cli_input_tmp}/${ASSUME_ROLE:=NOTSET}"
+	local input_folder="${aws_cli_input_tmp}/${ASSUME_ROLE:-NOTSET}"
 	mkdir -p ${input_folder}
 	local input_file_path="${input_folder}/${md5_hash}.txt"
 	local empty_file=$(find ${input_folder} -name ${md5_hash}.txt -empty)

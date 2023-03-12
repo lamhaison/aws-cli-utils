@@ -14,7 +14,7 @@ if [[ -z "${AWS_CLI_SOURCE_SCRIPTS}" ]]; then
 		DEFAULT_AWS_CLI_SOURCE_SCRIPTS='/opt/lamhaison-tools/aws-cli-utils'
 	fi
 
-	export AWS_CLI_SOURCE_SCRIPTS="${LOCAL_AWS_CLI_SOURCE_SCRIPTS:=${DEFAULT_AWS_CLI_SOURCE_SCRIPTS}}"
+	export AWS_CLI_SOURCE_SCRIPTS="${LOCAL_AWS_CLI_SOURCE_SCRIPTS:-${DEFAULT_AWS_CLI_SOURCE_SCRIPTS}}"
 else
 	export AWS_CLI_SOURCE_SCRIPTS=${AWS_CLI_SOURCE_SCRIPTS}
 fi
@@ -67,7 +67,7 @@ if [ "true" = "${aws_cli_load_current_assume_role}" ] && [ -s "${aws_cli_current
 	aws_assume_role_load_current_assume_role_for_new_tab
 fi
 
-LHS_BIND_KEY=${2:='True'}
+LHS_BIND_KEY=${2:-'True'}
 
 if [[ "${LHS_BIND_KEY}" = "True" ]]; then
 	# Add hot-keys

@@ -55,7 +55,7 @@ aws_ec2_start() {
 aws_ec2_rm_instruction() {
 	aws_commandline_logging "\
 		aws ec2 terminate-instances \
-			--instance-ids ${1:="\$aws_ec2_instance_ids"}
+			--instance-ids ${1:-"\$aws_ec2_instance_ids"}
 	"
 }
 
@@ -161,7 +161,7 @@ aws_sg_add_rule_instruction() {
 	echo "\
 		# Allow access the ssh from a specific IP address
 		aws ec2 authorize-security-group-ingress \
-		--group-id ${aws_sg_id:="\$aws_sg_id"} \
+		--group-id ${aws_sg_id:-"\$aws_sg_id"} \
 		--protocol tcp --port 22 \
 		--cidr $(dig +short myip.opendns.com @resolver1.opendns.com)/32
 	"

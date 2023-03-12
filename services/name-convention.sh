@@ -12,13 +12,13 @@ aws_name_convention_get_long_env_name() {
 
 aws_name_convention_get_with_assume_role_name() {
 	local input_name=$1
-	echo ${ASSUME_ROLE:="ASSUME_ROLE"}-${input_name:="input_name"}
+	echo ${ASSUME_ROLE:-"ASSUME_ROLE"}-${input_name:-"input_name"}
 }
 
 aws_name_convention_get_s3_bucket_name() {
 	aws_s3_bucket_name=$1
 	echo "The bucket name should will be like that \
-		[ ${ASSUME_ROLE:="ASSUME_ROLE"}-${aws_s3_bucket_name:?"aws_s3_bucket_name is unset or empty"}  ]" | tr -s ''
+		[ ${ASSUME_ROLE:-"ASSUME_ROLE"}-${aws_s3_bucket_name:?"aws_s3_bucket_name is unset or empty"}  ]" | tr -s ''
 }
 
 aws_name_convention_get_s3_bucket_name_with_hint() {

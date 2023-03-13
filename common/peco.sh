@@ -93,7 +93,7 @@ peco_aws_ecs_list_services() {
 
 # AWS ECR
 
-peco_aws_ecr_list_repositorie_names() {
+peco_aws_ecr_list_repo_names() {
 	peco_aws_input 'aws ecr describe-repositories --query "*[].repositoryName"' 'true'
 }
 

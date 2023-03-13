@@ -1,6 +1,6 @@
 #!/bin/bash
 
-aws_ecr_list_repo() {
+aws_ecr_list_repos() {
 	aws_run_commandline "aws ecr describe-repositories --query \"*[].repositoryArn\""
 }
 
@@ -52,12 +52,12 @@ aws_ecr_get_latest_image() {
 
 aws_ecr_get_latest_image_with_hint() {
 	echo "Your repository name >"
-	aws_ecr_get_latest_image $(peco_create_menu 'peco_aws_ecr_list_repositorie_names')
+	aws_ecr_get_latest_image $(peco_create_menu 'peco_aws_ecr_list_repo_names')
 }
 
 aws_ecr_list_images_with_hint() {
 	echo "Your repository name >"
-	aws_ecr_list_images $(peco_create_menu 'peco_aws_ecr_list_repositorie_names')
+	aws_ecr_list_images $(peco_create_menu 'peco_aws_ecr_list_repo_names')
 }
 
 aws_ecr_get_image() {
@@ -75,7 +75,7 @@ aws_ecr_get_image() {
 
 aws_ecr_pull_image_with_hint() {
 	echo "Your repository name >"
-	aws_ecr_repo_name=$(peco_create_menu 'peco_aws_ecr_list_repositorie_names')
+	aws_ecr_repo_name=$(peco_create_menu 'peco_aws_ecr_list_repo_names')
 	echo "Your image tag for ${aws_ecr_repo_name:?'aws_ecr_repo_name is unset or empty'} >"
 	# aws_ecr_repo_image_tag=$(echo "$(peco_aws_ecr_list_images ${aws_ecr_repo_name})" | peco)
 	aws_ecr_repo_image_tag=$(peco_create_menu "peco_aws_ecr_list_images ${aws_ecr_repo_name}")

@@ -50,9 +50,9 @@ aws_assume_role_unzip_tmp_credential() {
 	cd - >/dev/null
 }
 
-aws_assume_role_remove_tmp_credential() {
+aws_assume_role_rm_tmp_credential() {
 	assume_role_name_input=$1
-	tmp_credentials_file_zip=${tmp_credentials}/${assume_role_name_input:?"aws_assume_role_remove_tmp_credential is unset or empty"}.zip
+	tmp_credentials_file_zip=${tmp_credentials}/${assume_role_name_input:?"aws_assume_role_rm_tmp_credential is unset or empty"}.zip
 	if [ -f "${tmp_credentials_file_zip}" ]; then
 		rm -r ${tmp_credentials_file_zip}
 	fi

@@ -205,3 +205,13 @@ aws_ec2_other_commandlines() {
 	fi
 
 }
+
+aws_ec2_get_credential_from_metadata_instruction() {
+	local aws_meta_data_address="http://169.254.169.254"
+	cat <<-__EOF__
+		# Run on ec2
+		iam_role_name=\$(curl -s '${aws_meta_data_address}/latest/meta-data/iam/security-credentials/')
+		curl -s ${aws_meta_data_address}/latest/meta-data/iam/security-credentials/\${iam_role_name}
+	__EOF__
+
+}

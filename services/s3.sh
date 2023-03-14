@@ -139,3 +139,11 @@ aws_s3_get_presigned_url() {
 	"
 
 }
+
+aws_s3_cp_folder_instruction() {
+	echo "\
+		aws s3 cp s3://BUCKET_NAME/cf/cf-domain.com/cf-domain.com-2022-12 \
+			s3://NEW_BUCKET_NAME/cf-domain.com-2022-12/00-10 --recursive --exclude \"*\" --include \"CF_ID.2022-12-0*\"
+	"
+
+}

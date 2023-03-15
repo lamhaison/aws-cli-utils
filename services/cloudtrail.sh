@@ -22,7 +22,7 @@ aws_cloudtrail_get_aws_config_set_recorder_event_instruction() {
 
 aws_cloudtrail_list_event_names() {
 	local_aws_cloudtrail_list_event_name_peco_menu() {
-		local aws_cloudtrail_event_name="https://gist.githubusercontent.com/vltlhson/da04f0c3b2a114f952bac215d3808223/raw/255a9435d2b71fdb900739355699b3ddffa414c2/cloudTrailEventNames.list"
+		local aws_cloudtrail_event_name="https://gist.githubusercontent.com/lamhaison/8fe7937f147a6cb0ed446ef3ac17f972/raw/255a9435d2b71fdb900739355699b3ddffa414c2/cloudTrailEventNames.list"
 		curl --silent -q --request GET ${aws_cloudtrail_event_name}
 	}
 

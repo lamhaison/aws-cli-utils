@@ -94,6 +94,22 @@ aws_s3_rm_with_hint() {
 	aws_s3_rm_instruction $(peco_create_menu 'peco_aws_s3_list')
 }
 
+#
+# TODO aws_s3_get_location for getting bucket location.
+# @param	TODO The first parameter is the bucket name.
+# @return Buckets in Region us-east-1 have a LocationConstraint of null .
+#
+aws_s3_get_location() {
+	aws_run_commandline "\
+		aws s3api get-bucket-location --bucket ${1}	
+	"
+}
+
+aws_s3_get_location_with_hint() {
+	#
+	aws_s3_get_location $(peco_create_menu 'peco_aws_s3_list')
+}
+
 aws_s3_get_bucket_policy() {
 	aws_s3_bucket_name=$1
 	aws_run_commandline \
@@ -106,4 +122,28 @@ aws_s3_get_bucket_policy() {
 
 aws_s3_get_bucket_policy_with_hint() {
 	aws_s3_get_bucket_policy $(peco_create_menu 'peco_aws_s3_list')
+}
+
+#
+# TODO to get presign url for s3 object.
+# @param	The first parameter is the full path of object including s3 bucket name
+# 			For ex: s3://DOC-EXAMPLE-BUCKET/test2.txt
+#			The second parameter is the expires-in (integer) Number of seconds until the pre-signed URL expires.
+# 			Default is 3600 seconds.
+# @return
+#
+
+aws_s3_get_presigned_url() {
+	aws_run_commandline "\
+		aws s3 presign $1 --expires-in ${2:-3600}	
+	"
+
+}
+
+aws_s3_cp_folder_instruction() {
+	echo "\
+		aws s3 cp s3://BUCKET_NAME/cf/cf-domain.com/cf-domain.com-2022-12 \
+			s3://NEW_BUCKET_NAME/cf-domain.com-2022-12/00-10 --recursive --exclude \"*\" --include \"CF_ID.2022-12-0*\"
+	"
+
 }

@@ -1,5 +1,11 @@
 #!/bin/bash
 
+local_aws_ec2_instance_id_peco_menu() {
+	local aws_ec2_instance_id=$(peco_create_menu 'peco_aws_ec2_list')
+	aws_ec2_instance_id=$(echo "${aws_ec2_instance_id}" | awk -F "_" '{print $1}')
+	echo ${aws_ec2_instance_id}
+}
+
 # AWS ec2
 # List all ec2 instance(don't care stopped or running instances)
 aws_ec2_list_all() {
@@ -31,6 +37,10 @@ aws_ec2_get() {
 	"
 }
 
+aws_ec2_get_with_hint() {
+	aws_ec2_get $(local_aws_ec2_instance_id_peco_menu)
+}
+
 aws_ec2_reboot() {
 	aws_run_commandline "\
 		aws ec2 reboot-instances \
@@ -55,7 +65,7 @@ aws_ec2_start() {
 aws_ec2_rm_instruction() {
 	aws_commandline_logging "\
 		aws ec2 terminate-instances \
-			--instance-ids ${1:="\$aws_ec2_instance_ids"}
+			--instance-ids ${1:-"\$aws_ec2_instance_ids"}
 	"
 }
 
@@ -102,9 +112,7 @@ aws_ec2_connect() {
 }
 
 aws_ec2_connect_with_hint() {
-	aws_ec2_instance_id=$(peco_create_menu 'peco_aws_ec2_list')
-	aws_ec2_instance_id=$(echo "${aws_ec2_instance_id}" | awk -F "_" '{print $1}')
-	aws_ssm_connection_ec2 ${aws_ec2_instance_id}
+	aws_ssm_connection_ec2 $(local_aws_ec2_instance_id_peco_menu)
 }
 
 aws_ec2_list_eips() {
@@ -112,12 +120,11 @@ aws_ec2_list_eips() {
 }
 
 # VPC
-
 aws_ec2_list_vpcs() {
-	aws_run_commandline \
-		"
-		aws ec2 describe-vpcs --query '*[].{Id:VpcId,CidrBlock:CidrBlock,Name:Tags[?Key == \`Name\`] | [0].Value}' --output table
-		"
+	aws_run_commandline "\
+		aws ec2 describe-vpcs \
+			--query '*[].{Id:VpcId,CidrBlock:CidrBlock,Name:Tags[?Key == \`Name\`] | [0].Value}' --output table
+	"
 }
 
 aws_vpc_list() {
@@ -131,8 +138,7 @@ aws_subnet_list() {
 }
 
 aws_ec2_list_subnets() {
-	aws_run_commandline \
-		"
+	aws_run_commandline "\
 		aws ec2 describe-subnets \
 			--query '*[].{VpcId:VpcId,SubnetId:SubnetId,\
 				AvailabilityZone:AvailabilityZone,Name:Tags[?Key==\`Name\`].Value | [0]}' --output table
@@ -161,7 +167,7 @@ aws_sg_add_rule_instruction() {
 	echo "\
 		# Allow access the ssh from a specific IP address
 		aws ec2 authorize-security-group-ingress \
-		--group-id ${aws_sg_id:="\$aws_sg_id"} \
+		--group-id ${aws_sg_id:-"\$aws_sg_id"} \
 		--protocol tcp --port 22 \
 		--cidr $(dig +short myip.opendns.com @resolver1.opendns.com)/32
 	"
@@ -174,4 +180,38 @@ aws_region_list() {
     		--query 'Regions[].{Name:RegionName,Endpoint:Endpoint}' \
     		--output table
 	"
+}
+
+aws_ec2_other_commandlines() {
+	function local_aws_ec2_other_commandlines_menu() {
+		cat <<-__EOF__
+			aws_ec2_get \$(local_aws_ec2_instance_id_peco_menu) # Get ec2 instance with hint
+			aws_ec2_create_image \$(local_aws_ec2_instance_id_peco_menu) # Create ami image from ec2 with hint
+			aws_ec2_start \$(local_aws_ec2_instance_id_peco_menu) # Start ec2 instance with hint
+			aws_ec2_stop \$(local_aws_ec2_instance_id_peco_menu) # Stop ec2 instance with hint
+			aws_ec2_reboot \$(local_aws_ec2_instance_id_peco_menu) # Reboot ec2 instance with hint
+			aws_ec2_rm_instruction \$(local_aws_ec2_instance_id_peco_menu) # Remove ec2 instance instruction(Don't apply)
+
+		__EOF__
+	}
+
+	local aws_cmd=$(lhs_peco_create_menu 'local_aws_ec2_other_commandlines_menu' | awk -F "#" '{print $1}')
+
+	if [[ -n "${aws_cmd}" ]]; then
+		aws_commandline_logging "${aws_cmd}"
+		eval ${aws_cmd}
+	else
+		echo "Do nothing"
+	fi
+
+}
+
+aws_ec2_get_credential_from_metadata_instruction() {
+	local aws_meta_data_address="http://169.254.169.254"
+	cat <<-__EOF__
+		# Run on ec2
+		iam_role_name=\$(curl -s '${aws_meta_data_address}/latest/meta-data/iam/security-credentials/')
+		curl -s ${aws_meta_data_address}/latest/meta-data/iam/security-credentials/\${iam_role_name}
+	__EOF__
+
 }

@@ -244,14 +244,14 @@ aws_rds_rm_db_instance_instruction() {
 
 	aws_commandline_logging " \
 		aws rds modify-db-instance \
-			--db-instance-identifier ${aws_rds_db_instance_name:="\$aws_rds_db_instance_name"} \
+			--db-instance-identifier ${aws_rds_db_instance_name:-"\$aws_rds_db_instance_name"} \
 			--apply-immediately \
 			--no-deletion-protection
 	"
 
 	aws_commandline_logging " \
 		aws rds delete-db-instance \
-			--db-instance-identifier ${aws_rds_db_instance_name:="\$aws_rds_db_instance_name"} \
+			--db-instance-identifier ${aws_rds_db_instance_name:-"\$aws_rds_db_instance_name"} \
 			--skip-final-snapshot
 	"
 }

@@ -192,3 +192,14 @@ peco_aws_ec2_list() {
 	commandline="aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId}' --output text | tr -s '\t' '_'"
 	peco_commandline_input ${commandline} 'true'
 }
+
+peco_aws_ssm_list_parameters() {
+  commandline=" \
+    aws ssm get-parameters-by-path \
+      --path "/" \
+      --recursive \
+      --query 'Parameters[*].Name' \
+      | jq -r '.[]'
+  "
+  peco_commandline_input ${commandline} 'true'
+}

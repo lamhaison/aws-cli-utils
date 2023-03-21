@@ -1,8 +1,9 @@
 # aws-cli-utils
-This is the project to collect helpful aws cli commandline with complex options to support your working
+This is the project to collect helpful aws cli commandlines with complex options to support your working.
 ## Why I want to write this project.
 - Sometimes, aws cli is list, get, describes. It is pretty hard to remember.
 - Sometimes, you want to add more options on purpose and you want to have a place to collect and reuse it in the future. That is the reason I defined that structure to help me collect helpful commandlines and share on the github.
+- You have a lot of assume role profile, you can search it by peco and assume it one time by caching feature instead of filling in MFA every time. You can re-use assume-role in the other tab of iterm.
 
 
 ## Setup dependencies
@@ -80,9 +81,11 @@ mfa_serial = arn:aws:iam::ACCOUNT_NAME_MFA:mfa/ACCOUNT_NAME
 ## How to use
 ### AssumeRole
 ```
-Ctrl + @ and press enter and choose the assume role that you want to use.
+Hotkey: Ctrl + @ and press enter and choose the assume role that you want to use.
+Enter functionname: aws_assume_role_set_name_with_hint
+
 ```
-### List all functions
+### List all functions (You can search your function)
 ```
 aws_help
 You can search list function and after that you can run which funtion_name to get the detail of bashshell code.

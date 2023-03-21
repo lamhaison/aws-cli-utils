@@ -73,7 +73,8 @@ peco_create_menu() {
 	local input_function=$1
 	local peco_options=$2
 	local peco_command="peco ${peco_options}"
-	local input_value=$(echo "$(eval $input_function)" | eval ${peco_command})
+	# local input_value=$(echo "$(eval $input_function)" | eval ${peco_command})
+	local input_value=$(eval ${input_function} | eval ${peco_command})
 	echo ${input_value:?'Can not get the input from peco menu'}
 }
 
@@ -194,12 +195,12 @@ peco_aws_ec2_list() {
 }
 
 peco_aws_ssm_list_parameters() {
-  commandline=" \
+	commandline=" \
     aws ssm get-parameters-by-path \
       --path "/" \
       --recursive \
       --query 'Parameters[*].Name' \
       | jq -r '.[]'
   "
-  peco_commandline_input ${commandline} 'true'
+	peco_commandline_input ${commandline} 'true'
 }

@@ -53,8 +53,8 @@ git clone https://github.com/lamhaison/helpful-commandlines.git
 echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.bashrc
 ```
 
-## Setting on ~/.aws/config
-
+## Setting AWS credentials
+### The file ~/.aws/config
 ```
 
 [profile PROFILE_NAME-dev]
@@ -75,6 +75,26 @@ region = region
 role_arn = arn:aws:iam::ACCOUNT_NAME:role/PROFILE_NAME-prod
 source_profile = SOURCE_PROFILE
 mfa_serial = arn:aws:iam::ACCOUNT_NAME_MFA:mfa/ACCOUNT_NAME
+
+# Add this for searching on the menu by Peco when using the tool.
+[lamhaison]
+region = region
+
+```
+### The file ~/.aws/credentials
+
+```
+# In case, just use AWS credential permanently. Please add it on the file ./aws/config.
+[lamhaison]
+aws_access_key_id=xxxxxx
+aws_secret_access_key=yyyyxxxxyyyy
+
+
+[SOURCE_PROFILE]
+region = region
+aws_access_key_id=xxxxxx
+aws_secret_access_key=yyyyxxxxyyyy
+
 ```
 
 

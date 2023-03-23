@@ -49,6 +49,12 @@ echo "random_string" > ~/.password_assume_role_encrypted
 ## Settings when open terminal (I am using iterm)
 ```
 mkdir -p /opt/lamhaison-tools && cd /opt/lamhaison-tools
+
+# Install helpful-commandlines
+git clone git@github.com:lamhaison/helpful-commandlines.git
+echo "source /opt/lamhaison-tools/helpful-commandlines/main.sh" >> ~/.bashrc
+
+# Install aws-cli-utils commandlines
 git clone https://github.com/lamhaison/helpful-commandlines.git
 echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.bashrc
 ```
@@ -101,19 +107,35 @@ aws_secret_access_key=yyyyxxxxyyyy
 ## How to use
 ### AssumeRole
 ```
-Hotkey: Ctrl + @ and press enter and choose the assume role that you want to use.
-Enter functionname: aws_assume_role_set_name_with_hint
-
+Hotkey (US keyboard layout) : Ctrl + @ (number 2)  and press enter and choose the assume role that you want to use.
+Typing function_name: aws_assume_role_set_name_with_hint
 ```
 ### List all functions
 ```
-aws_help
+Hotkey (US keyboard layout): Ctrl + h and you can search the funtion and enter to chose which commandline you want to run or edit before running.
+Typing function_name: aws_help (You only search the name function, can not select or edit funtion directly on console).
 ```
 You can search list function and after that you can run which `funtion_name` to get the detail of bashshell code.
 
+* You can search by a keyword
+![image](./images/aws_help_search_menu.png)
+
+* You can search by multi keywords with space seperately. Thank for Peco feature. It is pretty helplful.
+![image](./images/aws_help_search_menu_keyword_seperated.png)
+
+
+
+
+### List history and select the commandline that you want to re-run
+```
+Hotkey (US keyboard layout): Ctrl + r and you can search the history commandlines and enter to chose which commandline you want to run or edit before running.
+```
+
+
 ### Other
 ```
-admin@MacBook-Pro-cua-Admin ~ % aws_assume_role_set_name PROFILE_NAME-dev
+source ~/.bashrc
+aws_assume_role_set_name PROFILE_NAME-dev
 You set the assume role name PROFILE_NAME-dev
 Running assume-role PROFILE_NAME-dev
 MFA code: 165933
@@ -133,8 +155,8 @@ admin@MacBook-Pro-cua-Admin aws_cli_results % aws_ec2_list
 +---------------------+---------------------------------+---------------+----------------+-----------+
 |     InstanceId      |              Name               |   PrivateIp   |   PublicIp     |   State   |
 +---------------------+---------------------------------+---------------+----------------+-----------+
-|  i-0512340c9dc5fb531|  demo-dev-jenkins-master        |  x.x.x.x      |  1.123.123.123 |  running  |
-|  i-0712343f1a9565397|  demo-dev-mongodb-master        |  y.y.y.y      |  1.123.123.123 |  running  |
+|  i-0512340c9dc5fb123|  demo-dev-jenkins-master        |  x.x.x.x      |  1.123.123.123 |  running  |
+|  i-0712343f1a9565456|  demo-dev-mongodb-master        |  y.y.y.y      |  1.123.123.123 |  running  |
 +---------------------+---------------------------------+---------------+----------------+-----------+
 ```
 

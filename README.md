@@ -117,7 +117,14 @@ Typing function_name: aws_help (You only search the name function, can not selec
 ```
 You can search list function and after that you can run which `funtion_name` to get the detail of bashshell code.
 
-![image](./images/aws_help.png)
+* You can search by a keyword
+![image](./images/aws_help_search_menu.png)
+
+* You can search by multi keywords with space seperately. Thank for Peco feature. It is pretty helplful.
+![image](./images/aws_help_search_menu_keyword_seperated.png)
+
+
+
 
 ### List history and select the commandline that you want to re-run
 ```

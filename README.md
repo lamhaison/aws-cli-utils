@@ -49,6 +49,12 @@ echo "random_string" > ~/.password_assume_role_encrypted
 ## Settings when open terminal (I am using iterm)
 ```
 mkdir -p /opt/lamhaison-tools && cd /opt/lamhaison-tools
+
+# Install helpful-commandlines
+git clone git@github.com:lamhaison/helpful-commandlines.git
+echo "source /opt/lamhaison-tools/helpful-commandlines/main.sh" >> ~/.bashrc
+
+# Install aws-cli-utils commandlines
 git clone https://github.com/lamhaison/helpful-commandlines.git
 echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.bashrc
 ```

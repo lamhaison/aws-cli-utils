@@ -131,6 +131,15 @@ You can search list function and after that you can run which `funtion_name` to 
 Hotkey (US keyboard layout): Ctrl + r and you can search the history commandlines and enter to chose which commandline you want to run or edit before running.
 ```
 
+### When you want to build a aws commandline
+```
+Hotkey (US keyboard layout): Option + ac
+```
+![image](./images/aws_get_command/step_1.png)
+![image](./images/aws_get_command/step_2.png)
+![image](./images/aws_get_command/step_3.png)
+![image](./images/aws_get_command/step_4.png)
+
 
 ### Other
 ```

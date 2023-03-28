@@ -19,21 +19,21 @@ Please note we have a code of conduct, please follow it in all your interactions
 
 ## Semantic Pull Requests
 To generate changelog, Pull Requests or Commits must have semantic and must follow conventional specs below:
-- `Add` - add description
-- `Update` - update description
-- `Remove` - remove somethings such as functions, temp file, ...
-- `Improvement` - for enhancements
-- `Feat` – a new feature is introduced with the changes
-- `Fix` - a bug fix has occurred
-- `Chore` – for updating dependencies
-- `Refactor` - refactored code that neither fixes a bug nor adds a feature
-- `Docs` - updates to documentation such as a the README or other markdown files
-- `Style` - related to code formatting such as white-space, missing semi-colons, and so on
-- `Test` - including new or correcting previous tests
-- `Perf` – performance improvements
-- `CiCd` - continuous integration and continuous delivery related
-- `Build` – changes that affect the build system or external dependencies
-- `Revert` - reverts a previous commit
-- `Release` - Your Release description (Comment for the PR)
+- `[Add]` - add description
+- `[Update]` - update description
+- `[Remove]` - remove somethings such as functions, temp file, ...
+- `[Improvement]` - for enhancements
+- `[Feat]` – a new feature is introduced with the changes
+- `[Fix]` - a bug fix has occurred
+- `[Chore]` – for updating dependencies
+- `[Refactor]` - refactored code that neither fixes a bug nor adds a feature
+- `[Docs]` - updates to documentation such as a the README or other markdown files
+- `[Style]` - related to code formatting such as white-space, missing semi-colons, and so on
+- `[Test]` - including new or correcting previous tests
+- `[Perf]` – performance improvements
+- `[CiCd]` - continuous integration and continuous delivery related
+- `[Build]` – changes that affect the build system or external dependencies
+- `[Revert]` - reverts a previous commit
+- `[Release]` - Your Release description (Comment for the PR)
 
 The `[Chore]` prefix skipped during changelog generation.

@@ -30,42 +30,54 @@ aws_main_function() {
 # }
 
 aws_get_command() {
+#  function curl_aws_document_and_cut() {
+#    echo "curl_aws_document_and_cut $1"
+#    local aws_service_name=$1
+#    local curl_path=$([ -z "$aws_service_name" ] && echo "index.html" || echo "reference/$aws_service/index.html" )
+#    curl -s "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/${curl_path}"  \
+#        | grep '<li class="toctree-l1"><a class="reference internal"' \
+#        | awk -F '.html">' '{print $2}' \
+#        | awk -F '</a>' '{print $1}' > ${aws_cli_input_folder}/aws_list_services.txt
+#  }
+
   if [ ! -s ${aws_cli_input_folder}/aws_list_services.txt ]; then
-    curl -s https://awscli.amazonaws.com/v2/documentation/api/latest/reference/index.html  | grep '<li class="toctree-l1"><a class="reference internal"' | awk -F '.html">' '{print $2}' | awk -F '</a>' '{print $1}' > ${aws_cli_input_folder}/aws_list_services.txt
+    curl -s https://awscli.amazonaws.com/v2/documentation/api/latest/reference/index.html  \
+    | grep '<li class="toctree-l1"><a class="reference internal"' \
+    | awk -F '.html">' '{print $2}' \
+    | awk -F '</a>' '{print $1}' > ${aws_cli_input_folder}/aws_list_services.txt
   fi
 
   local aws_service=$(cat ${aws_cli_input_folder}/aws_list_services.txt | peco --prompt "Select service >")
 
-  if [ -z $aws_service ]; then
+  if [ -z "$aws_service" ]; then
       return
     fi
 
   if [ ! -s ${aws_cli_list_commands_folder}/aws_service.txt ]; then
-      curl -s https://awscli.amazonaws.com/v2/documentation/api/latest/reference/$aws_service/index.html  | grep '<li class="toctree-l1"><a class="reference internal"' | awk -F '.html">' '{print $2}' | awk -F '</a>' '{print $1}' > ${aws_cli_list_commands_folder}/$aws_service.txt
+      curl -s https://awscli.amazonaws.com/v2/documentation/api/latest/reference/$aws_service/index.html  \
+      | grep '<li class="toctree-l1"><a class="reference internal"' \
+      | awk -F '.html">' '{print $2}' \
+      | awk -F '</a>' '{print $1}' > ${aws_cli_list_commands_folder}/$aws_service.txt
     fi
 
   local aws_command=$(cat ${aws_cli_list_commands_folder}/$aws_service.txt | peco --prompt "aws $aws_service" --on-cancel error)
 
-  if [ -z $aws_command ]; then
-        return
+  if [ -z "$aws_command" ]; then
+      return
     fi
 
   local final_action=$(echo -e "input\ndocument\nhelp" | peco)
 
-  if [ $final_action = "document" ]; then
-      open https://awscli.amazonaws.com/v2/documentation/api/latest/reference/$aws_service/$aws_command.html
-      return
-    elif [ $final_action = "help" ]; then
-      "aws $aws_service $aws_command help"
-      return
+  if [ "$final_action" = "input" ]; then
+      local aws_input_terminal="aws $aws_service $aws_command"
+    elif [ "$final_action" = "document" ]; then
+      local aws_input_terminal="open https://awscli.amazonaws.com/v2/documentation/api/latest/reference/$aws_service/$aws_command.html"
+    else
+      local aws_input_terminal="aws $aws_service $aws_command help"
     fi
 
-  echo
-  local GREEN='\033[0;32m'
-  local NC='\033[0m'
-  echo -e "${GREEN}aws $aws_service $aws_command${NC}"
   local BUFFER=$(
-  		echo "aws $aws_service $aws_command" | peco --query "$LBUFFER" --select-1
+  		echo "$aws_input_terminal" | peco --query "$LBUFFER" --select-1
   	)
-  	CURSOR=$#BUFFER
+  CURSOR=$#BUFFER
 }

@@ -30,21 +30,17 @@ aws_main_function() {
 # }
 
 aws_get_command() {
-#  function curl_aws_document_and_cut() {
-#    echo "curl_aws_document_and_cut $1"
-#    local aws_service_name=$1
-#    local curl_path=$([ -z "$aws_service_name" ] && echo "index.html" || echo "reference/$aws_service/index.html" )
-#    curl -s "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/${curl_path}"  \
-#        | grep '<li class="toctree-l1"><a class="reference internal"' \
-#        | awk -F '.html">' '{print $2}' \
-#        | awk -F '</a>' '{print $1}' > ${aws_cli_input_folder}/aws_list_services.txt
-#  }
+  function curl_aws_document_and_cut() {
+    local aws_service_name=$1
+    local curl_path=$([ -z "$aws_service_name" ] && echo "index.html" || echo "$aws_service/index.html" )
+    curl -s "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/${curl_path}"  \
+        | grep '<li class="toctree-l1"><a class="reference internal"' \
+        | awk -F '.html">' '{print $2}' \
+        | awk -F '</a>' '{print $1}'
+  }
 
   if [ ! -s ${aws_cli_input_folder}/aws_list_services.txt ]; then
-    curl -s https://awscli.amazonaws.com/v2/documentation/api/latest/reference/index.html  \
-    | grep '<li class="toctree-l1"><a class="reference internal"' \
-    | awk -F '.html">' '{print $2}' \
-    | awk -F '</a>' '{print $1}' > ${aws_cli_input_folder}/aws_list_services.txt
+    curl_aws_document_and_cut > ${aws_cli_input_folder}/aws_list_services.txt
   fi
 
   local aws_service=$(cat ${aws_cli_input_folder}/aws_list_services.txt | peco --prompt "Select service >")
@@ -54,10 +50,7 @@ aws_get_command() {
     fi
 
   if [ ! -s ${aws_cli_list_commands_folder}/aws_service.txt ]; then
-      curl -s https://awscli.amazonaws.com/v2/documentation/api/latest/reference/$aws_service/index.html  \
-      | grep '<li class="toctree-l1"><a class="reference internal"' \
-      | awk -F '.html">' '{print $2}' \
-      | awk -F '</a>' '{print $1}' > ${aws_cli_list_commands_folder}/$aws_service.txt
+      curl_aws_document_and_cut "$aws_service" > ${aws_cli_list_commands_folder}/$aws_service.txt
     fi
 
   local aws_command=$(cat ${aws_cli_list_commands_folder}/$aws_service.txt | peco --prompt "aws $aws_service" --on-cancel error)

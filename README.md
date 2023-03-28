@@ -169,3 +169,21 @@ admin@MacBook-Pro-cua-Admin aws_cli_results % aws_ec2_list
 +---------------------+---------------------------------+---------------+----------------+-----------+
 ```
 
+
+
+## CONTRIBUTING
+
+Contributions are very welcomed!
+
+Start by reviewing [contribution guide](CONTRIBUTING.md) and our [code of conduct](CODE_OF_CONDUCT.md). After that, start coding and ship your changes by creating a new PR.
+
+## LICENSE
+
+Apache 2 Licensed. See [LICENSE](LICENSE) for full details.
+
+## AUTHORS
+
+<!--- Replace repository name -->
+<a href="https://github.com/lamhaison/REPO_NAME/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=lamhaison/aws-cli-utils" />
+</a>

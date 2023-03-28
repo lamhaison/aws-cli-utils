@@ -29,6 +29,7 @@ export aws_cli_input_tmp="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/inputs"
 export aws_cli_input_folder="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_inputs"
 export aws_cli_list_commands_folder="${aws_cli_input_folder}/aws_services_commands"
 export aws_tmp_input="/tmp/aws_tmp_input_23647494949484.txt"
+export aws_cli_document_root_url="https://awscli.amazonaws.com/v2/documentation/api/latest/reference"
 export aws_assume_role_print_account_info="false"
 export aws_cli_retry_time=10
 export aws_cli_retry_sleep_interval=1

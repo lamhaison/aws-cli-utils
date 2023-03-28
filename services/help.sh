@@ -28,3 +28,37 @@ aws_main_function() {
 # 	echo Running the commandline ${aws_custom_commandline:?"The commandline is unset or empty. Then do nothing"}
 # 	eval $aws_custom_commandline
 # }
+
+aws_get_command() {
+  if [ ! -s ${aws_cli_input_folder}/aws_list_services.txt ]; then
+    curl https://awscli.amazonaws.com/v2/documentation/api/latest/reference/index.html  | grep '<li class="toctree-l1"><a class="reference internal"' | awk -F '.html">' '{print $2}' | awk -F '</a>' '{print $1}' > ${aws_cli_input_folder}/aws_list_services.txt
+  fi
+
+  local aws_service=$(cat ${aws_cli_input_folder}/aws_list_services.txt | peco --prompt "Select service >")
+
+  if [ -z $aws_service ]; then
+      return
+    fi
+
+  if [ ! -s ${aws_cli_list_commands_folder}/aws_service.txt ]; then
+      curl https://awscli.amazonaws.com/v2/documentation/api/latest/reference/$aws_service/index.html  | grep '<li class="toctree-l1"><a class="reference internal"' | awk -F '.html">' '{print $2}' | awk -F '</a>' '{print $1}' > ${aws_cli_list_commands_folder}/$aws_service.txt
+    fi
+
+  local aws_command=$(cat ${aws_cli_list_commands_folder}/$aws_service.txt | peco --prompt "aws $aws_service" --on-cancel error)
+
+  if [ -z $aws_command ]; then
+        return
+    fi
+
+  local final_action=$(echo -e "echo \ndocument" | peco)
+
+  if [ $final_action = "document" ]; then
+      open https://awscli.amazonaws.com/v2/documentation/api/latest/reference/$aws_service/$aws_command.html
+      return
+    fi
+
+  echo
+  local GREEN='\033[0;32m'
+  local NC='\033[0m'
+  echo -e "${GREEN}aws $aws_service $aws_command${NC}"
+}

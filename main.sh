@@ -26,6 +26,8 @@ export aws_cli_results="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results"
 export aws_cli_logs="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/logs"
 export aws_cli_images="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/images"
 export aws_cli_input_tmp="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/inputs"
+export aws_cli_input_folder="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_inputs"
+export aws_cli_list_commands_folder="${aws_cli_input_folder}/aws_services_commands"
 export aws_tmp_input="/tmp/aws_tmp_input_23647494949484.txt"
 export aws_assume_role_print_account_info="false"
 export aws_cli_retry_time=10
@@ -45,6 +47,7 @@ mkdir -p ${tmp_credentials}
 mkdir -p ${aws_cli_results}
 mkdir -p ${aws_cli_logs}
 mkdir -p ${aws_cli_input_tmp}
+mkdir -p ${aws_cli_list_commands_folder}
 
 # Default settings AWSCLI
 export AWS_DEFAULT_OUTPUT="json"

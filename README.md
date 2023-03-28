@@ -184,6 +184,6 @@ Apache 2 Licensed. See [LICENSE](LICENSE) for full details.
 ## AUTHORS
 
 <!--- Replace repository name -->
-<a href="https://github.com/lamhaison/REPO_NAME/graphs/contributors">
+<a href="https://github.com/lamhaison/aws-cli-utils/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=lamhaison/aws-cli-utils" />
 </a>

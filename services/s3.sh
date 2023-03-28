@@ -88,6 +88,26 @@ aws_s3_rm_instruction() {
 			aws_s3_ls
 		]
 	"
+
+	# https://stackoverflow.com/questions/29809105/how-do-i-delete-a-versioned-bucket-in-aws-s3-using-the-cli
+	# TODO Later (Verify later)
+	cat <<-__EOF__
+
+		# Delete all object versioning enabled
+		aws s3api put-bucket-lifecycle-configuration \
+		  --lifecycle-configuration '{"Rules":[{
+		      "ID":"empty-bucket",
+		      "Status":"Enabled",
+		      "Prefix":"",
+		      "Expiration":{"Days":1},
+		      "NoncurrentVersionExpiration":{"NoncurrentDays":1}
+		    }]}' \
+		  --bucket ${aws_s3_bucket_name}
+
+		# Then you just have to wait 1 day and the bucket can be deleted with
+		aws s3api delete-bucket --bucket ${aws_s3_bucket_name}
+
+	__EOF__
 }
 
 aws_s3_rm_with_hint() {

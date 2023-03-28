@@ -41,7 +41,13 @@ aws_get_command() {
     fi
 
     if [ ! -s "${cache_file}" ]; then
-      curl -s "${aws_cli_document_root_url}/${curl_path}" |
+      curl -s \
+          --connect-timeout 5 \
+          --max-time 10 \
+          --retry 5 \
+          --retry-delay 0 \
+          --retry-max-time 40 \
+        "${aws_cli_document_root_url}/${curl_path}" |
         grep '<li class="toctree-l1"><a class="reference internal"' |
         awk -F '.html">' '{print $2}' |
         awk -F '</a>' '{print $1}' >${cache_file}

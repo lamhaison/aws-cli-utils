@@ -215,3 +215,7 @@ aws_ec2_get_credential_from_metadata_instruction() {
 	__EOF__
 
 }
+
+aws_ec2_get_instance_type_spect_instruction() {
+	open https://instances.vantage.sh
+}

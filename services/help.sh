@@ -3,9 +3,10 @@
 aws_history() {
 
   local log_file_path=${aws_cli_logs}/${ASSUME_ROLE}.log
-  local peco_input=$(cat ${log_file_path} | grep "Running commandline " | uniq | peco)
-  # To cut "Running commandline [ "
-  peco_input=${peco_input:22}
+  local peco_command="cat ${log_file_path} | grep 'Running commandline ' | sed 's/Running commandline //' | uniq"
+  local peco_input=$(peco_create_menu "${peco_command}" '--prompt "Choose aws cli history >"')
+  # Remove space
+  peco_input=${peco_input:2}
   # To cut ] in the end
   peco_input=${peco_input%\]}
 

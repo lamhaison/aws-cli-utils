@@ -1,0 +1,2 @@
+install:
+	echo "Do nothing"

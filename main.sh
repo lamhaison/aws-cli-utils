@@ -82,5 +82,9 @@ if [[ "${LHS_BIND_KEY}" = "True" ]]; then
 	zle -N aws_get_command
 	# Hotkey: Option + a + c
 	bindkey 'åç' aws_get_command
+
+	zle -N aws_history
+	# Hotkey Option + ah
+	bindkey '˙' aws_history
 # bindkey '^e' aws_help
 fi

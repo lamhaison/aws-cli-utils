@@ -26,6 +26,20 @@ aws_cloudfront_get_with_hint() {
 	aws_cloudfront_get ${aws_distribution_id}
 }
 
+aws_cloudfront_get_alias() {
+	aws_run_commandline "\
+		aws cloudfront get-distribution \
+			--id ${1:?'your_variable_name is unset or empty'} \
+			--query '*[].AliasICPRecordals' --output table
+	"
+}
+
+aws_cloudfront_get_alias_with_hint() {
+	aws_distribution_id=$(peco_create_menu 'peco_aws_cloudfront_list' '--prompt "Your Distribution ID >"')
+	aws_distribution_id=$(echo ${aws_distribution_id} | awk -F "_" '{print $1}')
+	aws_cloudfront_get_alias ${aws_distribution_id}
+}
+
 aws_cloudfront_invalidate_cache() {
 	aws_distribution_id=$1
 	# Start with /

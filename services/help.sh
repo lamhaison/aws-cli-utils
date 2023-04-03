@@ -1,32 +1,47 @@
 #!/bin/bash
-aws_help() {
-	local aws_assume_role_main_function="aws_assume_role_set_name_with_hint"
-	local function_list=$(
-		cat ${AWS_CLI_SOURCE_SCRIPTS}/{services,common}/* |
-			grep -e "^aws*\(.+*\)" | tr -d "(){" |
-			grep -v ${aws_assume_role_main_function} |
-			sort
-	)
 
-	local BUFFER=$(
-		echo "${aws_assume_role_main_function}\n${function_list}" | peco --query "$LBUFFER"
-	)
-	CURSOR=$#BUFFER
+aws_history() {
+
+  local log_file_path=${aws_cli_logs}/${ASSUME_ROLE}.log
+  local peco_command="cat ${log_file_path} | grep 'Running commandline ' | sed 's/Running commandline //' | uniq"
+  local peco_input=$(peco_create_menu "${peco_command}" '--prompt "Choose aws cli history >"')
+  # Remove space
+  peco_input=${peco_input:2}
+  # To cut ] in the end
+  peco_input=${peco_input%\]}
+
+  local BUFFER=$peco_input
+  CURSOR=$#BUFFER
+
+}
+aws_help() {
+  local aws_assume_role_main_function="aws_assume_role_set_name_with_hint"
+  local function_list=$(
+    cat ${AWS_CLI_SOURCE_SCRIPTS}/{services,common}/* |
+      grep -e "^aws*\(.+*\)" | tr -d "(){" |
+      grep -v ${aws_assume_role_main_function} |
+      sort
+  )
+
+  local BUFFER=$(
+    echo "${aws_assume_role_main_function}\n${function_list}" | peco --query "$LBUFFER"
+  )
+  CURSOR=$#BUFFER
 }
 
 aws_main_function() {
-	local aws_assume_role_main_function="aws_assume_role_set_name_with_hint"
-	local BUFFER=$(
-		echo "${aws_assume_role_main_function}" | peco --query "$LBUFFER" --select-1
-	)
-	CURSOR=$#BUFFER
+  local aws_assume_role_main_function="aws_assume_role_set_name_with_hint"
+  local BUFFER=$(
+    echo "${aws_assume_role_main_function}" | peco --query "$LBUFFER" --select-1
+  )
+  CURSOR=$#BUFFER
 
 }
 
 # aws_run() {
-# 	aws_custom_commandline=$(cat ${AWS_CLI_SOURCE_SCRIPTS}/services/* | grep -e "^aws*\(.+*\)" | grep "with_hint" | tr -d "(){" | sort | peco)
-# 	echo Running the commandline ${aws_custom_commandline:?"The commandline is unset or empty. Then do nothing"}
-# 	eval $aws_custom_commandline
+#   aws_custom_commandline=$(cat ${AWS_CLI_SOURCE_SCRIPTS}/services/* | grep -e "^aws*\(.+*\)" | grep "with_hint" | tr -d "(){" | sort | peco)
+#   echo Running the commandline ${aws_custom_commandline:?"The commandline is unset or empty. Then do nothing"}
+#   eval $aws_custom_commandline
 # }
 
 aws_get_command() {
@@ -42,11 +57,11 @@ aws_get_command() {
 
     if [ ! -s "${cache_file}" ]; then
       curl -s \
-          --connect-timeout 5 \
-          --max-time 10 \
-          --retry 5 \
-          --retry-delay 0 \
-          --retry-max-time 40 \
+        --connect-timeout 5 \
+        --max-time 10 \
+        --retry 5 \
+        --retry-delay 0 \
+        --retry-max-time 40 \
         "${aws_cli_document_root_url}/${curl_path}" |
         grep '<li class="toctree-l1"><a class="reference internal"' |
         awk -F '.html">' '{print $2}' |

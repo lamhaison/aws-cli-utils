@@ -5,15 +5,23 @@ aws_history() {
   local log_file_path=${aws_cli_logs}/${ASSUME_ROLE}.log
   local peco_command="cat ${log_file_path} | grep 'Running commandline ' | sed 's/Running commandline //' | uniq"
   local peco_input=$(peco_create_menu "${peco_command}" '--prompt "Choose aws cli history >"')
-  # Remove space
-  peco_input=${peco_input:2}
-  # To cut ] in the end
-  peco_input=${peco_input%\]}
 
-  local BUFFER=$peco_input
-  CURSOR=$#BUFFER
+  if [[ $? -ne 0 ]]; then
+    return
+  fi
+
+  if [ ! -z "$peco_input" ]; then
+    # Remove space
+    peco_input=${peco_input:2}
+    # To cut ] in the end
+    peco_input=${peco_input%\]}
+    local BUFFER=$peco_input
+    CURSOR=$#BUFFER
+
+  fi
 
 }
+
 aws_help() {
   local aws_assume_role_main_function="aws_assume_role_set_name_with_hint"
   local function_list=$(

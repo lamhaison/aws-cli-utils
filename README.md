@@ -48,15 +48,29 @@ echo "random_string" > ~/.password_assume_role_encrypted
 
 ## Settings when open terminal (I am using iterm)
 ```
-mkdir -p /opt/lamhaison-tools && cd /opt/lamhaison-tools
+sudo mkdir -p /opt/lamhaison-tools
+chown $(whoami) /opt/lamhaison-tools
+cd /opt/lamhaison-tools
 
+# If you using ~/.bashrc
 # Install helpful-commandlines
-git clone git@github.com:lamhaison/helpful-commandlines.git
+git clone https://github.com/lamhaison/helpful-commandlines.git
 echo "source /opt/lamhaison-tools/helpful-commandlines/main.sh" >> ~/.bashrc
 
 # Install aws-cli-utils commandlines
-git clone https://github.com/lamhaison/helpful-commandlines.git
+git clone https://github.com/lamhaison/aws-cli-utils.git
 echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.bashrc
+
+
+# If using zsh
+# Install helpful-commandlines
+git clone https://github.com/lamhaison/helpful-commandlines.git
+echo "source /opt/lamhaison-tools/helpful-commandlines/main.sh" >> ~/.zshrc
+
+# Install aws-cli-utils commandlines
+git clone https://github.com/lamhaison/aws-cli-utils.git
+echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.zshrc
+
 ```
 
 ## Setting AWS credentials

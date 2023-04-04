@@ -5,7 +5,14 @@ This is the project to collect helpful aws cli commandlines with complex options
 - Sometimes, you want to add more options on purpose and you want to have a place to collect and reuse it in the future. That is the reason I defined that structure to help me collect helpful commandlines and share on the github.
 - You have a lot of assume role profile, you can search it by peco and assume it one time by caching feature instead of filling in MFA every time. You can re-use assume-role in the other tab of Iterm.
 
+# Setup by hombrew
+```
+brew tap lamhaison/aws-cli-utils
 
+brew install --verbose --debug aws-cli-utils
+```
+
+# Setup manullay
 ## Setup dependencies
 Notes: This document is for macos environment.
 

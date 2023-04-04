@@ -58,7 +58,10 @@ alias get-account-alias='aws iam list-account-aliases'
 alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Account" --output text)'
 
 # Import sub-commandlines.
-for script in $(find ${AWS_CLI_SOURCE_SCRIPTS} -type f -name '*.sh' | grep -v main.sh | grep -v main.sh | grep -v test.sh | grep -v temp.sh); do
+for script in $(
+	find ${AWS_CLI_SOURCE_SCRIPTS} -type f -name '*.sh' |
+		grep -v main.sh | grep -v main.sh | grep -v test.sh | grep -v temp.sh | grep -v aws-cli-utils.sh
+); do
 	source $script
 done
 

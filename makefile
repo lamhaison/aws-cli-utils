@@ -1,3 +1,4 @@
 install:
-	echo "Do nothing"
-	echo $(PWD) > /tmp/test.txt
+	echo "Todo later"
+
+

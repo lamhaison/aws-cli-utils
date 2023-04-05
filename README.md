@@ -18,7 +18,15 @@ source "$(which aws-cli-utils.sh)" "/opt/homebrew/Cellar/aws-cli-utils/$(brew in
 
 ```
 
-# Setup manullay
+## Re-install the latest version
+```
+brew uninstall --verbose --debug aws-cli-utils
+brew untap lamhaison/aws-cli-utils
+brew tap lamhaison/aws-cli-utils
+brew install --verbose --debug aws-cli-utils
+```
+
+# Setup manually
 ## Setup dependencies
 Notes: This document is for macos environment.
 

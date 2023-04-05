@@ -168,6 +168,14 @@ You can search list function and after that you can run which `funtion_name` to 
 Hotkey (US keyboard layout): Ctrl + r and you can search the history commandlines and enter to chose which commandline you want to run or edit before running.
 ```
 
+
+### List history of aws cli
+```
+Hotkey (US keyboard layout): Option + h or aws_history
+```
+![image](./images/aws_history_command/step_1.png)
+
+
 ### When you want to build a aws commandline to build your aws cli with hint by Peco search
 ```
 Hotkey (US keyboard layout): Option + ac

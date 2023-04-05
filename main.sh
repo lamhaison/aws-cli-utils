@@ -4,7 +4,8 @@
 # @script		main.sh
 # @description	TODO : to load function for aws-cli-utils
 # $1: Where is looking for sh files and source the list
-# $2: Do you want to set the bind key?
+# $2: Where do you want to save logs?
+# $3: Do you want to set the bind key?
 
 AWS_CLI_SOURCE_SCRIPTS=$1
 
@@ -19,14 +20,26 @@ else
 	export AWS_CLI_SOURCE_SCRIPTS=${AWS_CLI_SOURCE_SCRIPTS}
 fi
 
+AWS_CLI_DATA=$2
+if [[ -z "${AWS_CLI_DATA}" ]]; then
+	LOCAL_AWS_CLI_DATA=$(dirname -- "$0")
+	if [[ "${LOCAL_AWS_CLI_DATA}" = "." ]]; then
+		DEFAULT_AWS_CLI_DATA='/opt/lamhaison-tools/aws-cli-utils'
+	fi
+
+	export AWS_CLI_DATA="${LOCAL_AWS_CLI_DATA:-${DEFAULT_AWS_CLI_DATA}}"
+else
+	export AWS_CLI_DATA=${AWS_CLI_DATA}
+fi
+
 export assume_role_password_encrypted="$(cat ~/.password_assume_role_encrypted)"
 export tmp_credentials="/tmp/aws_temporary_credentials"
 
-export aws_cli_results="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results"
-export aws_cli_logs="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/logs"
-export aws_cli_images="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/images"
-export aws_cli_input_tmp="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_results/inputs"
-export aws_cli_input_folder="${AWS_CLI_SOURCE_SCRIPTS}/aws_cli_inputs"
+export aws_cli_results="${AWS_CLI_DATA}/aws_cli_results"
+export aws_cli_logs="${AWS_CLI_DATA}/aws_cli_results/logs"
+export aws_cli_images="${AWS_CLI_DATA}/aws_cli_results/images"
+export aws_cli_input_tmp="${AWS_CLI_DATA}/aws_cli_results/inputs"
+export aws_cli_input_folder="${AWS_CLI_DATA}/aws_cli_inputs"
 export aws_cli_list_commands_folder="${aws_cli_input_folder}/aws_services_commands"
 export aws_tmp_input="/tmp/aws_tmp_input_23647494949484.txt"
 export aws_cli_document_root_url="https://awscli.amazonaws.com/v2/documentation/api/latest/reference"
@@ -58,7 +71,10 @@ alias get-account-alias='aws iam list-account-aliases'
 alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Account" --output text)'
 
 # Import sub-commandlines.
-for script in $(find ${AWS_CLI_SOURCE_SCRIPTS} -type f -name '*.sh' | grep -v main.sh | grep -v main.sh | grep -v test.sh | grep -v temp.sh); do
+for script in $(
+	find ${AWS_CLI_SOURCE_SCRIPTS} -type f -name '*.sh' |
+		grep -v main.sh | grep -v main.sh | grep -v test.sh | grep -v temp.sh | grep -v aws-cli-utils.sh
+); do
 	source $script
 done
 
@@ -71,7 +87,7 @@ if [ "true" = "${aws_cli_load_current_assume_role}" ] && [ -s "${aws_cli_current
 	aws_assume_role_load_current_assume_role_for_new_tab
 fi
 
-LHS_BIND_KEY=${2:-'True'}
+LHS_BIND_KEY=${3:-'True'}
 
 if [[ "${LHS_BIND_KEY}" = "True" ]]; then
 	# Add hot-keys

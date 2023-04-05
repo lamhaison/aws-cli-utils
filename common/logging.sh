@@ -1,12 +1,12 @@
 #!/bin/bash
 
-aws_assume_role_check_log() {
+aws_assume_role_get_log() {
 	local log_file_path=${aws_cli_logs}/${ASSUME_ROLE}.log
 	echo "Read the log ${log_file_path}"
 	view +$ -c 'set number' ${log_file_path}
 }
 
-aws_assume_role_check_log_uploaded() {
+aws_assume_role_get_log_uploaded() {
 	local log_file_path=${aws_cli_logs}/${ASSUME_ROLE}-uploaded.log
 	echo "Read the log ${log_file_path}"
 	view +$ -c 'set number' ${log_file_path}

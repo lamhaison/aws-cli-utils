@@ -5,7 +5,7 @@ This is the project to collect helpful aws cli commandlines with complex options
 - Sometimes, you want to add more options on purpose and you want to have a place to collect and reuse it in the future. That is the reason I defined that structure to help me collect helpful commandlines and share on the github.
 - You have a lot of assume role profile, you can search it by peco and assume it one time by caching feature instead of filling in MFA every time. You can re-use assume-role in the other tab of Iterm.
 
-
+# Setup manually
 ## Setup dependencies
 Notes: This document is for macos environment.
 
@@ -46,7 +46,9 @@ echo "random_string" > ~/.password_assume_role_encrypted
 ```
 
 
-## Settings when open terminal (I am using iterm)
+## Setup the aws-cli-utils
+
+###  Setup from source code
 ```
 sudo mkdir -p /opt/lamhaison-tools
 chown $(whoami) /opt/lamhaison-tools
@@ -71,6 +73,27 @@ echo "source /opt/lamhaison-tools/helpful-commandlines/main.sh" >> ~/.zshrc
 git clone https://github.com/lamhaison/aws-cli-utils.git
 echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.zshrc
 
+```
+
+### Setup from homebrew
+#### Install
+```
+brew tap lamhaison/aws-cli-utils
+brew install --verbose --debug aws-cli-utils
+```
+## Load when start an Iterm terminal
+Add these lines to ~/.bashrc or ~/.zshrc or ~/.bash_profile
+```
+source "$(which aws-cli-utils.sh)" "/opt/homebrew/Cellar/aws-cli-utils/$(brew info aws-cli-utils | head -1 | awk -F "stable " '{print $2}')" "${HOME}" "True"
+
+```
+
+### Re-install the latest version
+```
+brew uninstall --verbose --debug aws-cli-utils
+brew untap lamhaison/aws-cli-utils
+brew tap lamhaison/aws-cli-utils
+brew install --verbose --debug aws-cli-utils
 ```
 
 ## Setting AWS credentials

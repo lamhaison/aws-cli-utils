@@ -78,8 +78,8 @@ echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.zshrc
 ### Setup from homebrew
 #### Install
 ```
-brew tap lamhaison/aws-cli-utils
-brew install --verbose --debug aws-cli-utils
+brew tap lamhaison/formulae
+brew install lamhaison/formulae/aws-cli-utils
 ```
 ## Load when start an Iterm terminal
 Add these lines to ~/.bashrc or ~/.zshrc or ~/.bash_profile
@@ -90,10 +90,10 @@ source "$(which aws-cli-utils.sh)" "/opt/homebrew/Cellar/aws-cli-utils/$(brew in
 
 ### Re-install the latest version
 ```
-brew uninstall --verbose --debug aws-cli-utils
-brew untap lamhaison/aws-cli-utils
-brew tap lamhaison/aws-cli-utils
-brew install --verbose --debug aws-cli-utils
+brew uninstall aws-cli-utils
+brew untap lamhaison/formulae
+brew tap lamhaison/formulae
+brew install lamhaison/formulae/aws-cli-utils
 ```
 
 ## Setting AWS credentials

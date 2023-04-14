@@ -51,7 +51,7 @@ echo "random_string" > ~/.password_assume_role_encrypted
 ###  Setup from source code
 ```
 sudo mkdir -p /opt/lamhaison-tools
-chown $(whoami) /opt/lamhaison-tools
+sudo chown $(whoami) /opt/lamhaison-tools
 cd /opt/lamhaison-tools
 
 # If you using ~/.bashrc

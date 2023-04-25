@@ -69,6 +69,13 @@ aws_ec2_rm_instruction() {
 	"
 }
 
+aws_ec2_rm_instruction_with_hint() {
+	aws_commandline_logging "\
+		aws ec2 terminate-instances \
+			--instance-ids $(local_aws_ec2_instance_id_peco_menu)
+	"
+}
+
 # Ec2 image
 aws_ec2_list_images() {
 	aws_run_commandline "aws ec2 describe-images --owners self"
@@ -82,7 +89,7 @@ aws_ec2_list_aws_default_images() {
 			'Name=block-device-mapping.volume-type,Values=gp2' \
 			'Name=ena-support,Values=true' 'Name=owner-alias,Values=amazon' \
 			'Name=name,Values=*amzn2-ami-hvm-2.0.????????.?-x86_64-gp2' \
-			--query 'Images[*].[ImageId,Name]' --output text
+			--query 'Images[*].[ImageId,Name,Description]' --output table
 	"
 }
 aws_ec2_create_image() {

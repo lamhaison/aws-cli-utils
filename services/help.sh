@@ -25,7 +25,7 @@ aws_history() {
 aws_help() {
   local aws_assume_role_main_function="aws_assume_role_set_name_with_hint"
   local function_list=$(
-    cat ${AWS_CLI_SOURCE_SCRIPTS}/{services,common}/* |
+    find ${AWS_CLI_SOURCE_SCRIPTS} -type f -name '*.sh' | xargs cat |
       grep -e "^aws*\(.+*\)" | tr -d "(){" |
       grep -v ${aws_assume_role_main_function} |
       sort

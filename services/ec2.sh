@@ -1,7 +1,18 @@
 #!/bin/bash
 
+# TODO local_aws_ec2_instance_id_peco_menu create ec2 instance_id list
+# @param filter by state (running, stopped, all)
+# @return ec2_instance_id that you choose
+#
 local_aws_ec2_instance_id_peco_menu() {
-	local aws_ec2_instance_id=$(peco_create_menu 'peco_aws_ec2_list')
+	local instance_state=${1:-'running'}
+
+	if [ "${instance_state}" = "all" ]; then
+		local aws_ec2_instance_id=$(peco_create_menu 'peco_aws_ec2_list_all')
+	else
+		local aws_ec2_instance_id=$(peco_create_menu "peco_aws_ec2_list ${instance_state}")
+	fi
+
 	aws_ec2_instance_id=$(echo "${aws_ec2_instance_id}" | awk -F "_" '{print $1}')
 	echo ${aws_ec2_instance_id}
 }
@@ -192,12 +203,12 @@ aws_region_list() {
 aws_ec2_other_commandlines() {
 	function local_aws_ec2_other_commandlines_menu() {
 		cat <<-__EOF__
-			aws_ec2_get \$(local_aws_ec2_instance_id_peco_menu) # Get ec2 instance with hint
-			aws_ec2_create_image \$(local_aws_ec2_instance_id_peco_menu) # Create ami image from ec2 with hint
-			aws_ec2_start \$(local_aws_ec2_instance_id_peco_menu) # Start ec2 instance with hint
-			aws_ec2_stop \$(local_aws_ec2_instance_id_peco_menu) # Stop ec2 instance with hint
-			aws_ec2_reboot \$(local_aws_ec2_instance_id_peco_menu) # Reboot ec2 instance with hint
-			aws_ec2_rm_instruction \$(local_aws_ec2_instance_id_peco_menu) # Remove ec2 instance instruction(Don't apply)
+			aws_ec2_get \$(local_aws_ec2_instance_id_peco_menu 'all') # Get ec2 instance with hint
+			aws_ec2_create_image \$(local_aws_ec2_instance_id_peco_menu 'all') # Create ami image from ec2 with hint
+			aws_ec2_start \$(local_aws_ec2_instance_id_peco_menu 'stopped') # Start ec2 instance with hint
+			aws_ec2_stop \$(local_aws_ec2_instance_id_peco_menu 'running') # Stop ec2 instance with hint
+			aws_ec2_reboot \$(local_aws_ec2_instance_id_peco_menu 'running') # Reboot ec2 instance with hint
+			aws_ec2_rm_instruction \$(local_aws_ec2_instance_id_peco_menu 'all') # Remove ec2 instance instruction(Don't apply)
 
 		__EOF__
 	}

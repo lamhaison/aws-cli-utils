@@ -213,3 +213,7 @@ peco_aws_ssm_list_parameters() {
   "
 	peco_commandline_input ${commandline} 'true'
 }
+
+peco_aws_dynamodb_list_tables() {
+	peco_aws_input "aws dynamodb list-tables --query 'TableNames[]'" 'true'
+}

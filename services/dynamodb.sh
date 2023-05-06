@@ -30,3 +30,18 @@ aws_dynamodb_get_table_with_hint() {
 	local lhs_input=$(peco_create_menu 'peco_aws_dynamodb_list_tables' '--prompt "Choose your table >"')
 	aws_dynamodb_get_table ${lhs_input}
 }
+
+aws_dynamodb_list_items() {
+
+	aws_run_commandline "
+		aws dynamodb scan \
+		    --table-name ${1:?'dynamodb_table_name is unset or empty'} \
+		    --select ALL_ATTRIBUTES \
+	"
+}
+
+aws_dynamodb_list_items_with_hint() {
+	local lhs_input=$(peco_create_menu 'peco_aws_dynamodb_list_tables' '--prompt "Choose your table >"')
+	aws_dynamodb_list_items ${lhs_input}
+
+}

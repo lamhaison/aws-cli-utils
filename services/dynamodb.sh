@@ -45,3 +45,16 @@ aws_dynamodb_list_items_with_hint() {
 	aws_dynamodb_list_items ${lhs_input}
 
 }
+
+aws_dynamodb_rm_table_instruction() {
+	aws_commandline_logging "
+		aws dynamodb delete-table --table-name ${1:?'dynamodb_table_name is unset or empty'}
+	"
+}
+
+aws_dynamodb_rm_table_instruction_with_hint() {
+	local lhs_input=$(peco_create_menu 'peco_aws_dynamodb_list_tables' '--prompt "Choose your table >"')
+
+	aws_dynamodb_rm_table_instruction $lhs_input
+
+}

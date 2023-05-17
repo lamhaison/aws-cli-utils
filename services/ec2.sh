@@ -226,3 +226,10 @@ aws_ec2_get_credential_from_metadata_instruction() {
 aws_ec2_get_instance_type_spect_instruction() {
 	open https://instances.vantage.sh
 }
+
+aws_ec2_get_security_group_inbound_rules_with_hint() {
+  local ec2_instance_id=$(local_aws_ec2_instance_id_peco_menu)
+  local list_security_group=$(aws ec2 describe-instances --query "Reservations[].Instances[0].SecurityGroups[].GroupId" --instance-id "$ec2_instance_id" | tr '\t' ' ' )
+  echo -e "List Security Groups: " $list_security_group "\n"
+  aws ec2 describe-security-groups --group-ids $list_security_group | jq -r '.SecurityGroups[] | {GroupName} as $g | .IpPermissions[] | {FromPort} as $f | {ToPort} as $p | if (.IpRanges | length ) > 0 then (.IpRanges[] | {GroupName: $g.GroupName, CidrIp, FromPort: $f.FromPort, ToPort: $p.ToPort}) else(.UserIdGroupPairs[] as $ug | {GroupName: $g.GroupName, CidrIp: $ug.GroupId, FromPort: $f.FromPort, ToPort: $p.ToPort}) end' | jq -r '(. | [.GroupName, .CidrIp, .FromPort, .ToPort]) | @tsv' | awk 'function printline() { for(i=0;i<88;i++) printf "-"; printf "\n" } BEGIN {printline(); printf("| %-35s | %-20s | %-10s | %-10s |\n", "GroupName", "CidrIp", "FromPort", "ToPort"); printline()} {printf("| %-35s | %-20s | %-10s | %-10s |\n", $1, $2, $3, $4)} END {printline()}'
+}

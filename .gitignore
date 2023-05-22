@@ -2,3 +2,4 @@ aws_cli_results
 services/tmp.sh
 .DS_Store
 aws_cli_inputs
+.idea

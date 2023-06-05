@@ -121,3 +121,11 @@ aws_iam_get_policy() {
 aws_iam_get_policy_with_hint() {
 	aws_iam_get_policy $(peco_create_menu 'peco_aws_iam_list_attached_policies')
 }
+
+aws_iam_list_ec2_instance_profiles() {
+	aws_run_commandline "
+		 aws iam list-instance-profiles  \
+		 	--query '*[].{InstanceProfileName:InstanceProfileName,Arn:Arn}'
+
+	"
+}

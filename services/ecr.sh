@@ -30,6 +30,10 @@ aws_ecr_logout() {
 }
 
 aws_ecr_list_images() {
+	if [[ -z "${AWS_ACCOUNT_ID}" ]]; then
+		aws_assume_role_get_aws_account_id
+	fi
+
 	aws_ecr_repo_name=$1
 	cat <<-_EOF_
 		Get images from ecr repo ${aws_ecr_repo_name:?Repo is not set or empty}
@@ -40,6 +44,9 @@ aws_ecr_list_images() {
 }
 
 aws_ecr_get_latest_image() {
+	if [[ -z "${AWS_ACCOUNT_ID}" ]]; then
+		aws_assume_role_get_aws_account_id
+	fi
 	aws_ecr_repo_name=$1
 
 	cat <<-_EOF_

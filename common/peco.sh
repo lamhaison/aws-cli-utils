@@ -217,3 +217,7 @@ peco_aws_ssm_list_parameters() {
 peco_aws_dynamodb_list_tables() {
 	peco_aws_input "aws dynamodb list-tables --query 'TableNames[]'" 'true'
 }
+
+peco_aws_sqs_list() {
+	peco_aws_input 'aws sqs list-queues --query "*[]"' 'true'
+}

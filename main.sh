@@ -99,6 +99,8 @@ if [[ "${LHS_BIND_KEY}" = "True" ]]; then
 	# Hotkey: Option + a + c
 	bindkey 'åç' aws_get_command
 
+	bindkey '∫' aws_get_command
+
 	zle -N aws_history
 	# Hotkey Option + ah
 	bindkey '˙' aws_history

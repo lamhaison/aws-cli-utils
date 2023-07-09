@@ -158,8 +158,15 @@ aws_subnet_list() {
 aws_ec2_list_subnets() {
 	aws_run_commandline "\
 		aws ec2 describe-subnets \
-			--query '*[].{VpcId:VpcId,SubnetId:SubnetId,\
-				AvailabilityZone:AvailabilityZone,Name:Tags[?Key==\`Name\`].Value | [0]}' --output table
+			--query '*[].{AName:Tags[?Key==\`Name\`].Value | [0],SubnetId:SubnetId,VpcId:VpcId,CidrBlock:CidrBlock,AvailableIpAddressCount:AvailableIpAddressCount \
+				AvailabilityZone:AvailabilityZone}' --output table
+	"
+}
+
+# AWS EBS
+aws_volumes_list() {
+	aws_run_commandline "\
+		 aws ec2 describe-volumes --query '*[].{VolumeId:VolumeId,AvailabilityZone:AvailabilityZone,State:State,Name:Tags[?Key==\`Name\`].Value | [0],KubernetesCluster:Tags[?Key==\`KubernetesCluster\`].Value | [0]}' --output table 
 	"
 }
 
@@ -239,22 +246,22 @@ aws_ec2_get_instance_type_spect_instruction() {
 }
 
 aws_ec2_get_sg_inbound_rules_with_hint() {
-  local ec2_instance_id=$(local_aws_ec2_instance_id_peco_menu)
-  local list_security_group=$(aws ec2 describe-instances --query "Reservations[].Instances[0].SecurityGroups[].GroupId" --instance-id "$ec2_instance_id" | tr '\t' ' ' )
+	local ec2_instance_id=$(local_aws_ec2_instance_id_peco_menu)
+	local list_security_group=$(aws ec2 describe-instances --query "Reservations[].Instances[0].SecurityGroups[].GroupId" --instance-id "$ec2_instance_id" | tr '\t' ' ')
 	echo -e "\nIf your security group name is too long and break the table layout, consider to use option -c for column layout.\n"
-  echo -e "List Security Groups: " $list_security_group "\n"
+	echo -e "List Security Groups: " $list_security_group "\n"
 
-	while getopts ":c" opt; do 
-		case ${opt} in 
-			c) 
-				{ echo "GroupName CidrIp FromPort ToPort"  && aws ec2 describe-security-groups --group-ids $list_security_group | jq -r '.SecurityGroups[] | {GroupName} as $g | .IpPermissions[] | {FromPort} as $f | {ToPort} as $p | if (.IpRanges | length ) > 0 then (.IpRanges[] | {GroupName: $g.GroupName, CidrIp, FromPort: $f.FromPort, ToPort: $p.ToPort}) else(.UserIdGroupPairs[] as $ug | {GroupName: $g.GroupName, CidrIp: $ug.GroupId, FromPort: $f.FromPort, ToPort: $p.ToPort}) end' | jq -r '(. | [.GroupName, .CidrIp, .FromPort, .ToPort]) | @tsv' ;} | column -t
-				return 0
-				;;
-			\?)
-				echo "Invalid option, print default table layout. Only option -c is allow."
-				;;
+	while getopts ":c" opt; do
+		case ${opt} in
+		c)
+			{ echo "GroupName CidrIp FromPort ToPort" && aws ec2 describe-security-groups --group-ids $list_security_group | jq -r '.SecurityGroups[] | {GroupName} as $g | .IpPermissions[] | {FromPort} as $f | {ToPort} as $p | if (.IpRanges | length ) > 0 then (.IpRanges[] | {GroupName: $g.GroupName, CidrIp, FromPort: $f.FromPort, ToPort: $p.ToPort}) else(.UserIdGroupPairs[] as $ug | {GroupName: $g.GroupName, CidrIp: $ug.GroupId, FromPort: $f.FromPort, ToPort: $p.ToPort}) end' | jq -r '(. | [.GroupName, .CidrIp, .FromPort, .ToPort]) | @tsv'; } | column -t
+			return 0
+			;;
+		\?)
+			echo "Invalid option, print default table layout. Only option -c is allow."
+			;;
 		esac
 	done
 
-  aws ec2 describe-security-groups --group-ids $list_security_group | jq -r '.SecurityGroups[] | {GroupName} as $g | .IpPermissions[] | {FromPort} as $f | {ToPort} as $p | if (.IpRanges | length ) > 0 then (.IpRanges[] | {GroupName: $g.GroupName, CidrIp, FromPort: $f.FromPort, ToPort: $p.ToPort}) else(.UserIdGroupPairs[] as $ug | {GroupName: $g.GroupName, CidrIp: $ug.GroupId, FromPort: $f.FromPort, ToPort: $p.ToPort}) end' | jq -r '(. | [.GroupName, .CidrIp, .FromPort, .ToPort]) | @tsv' | awk 'function printline() { for(i=0;i<88;i++) printf "-"; printf "\n" } BEGIN {printline(); printf("| %-35s | %-20s | %-10s | %-10s |\n", "GroupName", "CidrIp", "FromPort", "ToPort"); printline()} {printf("| %-35s | %-20s | %-10s | %-10s |\n", $1, $2, $3, $4)} END {printline()}'
+	aws ec2 describe-security-groups --group-ids $list_security_group | jq -r '.SecurityGroups[] | {GroupName} as $g | .IpPermissions[] | {FromPort} as $f | {ToPort} as $p | if (.IpRanges | length ) > 0 then (.IpRanges[] | {GroupName: $g.GroupName, CidrIp, FromPort: $f.FromPort, ToPort: $p.ToPort}) else(.UserIdGroupPairs[] as $ug | {GroupName: $g.GroupName, CidrIp: $ug.GroupId, FromPort: $f.FromPort, ToPort: $p.ToPort}) end' | jq -r '(. | [.GroupName, .CidrIp, .FromPort, .ToPort]) | @tsv' | awk 'function printline() { for(i=0;i<88;i++) printf "-"; printf "\n" } BEGIN {printline(); printf("| %-35s | %-20s | %-10s | %-10s |\n", "GroupName", "CidrIp", "FromPort", "ToPort"); printline()} {printf("| %-35s | %-20s | %-10s | %-10s |\n", $1, $2, $3, $4)} END {printline()}'
 }

@@ -221,3 +221,19 @@ peco_aws_dynamodb_list_tables() {
 peco_aws_sqs_list() {
 	peco_aws_input 'aws sqs list-queues --query "*[]"' 'true'
 }
+
+peco_aws_eks_list_clusters() {
+	peco_aws_input 'aws eks list-clusters  --query "*[]"' 'true'
+}
+
+peco_aws_cloudformation_list_stacks() {
+	peco_aws_input 'aws cloudformation list-stacks --query "*[].StackName"' 'true'
+}
+
+peco_aws_imagebuilder_list() {
+	peco_aws_input 'aws imagebuilder list-image-pipelines --query "imagePipelineList[*].arn"' 'true'
+}
+
+peco_aws_imagebuilder_list_recipes() {
+	peco_aws_input 'aws imagebuilder list-image-recipes --query "*[].arn"' 'true'
+}

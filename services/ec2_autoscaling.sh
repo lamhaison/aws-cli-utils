@@ -21,7 +21,7 @@ aws_autoscaling_get_instances() {
 		"
 		aws autoscaling describe-auto-scaling-groups \
         --auto-scaling-group-names ${aws_autoscaling_name:?'aws_autoscaling_name is unset or empty'} \
-        --query \"AutoScalingGroups[0].Instances[*].{InstanceId:InstanceId,HealthStatus:HealthStatus,LifecycleState:LifecycleState,LaunchTemplate:LaunchTemplate.Version}\" \
+        --query \"AutoScalingGroups[0].Instances[*].{InstanceId:InstanceId,HealthStatus:HealthStatus,AvailabilityZone:AvailabilityZone,LifecycleState:LifecycleState,LaunchTemplate:LaunchTemplate.Version}\" \
         --output table
 	"
 }

@@ -62,7 +62,7 @@ aws_autoscaling_detach_instance() {
 
 aws_autoscaling_set_desired_capacity_with_hint() {
 	aws_autoscaling_name=$(peco_create_menu 'peco_aws_autoscaling_list')
-	aws_autoscaling_desized_capacity=$(peco_create_menu_with_array_input "1 2 3 4 5 6" | peco)
+	aws_autoscaling_desized_capacity=$(peco_create_menu_with_array_input "0 1 2 3 4 5 6 7 8 9 10" | peco)
 
 	aws_autoscaling_set_desired_capacity ${aws_autoscaling_name} ${aws_autoscaling_desized_capacity}
 }

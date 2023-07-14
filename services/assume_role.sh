@@ -21,6 +21,14 @@ aws_assume_role_reset() {
 	source ${AWS_CLI_SOURCE_SCRIPTS}/main.sh
 }
 
+aws_assume_role_unset() {
+
+	for var_name in $(echo "ASSUME_ROLE  AWS_ACCESS_KEY_ID \
+			AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_SECURITY_TOKEN AWS_REGION"); do
+		unset $var_name
+	done
+}
+
 aws_assume_role_get_current() {
 	echo "You are using the assume role name ${ASSUME_ROLE}"
 }
@@ -183,8 +191,9 @@ aws_assume_role_set_name() {
 aws_assume_role_set_name_with_hint() {
 
 	function peco_aws_asssume_role_list() {
+		# To ignore comment profile
 		grep -iE "\[*\]" ~/.aws/config |
-			tr -d "[]" | awk -F " " '{print $2}'
+			tr -d "[]" | grep -v -E "^#.*" | awk -F " " '{print $2}'
 
 	}
 
@@ -223,5 +232,27 @@ aws_assume_role_get_tmp_credentials_for_new_members() {
 	aws_assume_role_set_name_with_hint
 	aws_assume_role_unzip_tmp_credential $assume_role
 	cat ${tmp_credentials_file} && rm -rf ${tmp_credentials_file}
+
+}
+
+aws_assume_role_get_tmp_credentials_for_credential_setting_file() {
+	local tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
+	aws_assume_role_set_name_with_hint
+
+	local lhs_docs=$(
+		cat <<-__EOF__
+			[${ASSUME_ROLE}-temp]
+				aws_access_key_id = ${AWS_ACCESS_KEY_ID}
+				aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
+				aws_session_token = ${AWS_SESSION_TOKEN}
+				region = ${AWS_REGION}
+
+		__EOF__
+	)
+
+	echo "$lhs_docs"
+
+	echo "$lhs_docs" >>${HOME}/.aws/credentials
+	echo "Add to the file ${HOME}/.aws/credentials"
 
 }

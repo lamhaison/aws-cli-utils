@@ -47,6 +47,6 @@ function aws_sqs_get() {
 	aws_sqs_get_by_url "$1"
 }
 
-function lhs_sqs_get_with_hint() {
+function aws_sqs_get_with_hint() {
 	aws_sqs_get $(peco_create_menu 'peco_aws_sqs_list')
 }

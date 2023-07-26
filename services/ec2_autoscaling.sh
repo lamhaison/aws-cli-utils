@@ -1,5 +1,26 @@
+#!/bin/bash
+###################################################################
+# # @version 		1.0.0
+# # @script			ec2_autoscaling.sh
+# # @author		 	lamhaison
+# # @email		 	lamhaison@gmail.com
+# # @description	When working with auto scaling group
+# # @bash_version   None
+# # @notes          None
+# # @usage		 	Only use function in the script instead of bash ec2_autoscaling.sh
+# # @date			YYYYMMDD
+###################################################################
+
 aws_autoscaling_list() {
-	aws_run_commandline 'aws autoscaling describe-auto-scaling-groups'
+	aws_run_commandline '\
+		aws autoscaling describe-auto-scaling-groups \
+			--query "*[].{ASGlhsrName:AutoScalingGroupName,\
+				LTID:MixedInstancesPolicy.LaunchTemplate.LaunchTemplateSpecification.LaunchTemplateId,\
+				LTVersion:MixedInstancesPolicy.LaunchTemplate.LaunchTemplateSpecification.Version,\
+				LTName:MixedInstancesPolicy.LaunchTemplate.LaunchTemplateSpecification.LaunchTemplateName,\
+				DesiredCapacity:DesiredCapacity}" \
+			--output table		
+	'
 }
 
 aws_autoscaling_get() {
@@ -70,23 +91,4 @@ aws_autoscaling_set_desired_capacity_with_hint() {
 # TODO LATER
 aws_autoscaling_detach_instance_with_hint() {
 	echo "TODO Later"
-}
-
-aws_autoscaling_get_launching_template() {
-	aws_autoscaling_launching_template_id=$1
-	aws_run_commandline "\
-		aws ec2 describe-launch-templates \
-			--launch-template-ids ${aws_autoscaling_launching_template_id}
-	"
-}
-
-aws_autoscaling_get_launching_template_version() {
-
-	aws_autoscaling_launching_template_id=$1
-	# aws_autoscaling_launching_template_version=$2
-	aws_run_commandline "\
-		aws ec2 describe-launch-template-versions \
-			--launch-template-id ${aws_autoscaling_launching_template_id}
-	"
-
 }

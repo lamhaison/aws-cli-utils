@@ -10,10 +10,6 @@ aws_datapipeline_check_using() {
 	aws datapipeline list-pipelines
 }
 
-aws_autoscaling_lauching_configuration_list() {
-	aws autoscaling describe-launch-configurations --query "*[].LaunchConfigurationName"
-}
-
 aws_resource_list() {
 
 	aws_run_commandline "\

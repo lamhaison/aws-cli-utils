@@ -67,7 +67,7 @@ mkdir -p ${aws_cli_list_commands_folder}
 export AWS_DEFAULT_OUTPUT="json"
 
 # add some help aliases
-alias get-account-alias='aws iam list-account-aliases'
+alias get-account-alias='aws iam list-account-aliases --query "*[0]" --output text'
 alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Account" --output text)'
 
 # Import sub-commandlines.

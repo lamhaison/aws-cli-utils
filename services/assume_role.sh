@@ -221,7 +221,7 @@ aws_assume_role_get_aws_account_id() {
 }
 
 aws_account_info() {
-	get-account-alias
+	echo "Alias $(get-account-alias)"
 	aws_assume_role_get_aws_account_id
 	echo "AccountId ${AWS_ACCOUNT_ID}"
 	echo AWS Region ${AWS_REGION:?"The AWS_REGION is unset or empty"}

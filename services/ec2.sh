@@ -66,11 +66,19 @@ aws_ec2_stop() {
 	"
 }
 
+aws_ec2_stop_with_hint() {
+	aws_ec2_stop $(local_aws_ec2_instance_id_peco_menu)
+}
+
 aws_ec2_start() {
 	aws_run_commandline "\
 		aws ec2 start-instances \
 			--instance-ids ${1:?"The aws_ec2_instance_id is unset or empty"}
 	"
+}
+
+aws_ec2_start_with_hint() {
+	aws_ec2_start $(local_aws_ec2_instance_id_peco_menu 'stopped')
 }
 
 aws_ec2_rm_instruction() {
@@ -117,6 +125,10 @@ aws_ec2_create_image() {
 		--name ${aws_ec2_instance_name}-$(date '+%Y-%m-%d-%H-%M-%S') \
 		--description ${aws_ec2_instance_name}-$(date '+%Y-%m-%d-%H-%M-%S') \
 		--query "ImageId" --output text
+}
+
+aws_ec2_create_image_with_hint() {
+	aws_ec2_create_image $(local_aws_ec2_instance_id_peco_menu)
 }
 
 aws_ec2_get_image() {
@@ -264,4 +276,22 @@ aws_ec2_get_sg_inbound_rules_with_hint() {
 	done
 
 	aws ec2 describe-security-groups --group-ids $list_security_group | jq -r '.SecurityGroups[] | {GroupName} as $g | .IpPermissions[] | {FromPort} as $f | {ToPort} as $p | if (.IpRanges | length ) > 0 then (.IpRanges[] | {GroupName: $g.GroupName, CidrIp, FromPort: $f.FromPort, ToPort: $p.ToPort}) else(.UserIdGroupPairs[] as $ug | {GroupName: $g.GroupName, CidrIp: $ug.GroupId, FromPort: $f.FromPort, ToPort: $p.ToPort}) end' | jq -r '(. | [.GroupName, .CidrIp, .FromPort, .ToPort]) | @tsv' | awk 'function printline() { for(i=0;i<88;i++) printf "-"; printf "\n" } BEGIN {printline(); printf("| %-35s | %-20s | %-10s | %-10s |\n", "GroupName", "CidrIp", "FromPort", "ToPort"); printline()} {printf("| %-35s | %-20s | %-10s | %-10s |\n", $1, $2, $3, $4)} END {printline()}'
+}
+
+aws_ec2_get_console_logs() {
+	aws_run_commandline "\
+		aws ec2 get-console-output \
+			--instance-id ${1:?'instance_id is unset or empty'} \
+			--output text
+	"
+}
+
+aws_ec2_get_fingerprint() {
+	aws_ec2_get_console_logs $1
+
+}
+
+aws_ec2_get_fingerprint_with_hint() {
+	aws_ec2_get_fingerprint $(local_aws_ec2_instance_id_peco_menu)
+
 }

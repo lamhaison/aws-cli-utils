@@ -1,7 +1,11 @@
 #!/bin/bash
 
 aws_elasticache_list() {
-	aws_run_commandline 'aws elasticache describe-cache-clusters'
+	aws_run_commandline "\
+		aws elasticache describe-cache-clusters --query '*[].{CacheClusterId:CacheClusterId,CacheNodeType:CacheNodeType,Engine:Engine,EngineVersion:EngineVersion,CacheClusterStatus:CacheClusterStatus,NumCacheNodes:NumCacheNodes}' \
+		--output table
+	"
+
 }
 
 aws_elasticache_rm_redis_cluster_instruction() {

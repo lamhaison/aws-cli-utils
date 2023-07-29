@@ -3,7 +3,7 @@
 aws_history() {
 
   local log_file_path=${aws_cli_logs}/${ASSUME_ROLE}.log
-  local peco_command="cat ${log_file_path} | grep 'Running commandline ' | sed 's/Running commandline //' | uniq"
+  local peco_command="cat ${log_file_path} | tac | grep 'Running commandline ' | sed 's/Running commandline //' | sort | uniq"
   local peco_input=$(peco_create_menu "${peco_command}" '--prompt "Choose aws cli history >"')
 
   if [[ $? -ne 0 ]]; then

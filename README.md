@@ -36,7 +36,12 @@ peco version v0.5.10 (built with go1.19.2)
 ### Install assume-role
 To allow assume role to a target account
 ```
-brew install remind101/formulae/assume-role
+
+
+brew install remind101/formulae/assume-role # For Macos Intel Chip
+brew tap lamhaison/formulae && brew install lamhaison/formulae/assume-role-linux # For Linux
+brew tap lamhaison/formulae && brew install lamhaison/formulae/assume-role-macos-apple-chip # For Macos Apple Chip
+
 ```
 
 ### Setup your password for compress the plantext your temporary credentail.

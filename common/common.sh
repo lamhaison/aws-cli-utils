@@ -68,7 +68,7 @@ function aws_commandline_logging() {
 	local aws_commandline_logging=$(echo ${1:?'aws_commandline is unset or empty'} | tr -d '\t' | tr -d '\n' | tr -s ' ')
 
 	if [ "$aws_show_commandline" = "true" ]; then
-		echo "Running commandline [ ${aws_commandline_logging} ]" >>${log_file_path}
+		echo "Running commandline [ ${aws_commandline_logging} ]" | tee -a ${log_file_path}
 	fi
 }
 

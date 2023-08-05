@@ -42,6 +42,10 @@ peco_commandline_input() {
 	local result_cached=$2
 	local input_expired_time="${3:-$peco_input_expired_time}"
 
+	if [ "${peco_aws_disable_input_cached}" = "0" ]; then
+		input_expired_time=0
+	fi
+
 	local md5_hash=$(echo $commandline | md5)
 	local input_folder="${aws_cli_input_tmp}/${ASSUME_ROLE:-NOTSET}"
 	mkdir -p ${input_folder}

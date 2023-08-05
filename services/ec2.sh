@@ -24,7 +24,7 @@ aws_ec2_list_all() {
 		"aws ec2 describe-instances \
 		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0], \
 			InstanceId:InstanceId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
-			PublicIp:PublicIpAddress,State:State.Name,LaunchTime:LaunchTime}' \
+			PublicIp:PublicIpAddress,State:State.Name,LaunchTime:LaunchTime,ZInstanceLifecycle:InstanceLifecycle}' \
 		--output table
 	"
 }
@@ -36,7 +36,7 @@ aws_ec2_list() {
 		--filters Name=instance-state-name,Values=running \
 		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0], \
 			InstanceId:InstanceId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
-			PublicIp:PublicIpAddress,State:State.Name,LaunchTime:LaunchTime}' \
+			PublicIp:PublicIpAddress,State:State.Name,LaunchTime:LaunchTime,ZInstanceLifecycle:InstanceLifecycle}' \
 		--output table
 	"
 }

@@ -161,6 +161,17 @@ aws_vpc_list() {
 	aws_ec2_list_vpcs
 }
 
+aws_vpc_check_private_dns_supported() {
+	local vpc_id=$1
+
+	# Check input invalid
+	if [ -z "$vpc_id" ]; then return; fi
+
+	aws ec2 describe-vpc-attribute --vpc-id ${vpc_id} --attribute enableDnsSupport
+	aws ec2 describe-vpc-attribute --vpc-id ${vpc_id} --attribute enableDnsHostnames
+
+}
+
 # Subnets
 aws_subnet_list() {
 

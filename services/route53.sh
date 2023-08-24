@@ -39,3 +39,12 @@ function aws_route53_get_with_hint() {
 	local aws_route53_host_zone_id=$(echo ${lhs_input} | awk -F "_" '{print $1}')
 	aws_route53_get $aws_route53_host_zone_id
 }
+
+function aws_route_get_host_zone_with_hint() {
+
+	local lhs_input=$(peco_create_menu 'peco_aws_route53_list' '--prompt "Choose the domain >"')
+	local aws_route53_host_zone_id=$(echo ${lhs_input} | awk -F "_" '{print $1}')
+
+	aws route53 get-hosted-zone --id ${aws_route53_host_zone_id}
+
+}

@@ -241,3 +241,8 @@ peco_aws_imagebuilder_list() {
 peco_aws_imagebuilder_list_recipes() {
 	peco_aws_input 'aws imagebuilder list-image-recipes --query "*[].arn"' 'true'
 }
+
+peco_aws_budgets_list() {
+	aws_assume_role_get_aws_account_id
+	peco_aws_input 'aws budgets describe-budgets --account-id=${AWS_ACCOUNT_ID} --query "*[].BudgetName"' 'true'
+}

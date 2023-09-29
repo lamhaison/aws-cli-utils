@@ -71,6 +71,16 @@ aws_export_region() {
 	export AWS_REGION=$AWS_REGION
 }
 
+
+aws_assume_role_get_expired_time() {
+	local input_aws_assume_role_expired_time=$(aws configure get profile.${ASSUME_ROLE}.assume_role_timeout)
+	if [ -z "${input_aws_assume_role_expired_time}" ]; then
+		input_aws_assume_role_expired_time="${aws_assume_role_expired_time}"
+	fi
+	echo ${input_aws_assume_role_expired_time}
+}
+
+
 aws_assume_role_get_credentail() {
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	echo "Running assume-role ${ASSUME_ROLE}"
@@ -78,6 +88,7 @@ aws_assume_role_get_credentail() {
 	# rm -rf ${tmp_credentials_file} ${tmp_credentials_file}.zip
 
 	assume_role_result=""
+	local aws_assume_role_expired_time=$(aws_assume_role_get_expired_time)
 	assume_role_duration="$((${aws_assume_role_expired_time} * 60))s"
 	while [[ "${assume_role_result}" == "" ]]; do
 		assume_role_result=$(assume-role -duration ${assume_role_duration} ${ASSUME_ROLE})
@@ -102,6 +113,8 @@ aws_assume_role_get_credentail() {
 aws_assume_role_unzip_tmp_credential_valid() {
 	local aws_assume_role=$1
 	local tmp_credentials_file_zip="${tmp_credentials}/${aws_assume_role}.zip"
+	
+	local aws_assume_role_expired_time=$(aws_assume_role_get_expired_time)
 	local assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
 
 	local expired_tmp_credential=$(find ${tmp_credentials} -name ${aws_assume_role}.zip -mmin +${assume_role_duration})
@@ -142,6 +155,7 @@ aws_call_assume_role() {
 	tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
 
+	local aws_assume_role_expired_time=$(aws_assume_role_get_expired_time)
 	assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
 	if [ -f ${tmp_credentials_file_zip} ]; then
 		if [ "$(aws_assume_role_unzip_tmp_credential_valid ${ASSUME_ROLE})" = "true" ]; then

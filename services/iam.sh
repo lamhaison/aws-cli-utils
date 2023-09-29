@@ -9,6 +9,32 @@ aws_iam_list_users() {
 	aws_run_commandline 'aws iam list-users --output table'
 }
 
+aws_iam_list_users_info() {
+
+	aws_run_commandline 'aws iam list-users --output table'
+
+	for user_name in $(aws iam list-users --query '*[].{UserName:UserName}' --output text); do
+		aws_run_commandline "\
+			aws iam get-user --user-name ${user_name}
+			aws iam list-attached-user-policies --user-name ${user_name}
+		"
+	done
+
+}
+
+aws_iam_list_roles_info() {
+
+	aws_run_commandline 'aws iam list-roles --output table'
+
+	for role_name in $(aws iam list-roles --query '*[].{RoleName:RoleName}' --output text); do
+		aws_run_commandline "\
+			aws iam get-role --role-name ${role_name}
+			aws iam list-attached-role-policies --role-name ${role_name}
+		"
+	done
+
+}
+
 aws_iam_create_instance_profile() {
 	aws_iam_ec2_instance_profile_role_name=$1
 

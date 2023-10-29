@@ -23,7 +23,7 @@ aws_ec2_list_all() {
 	aws_run_commandline \
 		"aws ec2 describe-instances \
 		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0], \
-			ImageId:ImageId,InstanceId:InstanceId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
+			InstanceId:InstanceId,ImageId:ImageId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
 			PublicIp:PublicIpAddress,State:State.Name,LaunchTime:LaunchTime,ZInstanceLifecycle:InstanceLifecycle}' \
 		--output table
 	"
@@ -34,7 +34,7 @@ aws_ec2_list_all_sort_by_launching_time() {
 		--filter Name=instance-state-name,Values=running \
 		--query 'Reservations[*].Instances[*].[LaunchTime,State.Name,ImageId,InstanceId,PrivateIpAddress,PublicIpAdress,InstanceLifecycle,Tags[?Key==`Name`] | [0].Value][] | sort_by(@, &[0])' \
 		--output table
-		
+
 }
 
 # Only list all the running instances.
@@ -43,7 +43,7 @@ aws_ec2_list() {
 		"aws ec2 describe-instances \
 		--filters Name=instance-state-name,Values=running \
 		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0], \
-			ImageId:ImageId,InstanceId:InstanceId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
+			InstanceId:InstanceId,ImageId:ImageId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
 			PublicIp:PublicIpAddress,State:State.Name,LaunchTime:LaunchTime,ZInstanceLifecycle:InstanceLifecycle}' \
 		--output table
 	"

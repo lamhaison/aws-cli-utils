@@ -108,8 +108,14 @@ aws_iam_get_role_with_hint() {
 }
 
 aws_iam_list_role_policies() {
-	aws_iam_role_name=$1
+	local aws_iam_role_name=$1
 	# aws_iam_get_role ${aws_iam_role_name}
+
+	# Check input invalid
+	if [ -z "$aws_iam_role_name" ]; then
+		echo "AWs IAM RoleName is invalid"
+		return
+	fi
 
 	aws_run_commandline "\
 		aws iam list-attached-role-policies --role-name ${aws_iam_role_name}

@@ -7,12 +7,15 @@
 # $2: Where do you want to save logs?
 # $3: Do you want to set the bind key?
 
+DEFAULT_AWS_CLI_SOURCE_SCRIPTS='/opt/lamhaison-tools/aws-cli-utils'
+DEFAULT_AWS_CLI_DATA='/opt/lamhaison-tools/aws-cli-utils'
+
 AWS_CLI_SOURCE_SCRIPTS=$1
 
 if [[ -z "${AWS_CLI_SOURCE_SCRIPTS}" ]]; then
 	LOCAL_AWS_CLI_SOURCE_SCRIPTS=$(dirname -- "$0")
-	if [[ "${LOCAL_AWS_CLI_SOURCE_SCRIPTS}" = "." ]]; then
-		DEFAULT_AWS_CLI_SOURCE_SCRIPTS='/opt/lamhaison-tools/aws-cli-utils'
+	if [[ "${LOCAL_AWS_CLI_SOURCE_SCRIPTS}" == "." ]]; then
+		LOCAL_AWS_CLI_SOURCE_SCRIPTS="${DEFAULT_AWS_CLI_SOURCE_SCRIPTS}"
 	fi
 
 	export AWS_CLI_SOURCE_SCRIPTS="${LOCAL_AWS_CLI_SOURCE_SCRIPTS:-${DEFAULT_AWS_CLI_SOURCE_SCRIPTS}}"
@@ -23,8 +26,8 @@ fi
 AWS_CLI_DATA=$2
 if [[ -z "${AWS_CLI_DATA}" ]]; then
 	LOCAL_AWS_CLI_DATA=$(dirname -- "$0")
-	if [[ "${LOCAL_AWS_CLI_DATA}" = "." ]]; then
-		DEFAULT_AWS_CLI_DATA='/opt/lamhaison-tools/aws-cli-utils'
+	if [[ "${LOCAL_AWS_CLI_DATA}" == "." ]]; then
+		LOCAL_AWS_CLI_DATA="${DEFAULT_AWS_CLI_DATA}"
 	fi
 
 	export AWS_CLI_DATA="${LOCAL_AWS_CLI_DATA:-${DEFAULT_AWS_CLI_DATA}}"
@@ -32,6 +35,7 @@ else
 	export AWS_CLI_DATA=${AWS_CLI_DATA}
 fi
 
+# shellcheck disable=SC2155
 export assume_role_password_encrypted="$(cat ~/.password_assume_role_encrypted)"
 export tmp_credentials="/tmp/aws_temporary_credentials"
 
@@ -89,7 +93,7 @@ fi
 
 LHS_BIND_KEY=${3:-'True'}
 
-if [[ "${LHS_BIND_KEY}" = "True" ]]; then
+if [[ ${LHS_BIND_KEY} == "True" && "$(which zle)" != "" ]]; then
 	# Add hot-keys
 	# zle -N aws_help
 	zle -N aws_main_function

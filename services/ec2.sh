@@ -128,7 +128,7 @@ aws_ec2_connect_with_hint() {
 	aws_ssm_connection_ec2 $(local_aws_ec2_instance_id_peco_menu)
 }
 
-aws_ec2_connect_forwarding_with_hint() {
+aws_ec2_connect_forwarding_for_rds_with_hint() {
 	local ec2_instance_id=$(local_aws_ec2_instance_id_peco_menu)
 	local rds_endpoint=$(local_aws_rds_endpoint_peco_menu)
 	echo "Enter your local port forwarding to the instance"

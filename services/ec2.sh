@@ -6,6 +6,12 @@ local_aws_ec2_instance_id_peco_menu() {
 	echo ${aws_ec2_instance_id}
 }
 
+local_aws_rds_endpoint_peco_menu() {
+	local aws_rds_endpoint=$(peco_create_menu 'peco_aws_list_db_endpoint')
+	aws_rds_endpoint=$(echo "${aws_rds_endpoint}" | awk -F "_" '{print $1}')
+	echo ${aws_rds_endpoint}
+}
+
 # AWS ec2
 # List all ec2 instance(don't care stopped or running instances)
 aws_ec2_list_all() {
@@ -120,6 +126,14 @@ aws_ec2_connect() {
 
 aws_ec2_connect_with_hint() {
 	aws_ssm_connection_ec2 $(local_aws_ec2_instance_id_peco_menu)
+}
+
+aws_ec2_connect_forwarding_with_hint() {
+	local ec2_instance_id=$(local_aws_ec2_instance_id_peco_menu)
+	local rds_endpoint=$(local_aws_rds_endpoint_peco_menu)
+	echo "Enter your local port forwarding to the instance"
+	read local_port
+	aws_ssm_port_forwarding_ec2 $ec2_instance_id $rds_endpoint $local_port
 }
 
 aws_ec2_list_eips() {

@@ -28,20 +28,20 @@ aws_ssm_connection_ec2() {
 
 }
 
-aws_ssm_port_forwarding_ec2() {
+aws_ssm_port_forwarding_ec2_for_rds() {
         aws_ec2_instance_id=$1
         aws_rds_endpoint=$2
-        rds_port=$3
+        local_port=$3
         aws_commandline_logging "\
                 aws ssm start-session --target ${aws_ec2_instance_id:?'aws_ec2_instance_id is unset or empty'}
                         --document-name AWS-StartPortForwardingSessionToRemoteHost \
-                        --parameters host="${aws_rds_endpoint:?'aws_rds_endpoint is unset or empty'}",portNumber="3306",localPortNumber="${rds_port:?'rds_port is unset or empty'}"
+                        --parameters host="${aws_rds_endpoint:?'aws_rds_endpoint is unset or empty'}",portNumber="3306",localPortNumber="${local_port:?'local_port is unset or empty'}"
         "
 
-        if [[ -n "${aws_ec2_instance_id}" || -n "${aws_rds_endpoint}"|| -n "${rds_port}" ]]; then
+        if [[ -n "${aws_ec2_instance_id}" || -n "${aws_rds_endpoint}"|| -n "${local_port}" ]]; then
                 aws ssm start-session --target $aws_ec2_instance_id \
                         --document-name AWS-StartPortForwardingSessionToRemoteHost \
-                        --parameters host="$aws_rds_endpoint",portNumber="3306",localPortNumber="$rds_port"
+                        --parameters host="$aws_rds_endpoint",portNumber="3306",localPortNumber="$local_port"
         fi
 
 }

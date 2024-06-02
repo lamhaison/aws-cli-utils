@@ -9,7 +9,7 @@ zip_tmp_credential() {
 	cd $tmp_credentials >/dev/null
 	echo "Encrypt temporary credential for assume-role ${ASSUME_ROLE} at ${tmp_credentials}/${ASSUME_ROLE}.zip"
 
-	if [ -f "${tmp_credentials}/${ASSUME_ROLE}.zip" ]; then
+	if [[ -f "${tmp_credentials}/${ASSUME_ROLE}.zip" ]]; then
 		rm -rf ${tmp_credentials}/${ASSUME_ROLE}.zip
 	fi
 
@@ -61,7 +61,7 @@ aws_assume_role_unzip_tmp_credential() {
 aws_assume_role_rm_tmp_credential() {
 	assume_role_name_input=$1
 	tmp_credentials_file_zip=${tmp_credentials}/${assume_role_name_input:?"aws_assume_role_rm_tmp_credential is unset or empty"}.zip
-	if [ -f "${tmp_credentials_file_zip}" ]; then
+	if [[ -f "${tmp_credentials_file_zip}" ]]; then
 		rm -r ${tmp_credentials_file_zip}
 	fi
 }
@@ -78,8 +78,19 @@ aws_assume_role_get_credentail() {
 	# rm -rf ${tmp_credentials_file} ${tmp_credentials_file}.zip
 
 	assume_role_result=""
+
+	aws_assume_role_expired_time_from_config=$(aws configure get profile.${ASSUME_ROLE}.assume_role_timeout)
+
+	# Check input invalid
+	if [[ -n "$aws_assume_role_expired_time_from_config" ]]; then
+		aws_assume_role_expired_time=$aws_assume_role_expired_time_from_config
+	fi
+
 	assume_role_duration="$((${aws_assume_role_expired_time} * 60))s"
+
 	while [[ "${assume_role_result}" == "" ]]; do
+
+		echo "assume-role -duration ${assume_role_duration} ${ASSUME_ROLE}"
 		assume_role_result=$(assume-role -duration ${assume_role_duration} ${ASSUME_ROLE})
 
 		if [[ "${assume_role_result}" == "" ]]; then
@@ -90,7 +101,7 @@ aws_assume_role_get_credentail() {
 
 	echo $assume_role_result >${tmp_credentials_file}
 	empty_file=$(find ${tmp_credentials} -name ${ASSUME_ROLE} -empty)
-	if [ -z "${empty_file}" ]; then
+	if [[ -z "${empty_file}" ]]; then
 		zip_tmp_credential
 	else
 		echo "Assume role couldn't be succesful"
@@ -106,7 +117,7 @@ aws_assume_role_unzip_tmp_credential_valid() {
 
 	local expired_tmp_credential=$(find ${tmp_credentials} -name ${aws_assume_role}.zip -mmin +${assume_role_duration})
 	# the file aws assume role zip file exists and not empty and not expired
-	if [ -s "${tmp_credentials_file_zip}" ] && [ -z "${expired_tmp_credential}" ]; then
+	if [[ -s "${tmp_credentials_file_zip}" ]] && [[ -z "${expired_tmp_credential}" ]]; then
 		echo "true"
 	else
 		echo "false"
@@ -120,10 +131,10 @@ aws_assume_role_load_current_assume_role_for_new_tab() {
 	local tmp_credentials_file_zip="${tmp_credentials}/${aws_assume_role}.zip"
 	local assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
 
-	if [ "true" = "${aws_cli_load_current_assume_role}" ] &&
+	if [[ "true" = "${aws_cli_load_current_assume_role}" ]] &&
 		# the file current aws assume role exists
-		[ -s "${aws_cli_current_assume_role_name}" ] &&
-		[ "true" = "$(aws_assume_role_unzip_tmp_credential_valid ${aws_assume_role})" ]; then
+		[[ -s "${aws_cli_current_assume_role_name}" ]] &&
+		[[ "true" = "$(aws_assume_role_unzip_tmp_credential_valid ${aws_assume_role})" ]]; then
 		aws_assume_role_set_name ${aws_assume_role}
 	fi
 }
@@ -143,8 +154,8 @@ aws_call_assume_role() {
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
 
 	assume_role_duration="$((${aws_assume_role_expired_time} - 5))"
-	if [ -f ${tmp_credentials_file_zip} ]; then
-		if [ "$(aws_assume_role_unzip_tmp_credential_valid ${ASSUME_ROLE})" = "true" ]; then
+	if [[ -f ${tmp_credentials_file_zip} ]]; then
+		if [[ "$(aws_assume_role_unzip_tmp_credential_valid ${ASSUME_ROLE})" = "true" ]]; then
 			echo "Re-use the temporary credential of ${ASSUME_ROLE} at ${tmp_credentials_file_zip}"
 		else
 			echo "The credential is older than ${aws_assume_role_expired_time} or the credential is empty then we will run assume-role ${ASSUME_ROLE} again"
@@ -172,10 +183,10 @@ aws_assume_role_set_name() {
 	aws_call_assume_role
 
 	tmp_credentials_file_zip="${tmp_credentials}/${ASSUME_ROLE}.zip"
-	if [ -f $tmp_credentials_file_zip ]; then
+	if [[ -f $tmp_credentials_file_zip ]]; then
 		# cd ${aws_cli_results}
 
-		if [ "${aws_assume_role_print_account_info}" = "true" ]; then
+		if [[ "${aws_assume_role_print_account_info}" = "true" ]]; then
 			aws_account_info
 		fi
 	else
@@ -254,5 +265,22 @@ aws_assume_role_get_tmp_credentials_for_credential_setting_file() {
 
 	echo "$lhs_docs" >>${HOME}/.aws/credentials
 	echo "Add to the file ${HOME}/.aws/credentials"
+
+}
+
+function aws_assume_role_get_tmp_credentials_for_env_docker_compose_setting_file() {
+	local tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
+	aws_assume_role_set_name_with_hint
+
+	local lhs_docs=$(
+		cat <<-__EOF__
+			AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+			AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+			AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+			AWS_REGION=${AWS_REGION}
+		__EOF__
+	)
+
+	echo "$lhs_docs"
 
 }

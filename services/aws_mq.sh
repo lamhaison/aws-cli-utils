@@ -11,9 +11,9 @@
 # # @usage		 	Only use function in the script instead of bash aws_mq.sh
 ###################################################################
 
-function aws_mq_list_broker() {
+function aws_mq_list_brokers() {
 	aws_run_commandline "\
-		aws mq list-brokers   --query '*[].{BrokerName:BrokerName,BrokerState:BrokerState,DeploymentMode:DeploymentMode,EngineType:EngineType,HostInstanceType:HostInstanceType}' \
+		aws mq list-brokers   --query '*[].{BrokerName:BrokerName,BrokerState:BrokerState,DeploymentMode:DeploymentMode,EngineType:EngineType,HostInstanceType:HostInstanceType,EndPoint:BrokerId}' \
 		--output table
 	"
 }

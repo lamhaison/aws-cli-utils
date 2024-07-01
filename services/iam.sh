@@ -112,7 +112,7 @@ aws_iam_list_role_policies() {
 	# aws_iam_get_role ${aws_iam_role_name}
 
 	# Check input invalid
-	if [ -z "$aws_iam_role_name" ]; then
+	if [[ -z "$aws_iam_role_name" ]]; then
 		echo "AWs IAM RoleName is invalid"
 		return
 	fi
@@ -160,4 +160,66 @@ aws_iam_list_ec2_instance_profiles() {
 		 	--query '*[].{InstanceProfileName:InstanceProfileName,Arn:Arn}'
 
 	"
+}
+
+# For remove iam user
+function aws_iam_rm_user_instruction() {
+
+	IAM_USERNAME=$1
+
+	# Check input invalid
+	if [[ -z "$IAM_USERNAME" ]]; then return; fi
+
+	# Function to detach managed policies
+	aws_iam_user_detach_managed_policies() {
+		policies=$(aws iam list-attached-user-policies --user-name "$IAM_USERNAME" --query 'AttachedPolicies[].PolicyArn' --output text)
+		for policy in $policies; do
+			echo aws iam detach-user-policy --user-name "$IAM_USERNAME" --policy-arn "$policy"
+		done
+	}
+
+	# Function to remove from IAM groups
+	aws_iam_user_remove_from_groups() {
+		groups=$(aws iam list-groups-for-user --user-name "$IAM_USERNAME" --query 'Groups[].GroupName' --output text)
+		for group in $groups; do
+			echo aws iam remove-user-from-group --user-name "$IAM_USERNAME" --group-name "$group"
+		done
+	}
+
+	# Function to delete inline policies
+	aws_iam_user_delete_inline_policies() {
+		policies=$(aws iam list-user-policies --user-name "$IAM_USERNAME" --query 'PolicyNames' --output text)
+		for policy in $policies; do
+			echo aws iam delete-user-policy --user-name "$IAM_USERNAME" --policy-name "$policy"
+		done
+	}
+
+	# Function to delete access keys
+	aws_iam_user_delete_access_keys() {
+		access_keys=$(aws iam list-access-keys --user-name "$IAM_USERNAME" --query 'AccessKeyMetadata[].AccessKeyId' --output text)
+		for key_id in $access_keys; do
+			echo aws iam delete-access-key --user-name "$IAM_USERNAME" --access-key-id "$key_id"
+		done
+	}
+
+	aws_iam_rm_iam_user() {
+		echo aws iam delete-user --user-name "$IAM_USERNAME"
+	}
+
+	# Main execution
+	aws_iam_user_detach_managed_policies
+	aws_iam_user_remove_from_groups
+	aws_iam_user_delete_inline_policies
+	aws_iam_user_delete_access_keys
+	aws_iam_rm_iam_user
+}
+
+# IAM Group
+function aws_iam_list_groups() {
+	aws_run_commandline "aws iam list-groups"
+}
+
+function aws_iam_rm_group_instruction() {
+	YourGroupName=$1
+	echo aws iam delete-group --group-name ${YourGroupName}
 }

@@ -14,7 +14,7 @@
 # # # $1:  the first argument
 ###################################################################
 
-function aws_budgets_list() {
+function aws_budget_list() {
 	aws_assume_role_get_aws_account_id
 	aws_run_commandline "\
 		aws budgets describe-budgets --account-id=${AWS_ACCOUNT_ID} 
@@ -27,7 +27,7 @@ function aws_budget_list_notifiction_for_budget() {
 
 	local budget_name=$1
 	# Check input invalid
-	if [ -z "$budget_name" ]; then return; fi
+	if [[ -z "$budget_name" ]]; then return; fi
 
 	aws_run_commandline "\
 		aws budgets describe-notifications-for-budget --account-id=${AWS_ACCOUNT_ID} --budget-name=${budget_name}

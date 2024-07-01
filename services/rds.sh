@@ -239,6 +239,20 @@ aws_rds_list_db_cluster_snapshots() {
 
 }
 
+function aws_rds_list_db_snapshots() {
+	aws_run_commandline " \
+		aws rds describe-db-snapshots \
+			--include-shared \
+			--query 'DBSnapshots[].{\
+				DBSnapshotIdentifier:DBSnapshotIdentifier,\
+				DBIdentifier:DBClusterIdentifier,\
+				SnapshotCreateTime:SnapshotCreateTime,\
+				Status:Status,SnapshotType:SnapshotType}' \
+			--output table
+	"
+
+}
+
 aws_rds_rm_db_instance_instruction() {
 	aws_rds_db_instance_name=$1
 

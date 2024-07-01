@@ -22,7 +22,7 @@ function aws_sqs_list() {
 function aws_sqs_get_by_name() {
 
 	# AWS_ACCOUNT_ID is null, get account id and export to ENV environment
-	if [ -z "$AWS_ACCOUNT_ID" ]; then
+	if [[ -z "$AWS_ACCOUNT_ID" ]]; then
 		aws_assume_role_get_aws_account_id
 	fi
 

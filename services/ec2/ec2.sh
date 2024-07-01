@@ -7,7 +7,7 @@
 local_aws_ec2_instance_id_peco_menu() {
 	local instance_state=${1:-'running'}
 
-	if [ "${instance_state}" = "all" ]; then
+	if [[ "${instance_state}" = "all" ]]; then
 		local aws_ec2_instance_id=$(peco_create_menu 'peco_aws_ec2_list_all')
 	else
 		local aws_ec2_instance_id=$(peco_create_menu "peco_aws_ec2_list ${instance_state}")
@@ -97,10 +97,24 @@ aws_ec2_rm_instruction() {
 }
 
 aws_ec2_rm_instruction_with_hint() {
-	aws_commandline_logging "\
-		aws ec2 terminate-instances \
-			--instance-ids $(local_aws_ec2_instance_id_peco_menu)
-	"
+
+	local instance_id=$(local_aws_ec2_instance_id_peco_menu)
+
+	# Check input invalid
+	if [[ -z "$instance_id" ]]; then
+		echo "The instance is invalid"
+		return
+	fi
+
+	# shellcheck disable=SC2155
+	local cmd=$(
+		cat <<-__EOF__
+			aws ec2 terminate-instances --instance-ids ${instance_id}
+		__EOF__
+	)
+
+	local_lhs_commandline_logging "$cmd"
+
 }
 
 # Ec2 image
@@ -173,7 +187,7 @@ aws_vpc_check_private_dns_supported() {
 	local vpc_id=$1
 
 	# Check input invalid
-	if [ -z "$vpc_id" ]; then return; fi
+	if [[ -z "$vpc_id" ]]; then return; fi
 
 	aws ec2 describe-vpc-attribute --vpc-id ${vpc_id} --attribute enableDnsSupport
 	aws ec2 describe-vpc-attribute --vpc-id ${vpc_id} --attribute enableDnsHostnames
@@ -242,10 +256,6 @@ aws_ec2_get_credential_from_metadata_instruction() {
 		curl -s ${aws_meta_data_address}/latest/meta-data/iam/security-credentials/\${iam_role_name}
 	__EOF__
 
-}
-
-aws_ec2_get_instance_type_spect_instruction() {
-	open https://instances.vantage.sh
 }
 
 aws_ec2_get_sg_inbound_rules_with_hint() {

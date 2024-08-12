@@ -269,9 +269,7 @@ aws_assume_role_get_tmp_credentials_for_credential_setting_file() {
 }
 
 function aws_assume_role_get_tmp_credentials_for_env_docker_compose_setting_file() {
-	local tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	aws_assume_role_set_name_with_hint
-
 	local lhs_docs=$(
 		cat <<-__EOF__
 			AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
@@ -282,5 +280,4 @@ function aws_assume_role_get_tmp_credentials_for_env_docker_compose_setting_file
 	)
 
 	echo "$lhs_docs"
-
 }

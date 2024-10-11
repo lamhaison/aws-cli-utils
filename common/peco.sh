@@ -246,3 +246,8 @@ peco_aws_budgets_list() {
 	aws_assume_role_get_aws_account_id
 	peco_aws_input 'aws budgets describe-budgets --account-id=${AWS_ACCOUNT_ID} --query "*[].BudgetName"' 'true'
 }
+
+peco_aws_secretmanager_list() {
+	peco_aws_input 'aws secretsmanager list-secrets --query "*[].Name"' 'true'
+
+}

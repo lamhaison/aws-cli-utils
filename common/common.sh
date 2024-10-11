@@ -98,3 +98,45 @@ aws_run_commandline_with_logging() {
 	echo $aws_commandline_result | eval $tee_command
 	echo "------------------------------FINISHED-$(date '+%Y-%m-%d-%H-%M-%S')-----------------------------------------" | eval $tee_command >/dev/null
 }
+
+# Waiting function
+function aws_wait() { # To run commandline and wait the status
+
+	echo "Accessing the waiting status function"
+
+	local commandline=$1
+	# The status that you want to wait
+	local waiting_status=$2
+	local max_retry_times=${3:-'30'}
+	local sleep_time=${3:-'60'}
+
+	# Check input invalid
+	if [[ -z "$commandline" ]]; then return 1; fi
+	if [[ -z "$waiting_status" ]]; then return 1; fi
+
+	# Initialize the counter variable
+	local counter=0
+	local current_status
+
+	# Start the while loop
+	while [[ $counter -lt $max_retry_times ]]; do
+		current_status=$(eval "${commandline}")
+
+		echo "[ Iteration: $counter ] - The expected status ${waiting_status}, Current status is ${current_status}"
+
+		if [[ "$current_status" == "${waiting_status}" ]]; then
+			echo "${current_status}"
+			return 0
+		fi
+
+		sleep "${sleep_time}"
+		# Increment the counter inside a subshell and ignore failure
+		((counter = counter + 1))
+
+	done
+
+	# Can't successful during waiting
+	echo "The expected status ${waiting_status}, Current status is ${current_status}"
+	exit 1
+
+}

@@ -200,11 +200,9 @@ aws_assume_role_set_name() {
 }
 
 aws_assume_role_set_name_with_hint() {
-
 	function peco_aws_asssume_role_list() {
 		# To ignore comment profile
-		grep -iE "\[*\]" ~/.aws/config |
-			tr -d "[]" | grep -v -E "^#.*" | awk -F " " '{print $2}'
+		cat ~/.aws/config | grep -E '^\[profile (.*)\]$' | sed -E 's|^\[profile (.*)\]$|\1|g'
 
 	}
 

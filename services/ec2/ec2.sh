@@ -296,3 +296,16 @@ aws_ec2_get_fingerprint_with_hint() {
 	aws_ec2_get_fingerprint $(local_aws_ec2_instance_id_peco_menu)
 
 }
+
+function aws_ec2_get_id_from_tag_name() {
+
+	local ec2_tag_name=$1
+
+	# Check input invalid
+	if [[ -z "$ec2_tag_name" ]]; then return; fi
+
+	aws ec2 describe-instances \
+		--filters "Name=tag:Name,Values=${ec2_tag_name}" \
+		--query "Reservations[*].Instances[*].InstanceId" \
+		--output text
+}

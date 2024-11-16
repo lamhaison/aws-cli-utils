@@ -33,6 +33,31 @@ aws_assume_role_get_current() {
 	echo "You are using the assume role name ${ASSUME_ROLE}"
 }
 
+function aws_assume_role_generate_aws_assume_role_link() {
+
+	# To get account id
+	local aws_assume_role_account
+
+	local aws_account_alias=$(get-account-alias 2>/dev/null)
+
+	if [[ -z "$aws_account_alias" ]]; then
+		# Using account_id
+		aws_assume_role_get_aws_account_id
+		local aws_assume_role_account="${AWS_ACCOUNT_ID}"
+
+	else
+		# Using account_alias
+		aws_assume_role_account="${aws_account_alias}"
+	fi
+
+	local aws_assume_role_name=$(aws_assume_role_get_role_name)
+	echo "https://signin.aws.amazon.com/switchrole?roleName=${aws_assume_role_name}&account=${aws_assume_role_account}"
+}
+
+function aws_assume_role_get_role_name() {
+	aws sts get-caller-identity --query 'Arn' --output text | awk -F '/' '{ print $2 }'
+}
+
 aws_assume_role_disable_print_account_info() {
 	export aws_assume_role_print_account_info=false
 }

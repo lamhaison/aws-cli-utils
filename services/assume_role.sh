@@ -234,7 +234,7 @@ aws_assume_role_set_name_with_hint() {
 	function aws_assume_role_insert_current_asssume_role_first() {
 		assume_role_list=$1
 		if [[ -n "${ASSUME_ROLE}" ]]; then
-			assume_role_list=$(echo ${assume_role_list} | grep -v ${ASSUME_ROLE})
+			assume_role_list=$(echo ${assume_role_list} | grep -v -E "${ASSUME_ROLE}$")
 			assume_role_list=$(echo "${ASSUME_ROLE}\n${assume_role_list}")
 
 		fi

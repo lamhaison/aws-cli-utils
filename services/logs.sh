@@ -26,23 +26,27 @@ function aws_logs_tail_with_hint() {
 
 # Function to start an AWS CloudWatch Logs query
 aws_logs_run_query() {
-	local log_group_name="$1" # The name of the log group
-	local start_time="$2"     # The start time for the query in milliseconds
-	local end_time="$3"       # The end time for the query in milliseconds
-	local query_string="$4"   # The CloudWatch Logs Insights query string
-	local region="$5"         # The AWS region
+	local log_group_names="$1" # Space-separated list of log group names
+	local start_time="$2"      # The start time for the query in milliseconds
+	local end_time="$3"        # The end time for the query in milliseconds
+	local query_string="$4"    # The CloudWatch Logs Insights query string
+	local region="$5"          # The AWS region
 
 	# Ensure required parameters are provided
-	if [[ -z "$log_group_name" || -z "$start_time" || -z "$end_time" || -z "$query_string" || -z "$region" ]]; then
+	if [[ -z "$log_group_names" || -z "$start_time" || -z "$end_time" || -z "$query_string" || -z "$region" ]]; then
 		echo "Error: Missing required arguments."
-		echo "Usage: aws_logs_run_query <log_group_name> <start_time> <end_time> <query_string> <region>"
+		echo "Usage: aws_logs_run_query <log_group_names> <start_time> <end_time> <query_string> <region>"
 		return 1
 	fi
+
+	# Convert the space-separated list of log groups into a JSON array
+	local log_group_json_array
+	log_group_json_array=$(printf '%s' "$log_group_names" | awk '{printf "[\"%s\"", $1; for (i=2; i<=NF; i++) printf ",\"%s\"", $i; printf "]"}')
 
 	# Execute the query
 	local query_id
 	query_id=$(aws logs start-query \
-		--log-group-name "$log_group_name" \
+		--log-group-names "$log_group_json_array" \
 		--start-time "$start_time" \
 		--end-time "$end_time" \
 		--query-string "$query_string" \
@@ -57,6 +61,11 @@ aws_logs_run_query() {
 	fi
 
 	echo "$query_id"
+}
+
+# Function to start an AWS CloudWatch Logs query for multiple log groups
+aws_logs_run_query_multi_groups() {
+	aws_logs_run_query "$@"
 }
 
 # Function to get AWS CloudWatch Logs query results

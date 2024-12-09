@@ -41,6 +41,7 @@ aws_logs_run_query() {
 
 	# Convert the space-separated list of log groups into a JSON array
 	local log_group_json_array
+	# from "log-group-1 log-group-2 log-group-3" to ["log-group-1","log-group-2","log-group-3"]
 	log_group_json_array=$(printf '%s' "$log_group_names" | awk '{printf "[\"%s\"", $1; for (i=2; i<=NF; i++) printf ",\"%s\"", $i; printf "]"}')
 
 	# Execute the query

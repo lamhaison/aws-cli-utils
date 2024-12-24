@@ -251,3 +251,7 @@ peco_aws_secretmanager_list() {
 	peco_aws_input 'aws secretsmanager list-secrets --query "*[].Name"' 'true'
 
 }
+
+peco_aws_sns_list() {
+	peco_aws_input 'aws sns list-topics --query "*[].TopicArn"' 'true'
+}

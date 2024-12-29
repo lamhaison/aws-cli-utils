@@ -142,6 +142,10 @@ peco_aws_list_db_clusters() {
 	peco_aws_input 'aws rds describe-db-clusters --query "*[].DBClusterIdentifier"' 'true'
 }
 
+peco_aws_list_db_endpoint() {
+	peco_aws_input 'aws rds describe-db-clusters --query "*[].[Endpoint, ReaderEndpoint]"' 'true'
+}
+
 peco_aws_list_db_instances() {
 	peco_aws_input 'aws rds describe-db-instances --query "*[].DBInstanceIdentifier"' 'true'
 }

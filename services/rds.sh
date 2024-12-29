@@ -239,6 +239,20 @@ aws_rds_list_db_cluster_snapshots() {
 
 }
 
+function aws_rds_list_db_snapshots() {
+	aws_run_commandline " \
+		aws rds describe-db-snapshots \
+			--include-shared \
+			--query 'DBSnapshots[].{\
+				DBSnapshotIdentifier:DBSnapshotIdentifier,\
+				DBIdentifier:DBClusterIdentifier,\
+				SnapshotCreateTime:SnapshotCreateTime,\
+				Status:Status,SnapshotType:SnapshotType}' \
+			--output table
+	"
+
+}
+
 aws_rds_rm_db_instance_instruction() {
 	aws_rds_db_instance_name=$1
 
@@ -254,4 +268,26 @@ aws_rds_rm_db_instance_instruction() {
 			--db-instance-identifier ${aws_rds_db_instance_name:-"\$aws_rds_db_instance_name"} \
 			--skip-final-snapshot
 	"
+}
+
+function aws_rds_list_pending_maintenance_actions { # To check security update for rds
+
+	local aws_rds_db_instance_name=$1
+
+	local cmd="aws rds describe-pending-maintenance-actions"
+
+	if [[ ! -z "$aws_rds_db_instance_name" ]]; then
+		aws_account_info # To get account id
+		cmd+=" --resource-identifier arn:aws:rds:${AWS_REGION}:${AWS_ACCOUNT_ID}:db:${aws_rds_db_instance_name}"
+	fi
+
+	aws_run_commandline "${cmd}"
+
+}
+
+function aws_rds_list_pending_maintenance_actions_with_hint() {
+
+	local aws_rds_db_instance_name=$(peco_create_menu 'peco_aws_list_db_instances' '--prompt "Choose db instance name >"')
+
+	aws_rds_list_pending_maintenance_actions "${aws_rds_db_instance_name}"
 }

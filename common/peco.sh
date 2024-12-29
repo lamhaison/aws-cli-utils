@@ -42,6 +42,10 @@ peco_commandline_input() {
 	local result_cached=$2
 	local input_expired_time="${3:-$peco_input_expired_time}"
 
+	if [ "${peco_aws_disable_input_cached}" = "0" ]; then
+		input_expired_time=0
+	fi
+
 	local md5_hash=$(echo $commandline | md5)
 	local input_folder="${aws_cli_input_tmp}/${ASSUME_ROLE:-NOTSET}"
 	mkdir -p ${input_folder}
@@ -193,8 +197,17 @@ peco_aws_iam_list_attached_policies() {
 
 # EC2 Instance
 peco_aws_ec2_list() {
+	local instance_state=${1:-'running'}
 
-	commandline="aws ec2 describe-instances --filters Name=instance-state-name,Values=running --query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId}' --output text | tr -s '\t' '_'"
+	commandline="aws ec2 describe-instances \
+		--filters Name=instance-state-name,Values=${instance_state} \
+		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId,PrivateIpAddress:PrivateIpAddress}' \
+		--output text | tr -s '\t' '_'"
+	peco_commandline_input ${commandline} 'true'
+}
+
+peco_aws_ec2_list_all() {
+	commandline="aws ec2 describe-instances --query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId.PrivateIpAddress:PrivateIpAddress}' --output text | tr -s '\t' '_'"
 	peco_commandline_input ${commandline} 'true'
 }
 
@@ -207,4 +220,38 @@ peco_aws_ssm_list_parameters() {
       | jq -r '.[]'
   "
 	peco_commandline_input ${commandline} 'true'
+}
+
+peco_aws_dynamodb_list_tables() {
+	peco_aws_input "aws dynamodb list-tables --query 'TableNames[]'" 'true'
+}
+
+peco_aws_sqs_list() {
+	peco_aws_input 'aws sqs list-queues --query "*[]"' 'true'
+}
+
+peco_aws_eks_list_clusters() {
+	peco_aws_input 'aws eks list-clusters  --query "*[]"' 'true'
+}
+
+peco_aws_cloudformation_list_stacks() {
+	peco_aws_input 'aws cloudformation list-stacks --query "*[].StackName"' 'true'
+}
+
+peco_aws_imagebuilder_list() {
+	peco_aws_input 'aws imagebuilder list-image-pipelines --query "imagePipelineList[*].arn"' 'true'
+}
+
+peco_aws_imagebuilder_list_recipes() {
+	peco_aws_input 'aws imagebuilder list-image-recipes --query "*[].arn"' 'true'
+}
+
+peco_aws_budgets_list() {
+	aws_assume_role_get_aws_account_id
+	peco_aws_input 'aws budgets describe-budgets --account-id=${AWS_ACCOUNT_ID} --query "*[].BudgetName"' 'true'
+}
+
+peco_aws_secretmanager_list() {
+	peco_aws_input 'aws secretsmanager list-secrets --query "*[].Name"' 'true'
+
 }

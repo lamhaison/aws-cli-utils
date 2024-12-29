@@ -7,12 +7,15 @@
 # $2: Where do you want to save logs?
 # $3: Do you want to set the bind key?
 
+DEFAULT_AWS_CLI_SOURCE_SCRIPTS='/opt/lamhaison-tools/aws-cli-utils'
+DEFAULT_AWS_CLI_DATA='/opt/lamhaison-tools/aws-cli-utils'
+
 AWS_CLI_SOURCE_SCRIPTS=$1
 
 if [[ -z "${AWS_CLI_SOURCE_SCRIPTS}" ]]; then
 	LOCAL_AWS_CLI_SOURCE_SCRIPTS=$(dirname -- "$0")
-	if [[ "${LOCAL_AWS_CLI_SOURCE_SCRIPTS}" = "." ]]; then
-		DEFAULT_AWS_CLI_SOURCE_SCRIPTS='/opt/lamhaison-tools/aws-cli-utils'
+	if [[ "${LOCAL_AWS_CLI_SOURCE_SCRIPTS}" == "." ]]; then
+		LOCAL_AWS_CLI_SOURCE_SCRIPTS="${DEFAULT_AWS_CLI_SOURCE_SCRIPTS}"
 	fi
 
 	export AWS_CLI_SOURCE_SCRIPTS="${LOCAL_AWS_CLI_SOURCE_SCRIPTS:-${DEFAULT_AWS_CLI_SOURCE_SCRIPTS}}"
@@ -23,8 +26,8 @@ fi
 AWS_CLI_DATA=$2
 if [[ -z "${AWS_CLI_DATA}" ]]; then
 	LOCAL_AWS_CLI_DATA=$(dirname -- "$0")
-	if [[ "${LOCAL_AWS_CLI_DATA}" = "." ]]; then
-		DEFAULT_AWS_CLI_DATA='/opt/lamhaison-tools/aws-cli-utils'
+	if [[ "${LOCAL_AWS_CLI_DATA}" == "." ]]; then
+		LOCAL_AWS_CLI_DATA="${DEFAULT_AWS_CLI_DATA}"
 	fi
 
 	export AWS_CLI_DATA="${LOCAL_AWS_CLI_DATA:-${DEFAULT_AWS_CLI_DATA}}"
@@ -32,6 +35,7 @@ else
 	export AWS_CLI_DATA=${AWS_CLI_DATA}
 fi
 
+# shellcheck disable=SC2155
 export assume_role_password_encrypted="$(cat ~/.password_assume_role_encrypted)"
 export tmp_credentials="/tmp/aws_temporary_credentials"
 
@@ -67,20 +71,20 @@ mkdir -p ${aws_cli_list_commands_folder}
 export AWS_DEFAULT_OUTPUT="json"
 
 # add some help aliases
-alias get-account-alias='aws iam list-account-aliases'
+alias get-account-alias='aws iam list-account-aliases --query "*[0]" --output text'
 alias get-account-id='echo AccountId $(aws sts get-caller-identity --query "Account" --output text)'
 
 # Import sub-commandlines.
 for script in $(
 	find ${AWS_CLI_SOURCE_SCRIPTS} -type f -name '*.sh' |
-		grep -v main.sh | grep -v main.sh | grep -v test.sh | grep -v temp.sh | grep -v aws-cli-utils.sh
+		grep -v -E '.*(main.sh|test.sh|temp.sh|aws-cli-utils.sh)$'
 ); do
 	source $script
 done
 
 # Reuse session in the new terminal
 export aws_cli_current_assume_role_name="/tmp/aws_cli_current_assume_role_SW7DNb48oQB57"
-export aws_cli_load_current_assume_role=false
+export aws_cli_load_current_assume_role=true
 # If the file is not empty
 # TODO Later (To check if the credential is expired, don't autoload credential)
 if [ "true" = "${aws_cli_load_current_assume_role}" ] && [ -s "${aws_cli_current_assume_role_name}" ]; then
@@ -89,7 +93,7 @@ fi
 
 LHS_BIND_KEY=${3:-'True'}
 
-if [[ "${LHS_BIND_KEY}" = "True" ]]; then
+if [[ ${LHS_BIND_KEY} == "True" && "$(which zle)" != "" ]]; then
 	# Add hot-keys
 	# zle -N aws_help
 	zle -N aws_main_function
@@ -98,6 +102,8 @@ if [[ "${LHS_BIND_KEY}" = "True" ]]; then
 	zle -N aws_get_command
 	# Hotkey: Option + a + c
 	bindkey 'åç' aws_get_command
+
+	bindkey '∫' aws_get_command
 
 	zle -N aws_history
 	# Hotkey Option + ah

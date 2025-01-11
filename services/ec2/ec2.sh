@@ -44,7 +44,7 @@ aws_ec2_list() {
 		--filters Name=instance-state-name,Values=running \
 		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0], \
 			InstanceId:InstanceId,ImageId:ImageId,InstanceType:InstanceType,PrivateIp:PrivateIpAddress,\
-			PublicIp:PublicIpAddress,State:State.Name,LaunchTime:LaunchTime,ZInstanceLifecycle:InstanceLifecycle}' \
+			PublicIp:PublicIpAddress,State:State.Name,LaunchTime:LaunchTime,ZInstanceLifecycle:InstanceLifecycle,AvailabilityZone:Placement.AvailabilityZone}' \
 		--output table
 	"
 }

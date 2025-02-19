@@ -14,6 +14,24 @@ function aws_secretmanager_list() {
 	"
 }
 
+function aws_secretmanager_get() {
+	local secret_name=$1
+
+	# Check input invalid
+	if [[ -z "$secret_name" ]]; then return; fi
+	aws_run_commandline "\
+		aws secretsmanager describe-secret --secret-id '${secret_name}'
+	"
+}
+
+function aws_secretmanager_get_with_hint() {
+	local secret_name=$(peco_create_menu 'peco_aws_secretmanager_list' '--prompt "Choose secret that you want >"')
+
+	# Check input invalid
+	if [[ -z "$secret_name" ]]; then return; fi
+	aws_secretmanager_get "${secret_name}"
+}
+
 function aws_secretmanager_get_value() {
 
 	local secret_name=$1

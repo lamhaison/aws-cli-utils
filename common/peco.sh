@@ -203,7 +203,9 @@ peco_aws_ec2_list() {
 }
 
 peco_aws_ec2_list_all() {
-	commandline="aws ec2 describe-instances --query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId.PrivateIpAddress:PrivateIpAddress}' --output text | tr -s '\t' '_'"
+	commandline="aws ec2 describe-instances \
+		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId,PrivateIpAddress:PrivateIpAddress}' \
+		--output text | tr -s '\t' '_'"
 	peco_commandline_input ${commandline} 'true'
 }
 

@@ -150,7 +150,7 @@ aws_ec2_create_image() {
 }
 
 aws_ec2_create_image_with_hint() {
-	aws_ec2_create_image $(local_aws_ec2_instance_id_peco_menu)
+	aws_ec2_create_image $(local_aws_ec2_instance_id_peco_menu 'all')
 }
 
 aws_ec2_get_image() {

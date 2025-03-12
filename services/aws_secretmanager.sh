@@ -33,7 +33,6 @@ function aws_secretmanager_get_with_hint() {
 }
 
 function aws_secretmanager_get_value() {
-
 	local secret_name=$1
 	local nolog=${2:-'no'}
 	# Check input invalid

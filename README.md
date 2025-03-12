@@ -89,7 +89,7 @@ brew install lamhaison/formulae/aws-cli-utils
 ## Load when start an Iterm terminal
 Add these lines to ~/.bashrc or ~/.zshrc or ~/.bash_profile
 ```
-source "$(which aws-cli-utils.sh)" "/opt/homebrew/Cellar/aws-cli-utils/$(brew info aws-cli-utils | head -1 | awk -F "stable " '{print $2}')" "${HOME}" "True"
+source "$(which lhs-helpful-commandlines.sh)" "/opt/homebrew/Cellar/lhs-helpful-commandlines/$(brew info lhs-helpful-commandlines | grep -E '==> .*: stable (.*)$' | sed -E 's|==> .*: stable (.*)$|\1|g')" "True" "True"
 
 ```
 

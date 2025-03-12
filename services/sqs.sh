@@ -50,3 +50,19 @@ function aws_sqs_get() {
 function aws_sqs_get_with_hint() {
 	aws_sqs_get $(peco_create_menu 'peco_aws_sqs_list')
 }
+
+function aws_sqs_purge() { # Be careful when using it, it will delete all the message in queues
+
+	local aws_sqs_queue_url=$1
+
+	# Check input invalid
+	if [[ -z "$aws_sqs_queue_url" ]]; then return; fi
+	aws_run_commandline "\
+		aws sqs purge-queue --queue-url "${aws_sqs_queue_url}"
+	"
+
+}
+
+function aws_sqs_purge_with_hint() {
+	aws_sqs_purge $(peco_create_menu 'peco_aws_sqs_list')
+}

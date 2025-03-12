@@ -82,3 +82,21 @@ aws_ecs_set_service_desized_count() {
 			
 	"
 }
+
+aws_ecs_execute_container() {
+	echo "List clusters"
+	aws_ecs_cluster_arn=$(echo "$(peco_aws_ecs_list_clusters)" | peco)
+	echo Cluster Arn ${aws_ecs_cluster_arn:?"aws_ecs_cluster_arn is not set or empty"}
+	echo "List services"
+	aws_ecs_service_arn=$(echo "$(peco_aws_ecs_list_services)" | peco)
+	echo Service Arn ${aws_ecs_service_arn:?"aws_ecs_service_arn is not set or empty"}
+	aws_ecs_task_definition_arn=$(aws ecs describe-services --cluster $aws_ecs_cluster_arn --service $aws_ecs_service_arn --query 'services[0].taskDefinition' --output text)
+	echo "Task Definition Arn $aws_ecs_task_definition_arn"
+	echo "List tasks"
+	aws_ecs_task_arn=$(aws ecs list-tasks --cluster $aws_ecs_cluster_arn --service-name $aws_ecs_service_arn --query 'taskArns' --output text| sed 's/\t/\n/g' | peco)
+	echo Task Arn ${aws_ecs_task_arn:?"aws_ecs_task_arn is not set or empty"}
+	echo "List containers in task definition"
+	container_name=$(aws ecs describe-task-definition --task-definition $aws_ecs_task_definition_arn --query 'taskDefinition.containerDefinitions[*].name' --output text | sed 's/\t/\n/g' | peco)
+	echo Container name ${container_name:?"container_name is not set or empty"}
+	aws ecs execute-command --cluster $aws_ecs_cluster_arn --container $container_name --interactive --command "/bin/sh" --task $aws_ecs_task_arn
+}

@@ -24,7 +24,6 @@ function aws_logs_rm_group_instruction() {
 	# Check aws_log_group_name invalid
 	if [ -z "$aws_log_group_name" ]; then return; fi
 	local aws_cmd=$(echo "aws logs delete-log-group --log-group-name $aws_log_group_name")
-	echo ${aws_cmd}
 	echo "${aws_cmd}"
 }
 

@@ -1,32 +1,32 @@
-aws_assume_role_option_set_output_table() {
+function aws_assume_role_option_set_output_table() {
 	export AWS_DEFAULT_OUTPUT="table"
 }
 
-aws_assume_role_option_set_output_json() {
+function aws_assume_role_option_set_output_json() {
 	export AWS_DEFAULT_OUTPUT="json"
 }
 
-aws_assume_role_option_set_output_yml() {
+function aws_assume_role_option_set_output_yml() {
 	export AWS_DEFAULT_OUTPUT="yaml"
 }
 
-aws_assume_role_enable_fast_mode() {
+function aws_assume_role_enable_fast_mode() {
 	export aws_assume_role_print_account_info=false
 }
 
-aws_assume_role_disable_fast_mode() {
+function aws_assume_role_disable_fast_mode() {
 	export aws_assume_role_print_account_info=true
 }
 
-aws_assume_role_disable_load_current_assume_role_for_new_tab() {
+function aws_assume_role_disable_load_current_assume_role_for_new_tab() {
 	rm -rf ${aws_cli_current_assume_role_name} >/dev/null
 }
 
-aws_assume_role_disable_show_detail_commandline() {
+function aws_assume_role_disable_show_detail_commandline() {
 	export aws_show_commandline=false
 }
 
-aws_run_commandline_with_retry() {
+function aws_run_commandline_with_retry() {
 	local aws_commandline=$1
 	local silent_mode=$2
 	local retry_counter=0
@@ -57,7 +57,7 @@ aws_run_commandline_with_retry() {
 
 }
 
-aws_run_commandline() {
+function aws_run_commandline() {
 	aws_run_commandline=$1
 	aws_run_commandline="${aws_run_commandline:?'aws_run_commandline is unset or empty'}"
 	aws_run_commandline_with_logging "${aws_run_commandline}"
@@ -72,7 +72,7 @@ function aws_commandline_logging() {
 	fi
 }
 
-aws_run_commandline_with_logging() {
+function aws_run_commandline_with_logging() {
 	local aws_commandline=$1
 	local log_file_path=${aws_cli_logs}/${ASSUME_ROLE}.log
 

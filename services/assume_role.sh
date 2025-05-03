@@ -224,12 +224,13 @@ aws_assume_role_set_name() {
 	aws_assume_role_save_current_assume_role ${aws_cli_current_assume_role_name}
 }
 
-aws_assume_role_set_name_with_hint() {
-	function peco_aws_asssume_role_list() {
-		# To ignore comment profile
-		cat ~/.aws/config | grep -E '^\[profile (.*)\]$' | sed -E 's|^\[profile (.*)\]$|\1|g'
+function peco_aws_asssume_role_list() {
+	# To ignore comment profile
+	cat ~/.aws/config | grep -E '^\[profile (.*)\]$' | sed -E 's|^\[profile (.*)\]$|\1|g'
 
-	}
+}
+
+function aws_assume_role_set_name_with_hint() {
 
 	function aws_assume_role_insert_current_asssume_role_first() {
 		assume_role_list=$1

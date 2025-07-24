@@ -281,3 +281,7 @@ function peco_aws_iam_role_list() {
 function peco_aws_iam_instance_profile_list() {
 	peco_aws_input 'aws iam list-instance-profiles --query "*[].{InstanceProfileName:InstanceProfileName}"' 'true'
 }
+
+function peco_aws_scheduler_list() {
+	peco_aws_input 'aws scheduler list-schedules --query "Schedules[*].[Name]"' 'true'
+}

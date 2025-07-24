@@ -157,7 +157,8 @@ function aws_secretmanager_update_secret() {
 
 function aws_secretmanager_update_specific_secret_key_with_hint() {
 
-	local secret_name=$(peco_create_menu 'peco_aws_secretmanager_list' '--prompt "Choose secret that you want >"')
+	local secret_name
+	secret_name=$(peco_create_menu 'peco_aws_secretmanager_list' '--prompt "Choose secret that you want >"')
 
 	# Check input invalid
 	if [[ -z "$secret_name" ]]; then
@@ -186,6 +187,12 @@ function aws_secretmanager_update_specific_secret_key_with_hint() {
 			echo "Secret value cannot be empty."
 			continue
 		fi
+
+		# Remove space/end-of-line at the begining and end of line for secret_value and secret key
+		secret_key=$(echo "${secret_key}" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+		secret_key=$(echo "$secret_key" | sed '/./,$!d' | tac | sed '/./,$!d' | tac)
+		secret_value=$(echo "${secret_value}" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+		secret_value=$(echo "$secret_value" | sed '/./,$!d' | tac | sed '/./,$!d' | tac)
 
 		aws_secretmanager_update_secret "${secret_name}" "${secret_key}" "${secret_value}"
 
@@ -230,13 +237,19 @@ function aws_secretmanager_delete_key() { # Be careful when using this
 }
 
 function aws_secretmanager_delete_key_with_hint() { # # Be careful when using this
-	local secret_name=$(peco_create_menu 'peco_aws_secretmanager_list' '--prompt "Choose secret that you want >"')
+	local secret_name
+	local secret_key
+
+	secret_name=$(peco_create_menu 'peco_aws_secretmanager_list' '--prompt "Choose secret that you want >"')
 
 	# Check input invalid
-	if [[ -z "$secret_name" ]]; then return; fi
+	if [[ -z "$secret_name" ]]; then
+		echo "❌ Secret name is invalid."
+		return
+	fi
 
-	local secret_key=$(peco_create_menu 'aws_secretmanager_list_keys ${secret_name}' '--prompt "Choose secret key that you want >"')
+	secret_key=$(peco_create_menu 'aws_secretmanager_list_keys ${secret_name}' '--prompt "Choose secret key that you want >"')
 
-	aws_secretmanager_delete_key "${secret_name}" ${secret_key}
+	aws_secretmanager_delete_key "${secret_name}" "${secret_key}"
 
 }

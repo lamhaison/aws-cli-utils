@@ -44,7 +44,7 @@ brew tap lamhaison/formulae && brew install lamhaison/formulae/assume-role-macos
 
 ```
 
-### Setup your password for compress the plantext your temporary credentail.
+### Setup your password for compress the plantext your temporary credentials.
 ```
 # This password is used to encrypt your tmp credential.
 echo "random_string" > ~/.password_assume_role_encrypted

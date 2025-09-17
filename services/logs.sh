@@ -18,6 +18,21 @@ function aws_logs_tail() {
 	eval ${aws_cmd}
 }
 
+function aws_logs_rm_group_instruction() {
+	aws_log_group_name=$1
+
+	# Check aws_log_group_name invalid
+	if [ -z "$aws_log_group_name" ]; then return; fi
+	local aws_cmd=$(echo "aws logs delete-log-group --log-group-name $aws_log_group_name")
+	echo "${aws_cmd}"
+}
+
+function aws_logs_rm_group_instruction_with_hint() {
+	aws_log_group_name=$(peco_create_menu 'peco_aws_logs_list')
+	aws_logs_rm_group_instruction $aws_log_group_name
+
+}
+
 function aws_logs_tail_with_hint() {
 	echo "Your log group name >"
 	aws_log_group_name=$(peco_create_menu 'peco_aws_logs_list')

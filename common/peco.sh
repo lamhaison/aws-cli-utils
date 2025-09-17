@@ -1,42 +1,42 @@
-peco_assume_role_name() {
+function peco_assume_role_name() {
 	cat ~/.aws/config | grep -e "^\[profile.*\]$" | peco
 }
 
-peco_format_name_convention_pre_defined() {
+function peco_format_name_convention_pre_defined() {
 	local peco_input=$1
 	echo "${peco_input}" | tr "\t" "\n" | tr -s " " "\n" | tr -s '\n'
 }
 
-peco_format_aws_output_text() {
+function peco_format_aws_output_text() {
 	local peco_input=$1
 	echo "${peco_input}" | tr "\t" "\n"
 }
 
-peco_aws_acm_list() {
+function peco_aws_acm_list() {
 	aws_acm_list | peco
 }
 
-peco_name_convention_input() {
+function peco_name_convention_input() {
 	local text_input=$1
 	local format_text=$(peco_format_name_convention_pre_defined $text_input)
 	echo $format_text
 }
 
-peco_create_menu_with_array_input() {
+function peco_create_menu_with_array_input() {
 	local text_input=$1
 	local format_text=$(peco_format_name_convention_pre_defined $text_input)
 	echo $format_text
 }
 
-peco_aws_disable_input_cached() {
+function peco_aws_disable_input_cached() {
 	export peco_input_expired_time=0
 }
 
-peco_aws_input() {
+function peco_aws_input() {
 	peco_commandline_input "${1} --output text" $2
 }
 
-peco_commandline_input() {
+function peco_commandline_input() {
 
 	local commandline="${1}"
 	local result_cached=$2
@@ -73,7 +73,7 @@ peco_commandline_input() {
 
 }
 
-peco_create_menu() {
+function peco_create_menu() {
 	local input_function=$1
 	local peco_options=$2
 	local peco_command="peco ${peco_options}"
@@ -83,33 +83,33 @@ peco_create_menu() {
 }
 
 # AWS Logs
-peco_aws_logs_list() {
+function peco_aws_logs_list() {
 	peco_aws_input 'aws logs describe-log-groups --query "*[].logGroupName"' 'true'
 }
 
 # AWS ECS
-peco_aws_ecs_list_clusters() {
+function peco_aws_ecs_list_clusters() {
 	peco_aws_input 'aws ecs list-clusters --query "*[]"' 'true'
 }
 
-peco_aws_ecs_list_services() {
+function peco_aws_ecs_list_services() {
 	peco_aws_input 'aws ecs list-services --cluster $aws_ecs_cluster_arn --query "*[]"'
 }
 
 # AWS ECR
 
-peco_aws_ecr_list_repo_names() {
+function peco_aws_ecr_list_repo_names() {
 	peco_aws_input 'aws ecr describe-repositories --query "*[].repositoryName"' 'true'
 }
 
-peco_aws_ecr_list_images() {
+function peco_aws_ecr_list_images() {
 	aws_ecr_repo_name=$1
 	peco_aws_input "aws ecr list-images \
 		--repository-name ${aws_ecr_repo_name:?'aws_ecr_repo_name is unset or empy'} \
 		--query \"imageIds[].{imageTag:imageTag}\""
 }
 
-peco_aws_alb_list_listners() {
+function peco_aws_alb_list_listners() {
 	aws_alb_arn=$1
 	peco_aws_input " \
 		aws elbv2 describe-listeners \
@@ -118,85 +118,85 @@ peco_aws_alb_list_listners() {
 }
 
 # AWS RDS
-peco_aws_list_db_parameter_groups() {
+function peco_aws_list_db_parameter_groups() {
 	peco_aws_input 'aws rds describe-db-parameter-groups --query "*[].DBParameterGroupName"' 'true'
 }
 
-peco_aws_rds_list_db_cluster_snapshots() {
+function peco_aws_rds_list_db_cluster_snapshots() {
 	peco_aws_input 'aws rds describe-db-cluster-snapshots \
 		--snapshot-type manual \
 		--query "DBClusterSnapshots[].DBClusterSnapshotIdentifier"'
 }
 
-peco_aws_rds_list_db_snapshots() {
+function peco_aws_rds_list_db_snapshots() {
 	peco_aws_input 'aws rds describe-db-snapshots \
 		--snapshot-type manual \
 		--query "DBSnapshots[].DBSnapshotIdentifier"'
 }
 
-peco_aws_list_db_cluster_parameter_groups() {
+function peco_aws_list_db_cluster_parameter_groups() {
 	peco_aws_input 'aws rds describe-db-cluster-parameter-groups --query "*[].DBClusterParameterGroupName"' 'true'
 }
 
-peco_aws_list_db_clusters() {
+function peco_aws_list_db_clusters() {
 	peco_aws_input 'aws rds describe-db-clusters --query "*[].DBClusterIdentifier"' 'true'
 }
 
-peco_aws_list_db_endpoint() {
+function peco_aws_list_db_endpoint() {
 	peco_aws_input 'aws rds describe-db-clusters --query "*[].[Endpoint, ReaderEndpoint]"' 'true'
 }
 
-peco_aws_list_db_instances() {
+function peco_aws_list_db_instances() {
 	peco_aws_input 'aws rds describe-db-instances --query "*[].DBInstanceIdentifier"' 'true'
 }
 
 # Lambda
-peco_aws_lambda_list() {
+function peco_aws_lambda_list() {
 	peco_aws_input 'aws lambda list-functions --query "*[].FunctionName"' 'true'
 }
 
 # S3
-peco_aws_s3_list() {
+function peco_aws_s3_list() {
 	peco_aws_input 'aws s3api list-buckets --query "Buckets[].Name"' 'true'
 }
 
 # Codebuild
-peco_aws_codebuild_list() {
+function peco_aws_codebuild_list() {
 	peco_aws_input 'aws codebuild list-projects --query "*[]"' 'true'
 }
 
-peco_aws_codepipeline_list() {
+function peco_aws_codepipeline_list() {
 	peco_aws_input 'aws codepipeline list-pipelines --query "*[].name"' 'true'
 }
 
 # Codedeploy
-peco_aws_codedeploy_list_deployment_ids() {
+function peco_aws_codedeploy_list_deployment_ids() {
 	peco_aws_input 'aws deploy list-deployments --query "deployments[]"'
 }
 
 # Cloudfront
-peco_aws_cloudfront_list() {
+function peco_aws_cloudfront_list() {
 	commandline="aws cloudfront list-distributions \
 		--query 'DistributionList.Items[*].{AId:Id,BComment:Comment}' --output text | tr -s '\t' '_'"
 	peco_commandline_input ${commandline} 'true'
 }
 
 # Autoscaling group
-peco_aws_autoscaling_list() {
+function peco_aws_autoscaling_list() {
 	peco_aws_input 'aws autoscaling describe-auto-scaling-groups --query "*[].AutoScalingGroupName"' 'true'
 }
 
 # IAM role list
-peco_aws_iam_list_roles() {
+function peco_aws_iam_list_roles() {
 	peco_aws_input 'aws iam list-roles --query "*[].{RoleName:RoleName}"' 'true'
 }
 
-peco_aws_iam_list_attached_policies() {
+function peco_aws_iam_list_attached_policies() {
 	peco_aws_input 'aws iam list-policies --scope Local --only-attached --query "*[].Arn"' 'true'
 }
 
 # EC2 Instance
-peco_aws_ec2_list() {
+function peco_aws_ec2_list() {
 	local instance_state=${1:-'running'}
 
 	commandline="aws ec2 describe-instances \
@@ -206,58 +206,82 @@ peco_aws_ec2_list() {
 	peco_commandline_input ${commandline} 'true'
 }
 
-peco_aws_ec2_list_all() {
+function peco_aws_ec2_list_all() {
 	commandline="aws ec2 describe-instances \
 		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId,PrivateIpAddress:PrivateIpAddress}' \
 		--output text | tr -s '\t' '_'"
 	peco_commandline_input ${commandline} 'true'
 }
 
-peco_aws_ssm_list_parameters() {
+function peco_aws_ssm_list_parameters() {
 	commandline=" \
-    aws ssm get-parameters-by-path \
-      --path "/" \
-      --recursive \
-      --query 'Parameters[*].Name' \
-      | jq -r '.[]'
+	aws ssm get-parameters-by-path \
+	  --path "/" \
+	  --recursive \
+	  --query 'Parameters[*].Name' \
+	  | jq -r '.[]'
   "
 	peco_commandline_input ${commandline} 'true'
 }
 
-peco_aws_dynamodb_list_tables() {
+function peco_aws_dynamodb_list_tables() {
 	peco_aws_input "aws dynamodb list-tables --query 'TableNames[]'" 'true'
 }
 
-peco_aws_sqs_list() {
+function peco_aws_sqs_list() {
 	peco_aws_input 'aws sqs list-queues --query "*[]"' 'true'
 }
 
-peco_aws_eks_list_clusters() {
+function peco_aws_eks_list_clusters() {
 	peco_aws_input 'aws eks list-clusters  --query "*[]"' 'true'
 }
 
-peco_aws_cloudformation_list_stacks() {
+function peco_aws_cloudformation_list_stacks() {
 	peco_aws_input 'aws cloudformation list-stacks --query "*[].StackName"' 'true'
 }
 
-peco_aws_imagebuilder_list() {
+function peco_aws_imagebuilder_list() {
 	peco_aws_input 'aws imagebuilder list-image-pipelines --query "imagePipelineList[*].arn"' 'true'
 }
 
-peco_aws_imagebuilder_list_recipes() {
+function peco_aws_imagebuilder_list_recipes() {
 	peco_aws_input 'aws imagebuilder list-image-recipes --query "*[].arn"' 'true'
 }
 
-peco_aws_budgets_list() {
+function peco_aws_budgets_list() {
 	aws_assume_role_get_aws_account_id
 	peco_aws_input 'aws budgets describe-budgets --account-id=${AWS_ACCOUNT_ID} --query "*[].BudgetName"' 'true'
 }
 
-peco_aws_secretmanager_list() {
+function peco_aws_secretmanager_list() {
 	peco_aws_input 'aws secretsmanager list-secrets --query "*[].Name"' 'true'
 
 }
 
-peco_aws_sns_list() {
+function peco_aws_sns_list() {
 	peco_aws_input 'aws sns list-topics --query "*[].TopicArn"' 'true'
+}
+
+function peco_aws_iam_user_list() {
+	peco_aws_input 'aws iam list-users --query "*[].{UserName:UserName}"' 'true'
+}
+
+function peco_aws_iam_group_list() {
+	peco_aws_input 'aws iam list-groups --query "*[].{GroupName:GroupName}"' 'true'
+}
+
+function peco_aws_iam_policy_list() {
+	peco_aws_input 'aws iam list-policies --query "*[].{PolicyName:PolicyName}"' 'true'
+}
+
+function peco_aws_iam_role_list() {
+	peco_aws_input 'aws iam list-roles --query "*[].{RoleName:RoleName}"' 'true'
+}
+
+function peco_aws_iam_instance_profile_list() {
+	peco_aws_input 'aws iam list-instance-profiles --query "*[].{InstanceProfileName:InstanceProfileName}"' 'true'
+}
+
+function peco_aws_scheduler_list() {
+	peco_aws_input 'aws scheduler list-schedules --query "Schedules[*].[Name]"' 'true'
 }

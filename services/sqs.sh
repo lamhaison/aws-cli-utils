@@ -66,3 +66,24 @@ function aws_sqs_purge() { # Be careful when using it, it will delete all the me
 function aws_sqs_purge_with_hint() {
 	aws_sqs_purge $(peco_create_menu 'peco_aws_sqs_list')
 }
+
+function aws_sqs_push_message() {
+	local aws_sqs_queue_url=$1
+	local aws_sqs_message_body=$2
+
+	# Check input invalid
+	if [[ -z "$aws_sqs_queue_url" || -z "$aws_sqs_message_body" ]]; then return; fi
+
+	aws_run_commandline "\
+		aws sqs send-message \
+			--queue-url '${aws_sqs_queue_url}' \
+			--message-body '${aws_sqs_message_body}'
+	"
+}
+
+function aws_sqs_push_message_hello_world_with_hint() {
+	local aws_sqs_queue_url=$(peco_create_menu 'peco_aws_sqs_list')
+	local aws_sqs_message_body="hello world!"
+
+	aws_sqs_push_message "${aws_sqs_queue_url}" "${aws_sqs_message_body}"
+}

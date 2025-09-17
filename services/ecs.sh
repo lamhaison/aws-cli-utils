@@ -100,3 +100,47 @@ aws_ecs_execute_container() {
 	echo Container name ${container_name:?"container_name is not set or empty"}
 	aws ecs execute-command --cluster $aws_ecs_cluster_arn --container $container_name --interactive --command "/bin/sh" --task $aws_ecs_task_arn
 }
+
+aws_ecs_list_task_definitions() {
+    aws_run_commandline "\
+        aws ecs list-task-definitions \
+            --query 'taskDefinitionArns[]' \
+            --output text"
+}
+
+aws_ecs_describe_task_definition() {
+    local task_definition="$1"
+
+    if [[ -z "$task_definition" ]]; then
+        echo "Error: Missing required argument."
+        echo "Usage: aws_ecs_describe_task_definition <task_definition>"
+        return 1
+    fi
+
+    aws_run_commandline "\
+        aws ecs describe-task-definition \
+            --task-definition $task_definition"
+}
+
+aws_ecs_deregister_task_definition() {
+    local task_definition="$1"
+
+    if [[ -z "$task_definition" ]]; then
+        echo "Error: Missing required argument."
+        echo "Usage: aws_ecs_deregister_task_definition <task_definition>"
+        return 1
+    fi
+
+    aws_run_commandline "\
+        aws ecs deregister-task-definition \
+            --task-definition $task_definition"
+}
+
+aws_ecs_get_task_definition_with_hint() {
+    local task_definition_list=$(aws ecs list-task-definitions --query 'taskDefinitionArns[]' --output text)
+    local selected_task_definition=$(peco_create_menu 'echo ${task_definition_list}' '--prompt "Select task definition >"')
+    
+    if [[ -n "$selected_task_definition" ]]; then
+        aws_ecs_describe_task_definition "$selected_task_definition"
+    fi
+}

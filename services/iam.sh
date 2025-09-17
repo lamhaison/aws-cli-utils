@@ -5,21 +5,127 @@ aws_iam_add_policy_to_role() {
 	echo "TODO Later"
 }
 
-aws_iam_list_users() {
+function aws_iam_list_users() {
 	aws_run_commandline 'aws iam list-users --output table'
 }
 
-aws_iam_list_users_info() {
+function aws_iam_user_get() {
+	local user_name=$1
 
-	aws_run_commandline 'aws iam list-users --output table'
+	# Check input invalid
+	if [[ -z "$user_name" ]]; then return; fi
 
-	for user_name in $(aws iam list-users --query '*[].{UserName:UserName}' --output text); do
-		aws_run_commandline "\
-			aws iam get-user --user-name ${user_name}
-			aws iam list-attached-user-policies --user-name ${user_name}
-		"
+	aws_run_commandline "\
+		aws iam get-user --user-name "$user_name"
+	"
+}
+
+function aws_iam_user_list_access_keys() {
+
+	local iam_user_name=$1
+
+	# Check input invalid
+	if [[ -z "$iam_user_name" ]]; then return; fi
+
+	aws_run_commandline "\
+		aws iam list-access-keys --user-name "$iam_user_name"
+	"
+}
+
+function aws_iam_user_list_access_keys_with_hint() {
+	local iam_user_name=$(peco_create_menu 'peco_aws_iam_user_list' '--prompt "Choose iam user name >"')
+	aws_iam_user_list_access_keys "${iam_user_name}"
+
+}
+
+function aws_iam_user_list_policies() {
+	local user_name=$1
+
+	# Check input invalid
+	if [[ -z "$user_name" ]]; then return; fi
+
+	echo "============================================================"
+	echo "👤 User: $user_name"
+	echo "============================================================"
+
+	aws_iam_user_get "${user_name}"
+
+	# === MANAGED USER POLICIES ===
+	echo "📎 Directly Attached (Managed) User Policies:"
+
+	for policy_arn in $(aws iam list-attached-user-policies \
+		--user-name "$user_name" \
+		--query 'AttachedPolicies[].PolicyArn' \
+		--output text); do
+		echo "- 🔐 Managed Policy ARN: $policy_arn"
+		version_id=$(aws iam get-policy --policy-arn "$policy_arn" --query 'Policy.DefaultVersionId' --output text)
+
+		if [[ $version_id =~ ^v[0-9]+$ ]]; then
+			aws iam get-policy-version \
+				--policy-arn "$policy_arn" \
+				--version-id "$version_id" \
+				--query 'PolicyVersion.Document' \
+				--output json
+		else
+			echo "⚠️  Skipped invalid or missing version for $policy_arn (version_id: '$version_id')"
+		fi
 	done
 
+	# === INLINE USER POLICIES ===
+	echo "📜 Inline User Policies:"
+	for policy_name in $(aws iam list-user-policies --user-name "$user_name" --query 'PolicyNames' --output text); do
+		echo "- 📄 Inline Policy: $policy_name"
+		aws iam get-user-policy \
+			--user-name "$user_name" \
+			--policy-name "$policy_name" \
+			--query 'PolicyDocument' \
+			--output json
+	done
+
+	# === GROUPS ===
+	echo "👥 IAM Groups:"
+	for group in $(aws iam list-groups-for-user --user-name "$user_name" --query 'Groups[].GroupName' --output text); do
+		echo "🔸 Group: $group"
+
+		# === MANAGED GROUP POLICIES ===
+		echo "📎 Managed Group Policies:"
+		for policy_arn in $(aws iam list-attached-group-policies --group-name "$group" --query 'AttachedPolicies[].PolicyArn' --output text); do
+			echo "- 🔐 Managed Policy ARN: $policy_arn"
+			version_id=$(aws iam get-policy --policy-arn "$policy_arn" --query 'Policy.DefaultVersionId' --output text)
+			aws iam get-policy-version \
+				--policy-arn "$policy_arn" \
+				--version-id "$version_id" \
+				--query 'PolicyVersion.Document' \
+				--output json
+		done
+
+		# === INLINE GROUP POLICIES ===
+		echo "📜 Inline Group Policies:"
+		for policy_name in $(aws iam list-group-policies --group-name "$group" --query 'PolicyNames' --output text); do
+			echo "- 📄 Inline Policy: $policy_name"
+			aws iam get-group-policy \
+				--group-name "$group" \
+				--policy-name "$policy_name" \
+				--query 'PolicyDocument' \
+				--output json
+		done
+	done
+
+	echo ""
+
+}
+
+function aws_iam_user_list_policies_all() {
+	echo "🔍 Listing IAM users and all IAM policies (managed + inline)..."
+
+	for user_name in $(aws iam list-users --query 'Users[].UserName' --output text); do
+		aws_iam_user_list_policies "${user_name}"
+	done
+}
+
+function aws_iam_user_list_policies_with_hint() {
+	local iam_user_name=$(peco_create_menu 'peco_aws_iam_user_list' '--prompt "Choose iam user name >"')
+	aws_iam_user_list_policies "$iam_user_name"
 }
 
 aws_iam_list_roles_info() {
@@ -134,11 +240,11 @@ aws_iam_list_role_policies() {
 	done
 }
 
-aws_iam_list_role_policies_with_hint() {
+function aws_iam_list_role_policies_with_hint() {
 	aws_iam_list_role_policies $(peco_create_menu 'peco_aws_iam_list_roles')
 }
 
-aws_iam_get_policy() {
+function aws_iam_get_policy() {
 	aws_iam_policy_arn=$1
 	aws_run_commandline "\
 		 aws iam get-policy --policy-arn \
@@ -150,11 +256,11 @@ aws_iam_get_policy() {
 	"
 }
 
-aws_iam_get_policy_with_hint() {
+function aws_iam_get_policy_with_hint() {
 	aws_iam_get_policy $(peco_create_menu 'peco_aws_iam_list_attached_policies')
 }
 
-aws_iam_list_ec2_instance_profiles() {
+function aws_iam_list_ec2_instance_profiles() {
 	aws_run_commandline "
 		 aws iam list-instance-profiles  \
 		 	--query '*[].{InstanceProfileName:InstanceProfileName,Arn:Arn}'

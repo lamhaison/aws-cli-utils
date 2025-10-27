@@ -104,7 +104,9 @@ aws_assume_role_get_credentail() {
 
 	assume_role_result=""
 
-	aws_assume_role_expired_time_from_config=$(aws configure get profile.${ASSUME_ROLE}.assume_role_timeout)
+	# aws_assume_role_expired_time_from_config=$(aws configure get profile.${ASSUME_ROLE}.assume_role_timeout)
+	# improve performance
+	aws_assume_role_expired_time_from_config=60
 
 	# Check input invalid
 	if [[ -n "$aws_assume_role_expired_time_from_config" ]]; then

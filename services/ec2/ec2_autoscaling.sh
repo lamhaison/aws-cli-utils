@@ -18,7 +18,9 @@ aws_autoscaling_list() {
 				LTID:MixedInstancesPolicy.LaunchTemplate.LaunchTemplateSpecification.LaunchTemplateId,\
 				LTVersion:MixedInstancesPolicy.LaunchTemplate.LaunchTemplateSpecification.Version,\
 				LTName:MixedInstancesPolicy.LaunchTemplate.LaunchTemplateSpecification.LaunchTemplateName,\
-				DesiredCapacity:DesiredCapacity}" \
+				MinSize:MinSize,\
+				DesiredCapacity:DesiredCapacity,\
+				MaxSize:MaxSize}" \
 			--output table		
 	'
 }

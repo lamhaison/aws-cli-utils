@@ -94,6 +94,11 @@ brew install lamhaison/formulae/aws-cli-utils # Make sure you flow the the instr
 ```
 ## Load when start an Iterm terminal
 Add these lines to ~/.bashrc or ~/.zshrc or ~/.bash_profile from the previous step `source ....`
+It depends on what you get when running brew install. Here is the example
+
+```bash
+source "$(which aws-cli-utils.sh)" "/opt/homebrew/Cellar/aws-cli-utils/$(brew info aws-cli-utils | head -1 | awk -F "stable " '{print $2}')/bin" "${HOME}" "True"
+```
 
 ### Re-install the latest version
 ```

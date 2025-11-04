@@ -159,10 +159,3 @@ function aws_s3_cp_folder_instruction() {
 
 }
 
-
-# Didn't work with PUT method
-# function aws_s3_get_presigned_url_for_uploader() {
-# 	aws_run_commandline "\
-# 		aws s3 presign $1 --http-method PUT --expires-in ${2:-3600}	
-# 	"
-# }

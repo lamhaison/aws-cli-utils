@@ -95,16 +95,22 @@ LHS_BIND_KEY=${3:-'True'}
 
 if [[ ${LHS_BIND_KEY} == "True" && "$(which zle)" != "" ]]; then
 	# Add hot-keys
-	# zle -N aws_help
+
+	# For aws helper function
+	zle -N aws_help
+	bindkey '^h' aws_help 
+	
+	# For assume role
 	zle -N aws_main_function
 	bindkey '^@' aws_main_function
 
+	# For building the aws cli commandline
 	zle -N aws_get_command
 	# Hotkey: Option + a + c
 	bindkey 'åç' aws_get_command
-
 	bindkey '∫' aws_get_command
 
+	# For get history
 	zle -N aws_history
 	# Hotkey Option + ah
 	bindkey '˙' aws_history

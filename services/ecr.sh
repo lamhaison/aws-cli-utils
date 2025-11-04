@@ -92,3 +92,24 @@ function aws_ecr_pull_image_with_hint() { # To get the docker image and pull it 
 		${aws_ecr_repo_image_tag:?'aws_ecr_repo_image_tag is uset or empty'}
 
 }
+
+
+# ECR for helmchart
+function aws_ecr_login_for_helm() {
+	if [[ -z "${AWS_ACCOUNT_ID}" ]]; then
+		aws_assume_role_get_aws_account_id
+	fi
+
+	local aws_ecr_helm_docker_login_password
+	local aws_ecr_helm_docker_login_cmd 
+
+	aws_ecr_helm_docker_login_password=$(aws ecr get-login-password --region ${AWS_REGION})
+
+	aws_ecr_helm_docker_login_cmd=$(
+		echo "echo '${aws_ecr_helm_docker_login_password}' | helm registry login \
+				--username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+	)
+
+	aws_run_commandline "${aws_ecr_helm_docker_login_cmd}"
+
+}

@@ -1,20 +1,14 @@
 #!/bin/bash
 
-# TODO local_aws_ec2_instance_id_peco_menu create ec2 instance_id list
-# @param filter by state (running, stopped, all)
-# @return ec2_instance_id that you choose
-#
 local_aws_ec2_instance_id_peco_menu() {
 	local instance_state=${1:-'running'}
+	local refresh_caching=${2:-'false'}
+	local aws_ec2_instance_id
 
-	if [[ "${instance_state}" = "all" ]]; then
-		local aws_ec2_instance_id=$(peco_create_menu 'peco_aws_ec2_list_all')
-	else
-		local aws_ec2_instance_id=$(peco_create_menu "peco_aws_ec2_list ${instance_state}")
-	fi
+	aws_ec2_instance_id=$(peco_create_menu "peco_aws_ec2_list '${instance_state}' '${refresh_caching}'")
 
 	aws_ec2_instance_id=$(echo "${aws_ec2_instance_id}" | awk -F "_" '{print $1}')
-	echo ${aws_ec2_instance_id}
+	echo "${aws_ec2_instance_id}"
 }
 
 # AWS ec2
@@ -75,7 +69,7 @@ aws_ec2_stop() {
 }
 
 aws_ec2_stop_with_hint() {
-	aws_ec2_stop $(local_aws_ec2_instance_id_peco_menu)
+	aws_ec2_stop $(local_aws_ec2_instance_id_peco_menu 'running' 'true')
 }
 
 aws_ec2_start() {
@@ -85,8 +79,8 @@ aws_ec2_start() {
 	"
 }
 
-aws_ec2_start_with_hint() {
-	aws_ec2_start $(local_aws_ec2_instance_id_peco_menu 'stopped')
+aws_ec2_start_with_hint() { 
+	aws_ec2_start $(local_aws_ec2_instance_id_peco_menu 'stopped' 'true')
 }
 
 aws_ec2_rm_instruction() {

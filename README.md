@@ -84,13 +84,20 @@ echo "source /opt/lamhaison-tools/aws-cli-utils/main.sh" >> ~/.zshrc
 #### Install
 ```
 brew tap lamhaison/formulae
-brew install lamhaison/formulae/aws-cli-utils
+brew install lamhaison/formulae/aws-cli-utils # Make sure you flow the the instruction when it is installed completely, we need that for the next step
+# Example
+#...
+#==> Caveats
+#Add these lines to ~/.bashrc or ~/.zshrc or ~/.bash_profile
+#source "$(which aws-cli-utils.sh)" "/opt/homebrew/Cellar/aws-cli-utils/$(brew info aws-cli-utils | head -1 | awk -F "stable " '{print $2}')/bin" "${HOME}" "True"
+#...
 ```
 ## Load when start an Iterm terminal
-Add these lines to ~/.bashrc or ~/.zshrc or ~/.bash_profile
-```
-source "$(which lhs-helpful-commandlines.sh)" "/opt/homebrew/Cellar/lhs-helpful-commandlines/$(brew info lhs-helpful-commandlines | grep -E '==> .*: stable (.*)$' | sed -E 's|==> .*: stable (.*)$|\1|g')" "True" "True"
+Add these lines to ~/.bashrc or ~/.zshrc or ~/.bash_profile from the previous step `source ....`
+It depends on what you get when running brew install. Here is the example
 
+```bash
+source "$(which aws-cli-utils.sh)" "/opt/homebrew/Cellar/aws-cli-utils/$(brew info aws-cli-utils | head -1 | awk -F "stable " '{print $2}')/bin" "${HOME}" "True"
 ```
 
 ### Re-install the latest version

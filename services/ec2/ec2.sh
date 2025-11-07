@@ -51,7 +51,7 @@ aws_ec2_get() {
 }
 
 aws_ec2_get_with_hint() {
-	aws_ec2_get $(local_aws_ec2_instance_id_peco_menu)
+	aws_ec2_get "$(local_aws_ec2_instance_id_peco_menu 'all' 'true')"
 }
 
 aws_ec2_reboot() {

@@ -268,7 +268,8 @@ aws_assume_role_get_tmp_credentials_for_new_members() {
 	local tmp_credentials_file="${tmp_credentials}/${ASSUME_ROLE}"
 	aws_assume_role_set_name_with_hint
 	aws_assume_role_unzip_tmp_credential $assume_role
-	cat ${tmp_credentials_file} && rm -rf ${tmp_credentials_file}
+	cat ${tmp_credentials_file} | grep "export" | grep -v "ASSUMED_ROLE" && rm -rf ${tmp_credentials_file}
+	echo "export AWS_REGION=$AWS_REGION"
 
 }
 

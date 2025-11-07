@@ -36,6 +36,22 @@ function peco_aws_input() {
 	peco_commandline_input "${1} --output text" $2
 }
 
+function peco_commandline_get_cache_file_name() {
+	local commandline="${1}"
+	local md5_hash=$(echo "$commandline" | md5)
+	echo "${md5_hash}"
+}
+
+function peco_comandline_input_clear_cache() {
+	local commandline="${1}"
+	local md5_hash=$(peco_commandline_get_cache_file_name "${commandline}")
+	local input_folder="${aws_cli_input_tmp}/${ASSUME_ROLE:-NOTSET}"
+	local input_file_path="${input_folder}/${md5_hash}.txt"
+	if [ -f "${input_file_path}" ]; then
+		rm -f "${input_file_path}"
+	fi
+}
+
 function peco_commandline_input() {
 
 	local commandline="${1}"
@@ -46,7 +62,7 @@ function peco_commandline_input() {
 		input_expired_time=0
 	fi
 
-	local md5_hash=$(echo $commandline | md5)
+	local md5_hash=$(peco_commandline_get_cache_file_name "${commandline}")
 	local input_folder="${aws_cli_input_tmp}/${ASSUME_ROLE:-NOTSET}"
 	mkdir -p ${input_folder}
 	local input_file_path="${input_folder}/${md5_hash}.txt"
@@ -198,30 +214,34 @@ function peco_aws_iam_list_attached_policies() {
 # EC2 Instance
 function peco_aws_ec2_list() {
 	local instance_state=${1:-'running'}
+	local refresh=${2:-'false'}
+	local commandline
 
-	commandline="aws ec2 describe-instances \
-		--filters Name=instance-state-name,Values=${instance_state} \
-		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId,PrivateIpAddress:PrivateIpAddress}' \
-		--output text | tr -s '\t' '_'"
-	peco_commandline_input ${commandline} 'true'
-}
+	# set -x
 
-function peco_aws_ec2_list_all() {
-	commandline="aws ec2 describe-instances \
-		--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId,PrivateIpAddress:PrivateIpAddress}' \
-		--output text | tr -s '\t' '_'"
-	peco_commandline_input ${commandline} 'true'
+	if [[ "${instance_state}" = "all" ]]; then
+		commandline="aws ec2 describe-instances \
+			--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId,PrivateIpAddress:PrivateIpAddress}' \
+			--output text | tr -s '\t' '_'"
+	else
+		commandline="aws ec2 describe-instances \
+			--filters Name=instance-state-name,Values=${instance_state} \
+			--query 'Reservations[].Instances[].{Name: Tags[?Key==\`Name\`].Value | [0],InstanceId:InstanceId,PrivateIpAddress:PrivateIpAddress}' \
+			--output text | tr -s '\t' '_'"
+	fi 
+
+	if [ "${refresh}" = "true" ]; then
+		peco_comandline_input_clear_cache "${commandline}"
+	fi
+
+	peco_commandline_input "${commandline}" 'true'
+
+	# set +x
 }
 
 function peco_aws_ssm_list_parameters() {
-	commandline=" \
-	aws ssm get-parameters-by-path \
-	  --path "/" \
-	  --recursive \
-	  --query 'Parameters[*].Name' \
-	  | jq -r '.[]'
-  "
-	peco_commandline_input ${commandline} 'true'
+	commandline="aws ssm get-parameters-by-path --path "/" --recursive  --query 'Parameters[*].Name' | jq -r '.[]'"
+	peco_commandline_input "${commandline}" 'true'
 }
 
 function peco_aws_dynamodb_list_tables() {
